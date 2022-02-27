@@ -1,5 +1,9 @@
 class VectorizedObject
 {
+
+	void GetBuffersInfo(uint& sizevbo,uint& sizeibo);
+	void RenderProgramUniforms();
+		
 	public:
 	float* vertex_buffer = NULL;
 	int* index_buffer = NULL;
@@ -32,7 +36,7 @@ class VectorizedObject
 	int sceneprog=0; 
 	int sceneprogidx =0;
 
-	
+	void Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint& offsetibo);
 
 
 	const int vertexxsurf = 0;
@@ -43,6 +47,7 @@ class VectorizedObject
 	
 	
 	void GetBuffersInfo(uint& sizevbo,uint& sizeibo, uint& vtlen);
+
 
 	void SetToOrigin(int vblocation);
 	void Translate(int vblocation,float* val);
@@ -57,7 +62,8 @@ class VectorizedObject
 	int SetUniform(const std::string& uniformname,int idx, float value);
 	int SetUniform(std::string&& uniformname,int idx, float value);
 	void SetUniform(int uniformidx,int idx, float value);
-
+	
+	virtual void RenderTexture() {};
 
 };
 
@@ -86,6 +92,13 @@ void VectorizedObject::GetBuffersInfo(uint &VBOsize , uint& IBOsize, uint& verte
 	vertexlen_=vertex_len;
 	
 	
+}
+
+void VectorizedObject::GetBuffersInfo(uint &VBOsize , uint& IBOsize )
+{
+	VBOsize = vertex_num;
+	IBOsize= vertexxsurf*surfaces_num;
+
 }
 
 void VectorizedObject::SetToOrigin(int vblocation)
@@ -182,5 +195,68 @@ int VectorizedObject::SpecifyBuffersAttributes(const std::string& name, int attr
 }
 
 
+void VectorizedObject::Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint& offsetibo)
+{
+	
+		
+	
+		uint tmpibo = 0, tmpvbo = 0; 
+		this->RenderProgramUniforms();
+		this->GetBuffersInfo(tmpvbo, tmpibo);	
+		
+		
 
+		for(int k=0; k<this->attributenames.size(); k++ )
+		{
+			
+			glVertexAttribPointer(  this->attributelocationsprogram[k], 
+						(this->attributesizes[k+1] - this->attributesizes[k]), 
+						GL_FLOAT, 
+						GL_FALSE, 
+						(this->attributesizes[this->attributesizes.size()-1])*sizeof(GLfloat), 
+						(void*) ((offsetvbo+this->attributesizes[k])*sizeof(GLfloat)) );
+						glEnableVertexAttribArray(this->attributelocationsprogram[k]);
+							
+		
+
+		}	
+		
+			
+	  	this->RenderTexture();
+			
+		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO );
+		glDrawElements( this->representation , 
+				this->surfaces_num*this->vertexxsurf, 
+				GL_UNSIGNED_INT, 
+				(void*) (offsetibo*sizeof(GLuint)) );
+			
+		int nbuffersize, vbsi; 
+		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &nbuffersize);
+		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &vbsi);	
+
+		offsetibo +=this->surfaces_num*this->vertexxsurf;
+		offsetvbo += tmpvbo*this->vertex_len;
+				
+		for(int k=0; k<this->attributenames.size(); k++ ){glDisableVertexAttribArray( this->attributelocationsprogram[k]);}	
+		
+
+}
+
+void VectorizedObject::RenderProgramUniforms()
+{
+
+	for(int k=0; k< this->uniformnames.size(); k++)
+	{
+		switch(this->uniformsizes[k+1]-this->uniformsizes[k])
+		{
+			case 2: 
+				glUniform2f(this->uniformlocationsprogram[k],
+				this->uniformattributes[this->uniformsizes[k]],
+				this->uniformattributes[this->uniformsizes[k]+1]);
+				//dbglog("unif" , obj->uniformattributes[obj->uniformsizes[k]],obj->uniformattributes[obj->uniformsizes[k]+1 ]);
+		}
+	}
+
+
+}
 

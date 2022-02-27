@@ -94,42 +94,7 @@ void Scene::Render()
 		for (int j =0; j< assets[i].size(); j++)
 		{
 		
-		//dbglog("test0");
-		VectorizedObject *obj = assets[i][j];
-		ProgramUniforms(obj);
-		obj->GetBuffersInfo(tmpvbo, tmpibo, vertxlen);	
-
-			for(int k=0; k<obj->attributenames.size(); k++ )
-			{
-				
-				glVertexAttribPointer( obj->attributelocationsprogram[k], 
-								       (obj->attributesizes[k+1] - obj->attributesizes[k]), 
-									   GL_FLOAT, 
-									   GL_FALSE, 
-									   (obj->attributesizes[obj->attributesizes.size()-1])*sizeof(GLfloat), 
-									   (void*) ((offsetvbo+obj->attributesizes[k])*sizeof(GLfloat)) );
-				glEnableVertexAttribArray(obj->attributelocationsprogram[k]);
-			
-			//	dbglog(i,j,"| loc = ", assets[i][j]->attributelocationsprogram[k]);
-	
-			}	
-			if(obj->ltexture) glBindTexture(GL_TEXTURE_2D, obj->texture);
-			
-			glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO );
-			glDrawElements(obj->representation , 
-						   obj->surfaces_num*obj->vertexxsurf, 
-						   GL_UNSIGNED_INT, 
-						   (void*) (offsetibo*sizeof(GLuint)) );
-			
-			int nbuffersize, vbsi; 
-			glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &nbuffersize);
-			glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &vbsi);	
-		//	dbglog(i,j, "|  offset ", offsetibo, nbuffersize/sizeof(GLuint), vbsi/sizeof(GLfloat));
-							
-			offsetibo +=obj->surfaces_num*obj->vertexxsurf;
-			offsetvbo += tmpvbo*vertxlen;
-				
-			for(int k=0; k<assets[i][j]->attributenames.size(); k++ ){glDisableVertexAttribArray( assets[i][j]->attributelocationsprogram[k]);}	
+			assets[i][j]->Render(VBO,IBO,offsetvbo,offsetibo);
 		}
 		//dbglog("");
 		
@@ -209,23 +174,7 @@ void Scene::Prepare()
 	dbglog("Buffers Filled ");
 }
 
-void Scene::ProgramUniforms(VectorizedObject* obj)
-{
 
-	for(int k=0; k< obj->uniformnames.size(); k++)
-	{
-		switch(obj->uniformsizes[k+1]-obj->uniformsizes[k])
-		{
-			case 2: 
-				glUniform2f(obj->uniformlocationsprogram[k],
-							obj->uniformattributes[obj->uniformsizes[k]],
-							obj->uniformattributes[obj->uniformsizes[k]+1]);
-				//dbglog("unif" , obj->uniformattributes[obj->uniformsizes[k]],obj->uniformattributes[obj->uniformsizes[k]+1 ]);
-		}
-	}
-
-
-}
 
 void Scene::UnloadObject(VectorizedObject& obj)
 {	

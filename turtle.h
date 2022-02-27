@@ -20,8 +20,9 @@
 #include "src/shader.h"
 #include "src/window.h"
 #include "src/vectorizedobject.h"
+#include "src/animatedobject2d.h"
 #include "src/scene.h"
 #include "src/geometrymisc.cpp"
-#include "src/animatedobject2d.h"
+
 
 
