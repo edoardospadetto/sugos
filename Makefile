@@ -1,6 +1,8 @@
 #OBJS specifies which files to compile as part of the project
 OBJS = main.cpp
 
+DEFS = -D DEBUG -g 
+
 #OBJ_NAME specifies the name of our exectuable
 OBJ_NAME = run
 

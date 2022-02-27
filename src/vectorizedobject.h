@@ -5,20 +5,20 @@ class VectorizedObject
 	void RenderProgramUniforms();
 		
 	public:
-	float* vertex_buffer = NULL;
-	int* index_buffer = NULL;
-	float* position = NULL; 
+	float*				vertex_buffer = NULL;
+	int* 				index_buffer = NULL;
+	float*				position = NULL; 
 	
 	//Buffers 
-	std::vector<std::string> buffernames = {};
-	std::vector<int> buffersizes = {};
-	std::vector<int> bufferformat = {};
+	std::vector<std::string>	buffernames = {};
+	std::vector<int> 		buffersizes = {};
+	std::vector<int> 		bufferformat = {};
 	
 	// Uniforms
-	std::vector<float> uniformattributes = {}; 
-	std::vector<std::string> uniformnames ={};
-	std::vector<int> uniformlocationsprogram ={};
-	std::vector<int> uniformsizes ={};
+	std::vector<float> 		uniformattributes = {}; 
+	std::vector<std::string> 	uniformnames ={};
+	std::vector<int> 		uniformlocationsprogram ={};
+	std::vector<int> 		uniformsizes ={};
 	
 	//IBO & VBO vars
 	std::vector<std::string> attributenames={}; 
@@ -64,6 +64,7 @@ class VectorizedObject
 	void SetUniform(int uniformidx,int idx, float value);
 	
 	virtual void RenderTexture() {};
+	virtual void UnbindTexture() {};
 
 };
 
@@ -79,26 +80,15 @@ vertex_len( vertex_len_), vertex_num(vertex_num_),  surfaces_num(surfaces_num_),
 
 void VectorizedObject::GetBuffersInfo(uint &VBOsize , uint& IBOsize, uint& vertexlen_ )
 {
-	//Create VBO
-	/*glGenBuffers( 1, &gVBO );
-	glBindBuffer( GL_ARRAY_BUFFER, gVBO );
-	glBufferData( GL_ARRAY_BUFFER, vertex_len* vertex_num* sizeof(GLfloat), this->vertex_buffer, GL_STATIC_DRAW );
-	//Create IBO
-	glGenBuffers( 1, &gIBO );
-	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gIBO );
-	glBufferData( GL_ELEMENT_ARRAY_BUFFER,  vertexxsurf*surfaces_num * sizeof(GLuint), this->index_buffer, GL_STATIC_DRAW );*/
 	VBOsize = vertex_num;
 	IBOsize= vertexxsurf*surfaces_num;
-	vertexlen_=vertex_len;
-	
-	
+	vertexlen_=vertex_len;	
 }
 
 void VectorizedObject::GetBuffersInfo(uint &VBOsize , uint& IBOsize )
 {
 	VBOsize = vertex_num;
 	IBOsize= vertexxsurf*surfaces_num;
-
 }
 
 void VectorizedObject::SetToOrigin(int vblocation)
@@ -155,9 +145,6 @@ int VectorizedObject::LinkUniformToVariable(const std::string& uniformname, int 
 	uniformnames.push_back(uniformname);
 	uniformlocationsprogram.push_back(-1);
 	uniformsizes.push_back(uniformsize+uniformsizes[uniformsizes.size()-1]);
-	//for(int u=0; u<uniformsizes.size(); u++){std::cout << uniformsizes[u] << " ";}
-	//std::cout << std::endl;
-	 
 	return(uniformnames.size()-1);
 
 }
@@ -231,6 +218,7 @@ void VectorizedObject::Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint&
 				(void*) (offsetibo*sizeof(GLuint)) );
 			
 		int nbuffersize, vbsi; 
+		this->UnbindTexture();
 		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &nbuffersize);
 		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &vbsi);	
 
