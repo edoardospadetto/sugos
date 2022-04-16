@@ -13,7 +13,7 @@ class Window_Class
 		  int HEIGHT = 640;
 		 
 		  float fps = 60 ;
-		  std::thread *EventHandler =NULL;
+		  std::thread *userWatchdog =NULL;
 		  
 		  bool lpixelart=true;
 
@@ -35,6 +35,7 @@ class Window_Class
 	public :
 		  Window_Class(unsigned int fps_, Uint32 flags);
 		  ~Window_Class();
+		  unsigned int GetTime();
 		  bool IsAlive();
 		  void CycleStart();
 		  int CycleEnd();
@@ -122,6 +123,8 @@ Window_Class::~Window_Class()
 
 }
 
+
+
 void Window_Class::CycleStart()
 {
 	frame_start = SDL_GetTicks();
@@ -131,15 +134,15 @@ void Window_Class::CycleStart()
 	glClearColor ( 0.3, 0.5, 0.3, 0.3 );
     //
 	//EVENT THREAD
-	EventHandler = new std::thread(&Window_Class::WindowEvents, this);
+	userWatchdog = new std::thread(&Window_Class::WindowEvents, this);
 
 }
 int Window_Class::CycleEnd()
 {
 
-	EventHandler->join();
+	userWatchdog->join();
 	GLQueue(); // What was not possible to execute in the thread;
-	delete EventHandler;
+	delete userWatchdog;
 	SDL_GL_SwapWindow(gWindow);
 
 	unsigned int now_frame = SDL_GetTicks() - frame_start;
@@ -159,9 +162,9 @@ bool Window_Class::IsAlive()
 
 void Window_Class::WindowEvents()
 {
-	    //Handle events on queue
-		//Set Logicals for other functions
-		SDL_Event event; 
+	//Handle events on queue
+	//Set Logicals for other functions
+	SDL_Event event; 
         while( SDL_PollEvent( &event ) != 0 )
         {
             //User requests quit
@@ -209,9 +212,17 @@ void Window_Class::SDLQueue()
 {
 	if(lresize) SDL_GetWindowSize(gWindow, &WIDTH,&HEIGHT);
 }
+
+//OpenGl actions according to userWatchdog
 void Window_Class::GLQueue()
 {
 	if(lresize) glViewport(0, 0, WIDTH, HEIGHT); lresize=false;
 	
+}
+
+unsigned int Window_Class::GetTime()
+{
+	
+	return SDL_GetTicks();
 }
 

@@ -1,3 +1,20 @@
+
+//VectorizedObject
+
+/* 
+* This is the most basic type of object appearing on screen.
+* 
+* Buffers
+* std::vector<std::string>  buffernames
+* Names given to each buffer,
+*
+*
+* std::vector<int> 	    buffersizes
+* std::vector<int> 	    bufferformat
+*/
+
+
+
 class VectorizedObject
 {
 
@@ -67,6 +84,8 @@ class VectorizedObject
 	virtual void UnbindTexture() {};
 
 };
+
+
 
 VectorizedObject::VectorizedObject(int vertex_len_,int vertex_num_, int surfaces_num_, int space_dim_,int vertxsup_):
 vertex_len( vertex_len_), vertex_num(vertex_num_),  surfaces_num(surfaces_num_), space_dim(space_dim_), vertexxsurf(vertxsup_)
@@ -162,15 +181,27 @@ int VectorizedObject::SetUniform(const std::string& uniformname,int idx, float v
 	return(-1);
 }
 
-int VectorizedObject::SetUniform(std::string&& uniformname,int idx, float value) {return SetUniform(uniformname,idx,value);}
 
+
+
+
+int VectorizedObject::SetUniform(std::string&& uniformname,int idx, float value) {return SetUniform(uniformname,idx,value);}
 void VectorizedObject::SetUniform(int uniformidx,int idx, float value)
 {
 	uniformattributes[uniformsizes[uniformidx]+idx] = value;
 }
 
 
+
+
+
+
+
 int VectorizedObject::SpecifyBuffersAttributes(std::string&& name, int size, GLenum representation_){return SpecifyBuffersAttributes(name, size, representation_);}
+
+
+
+
 
 int VectorizedObject::SpecifyBuffersAttributes(const std::string& name, int attributesize, GLenum representation_)
 {

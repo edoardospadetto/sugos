@@ -30,8 +30,8 @@ void GenQuadText(VectorizedObject& obj)
 {
 	float vertex[]= 	//VBO data
 	{
-		-1.0f, -1.0f, 0.0f,  0.0f,
-		 1.0f, -1.0f, 1.0f,  0.0f,
+		-1.0f, -1.0f, 0.0f,  0.0f, // bottom left
+		 1.0f, -1.0f, 1.0f,  0.0f, // bottom right
 		 1.0f,  1.0f, 1.0f,  1.0f,
 		-1.0f,  1.0f, 0.0f,  1.0f
 	};

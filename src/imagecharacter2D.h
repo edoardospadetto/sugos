@@ -1,7 +1,7 @@
 class ImageCharacter2D:: public VectorizedObject
 {
 	public:
-	ImageCharacter2D():VectorizedObject(4,4,1,2,4); 		
+		ImageCharacter2D(float width_, float height_);	
 
 
 
