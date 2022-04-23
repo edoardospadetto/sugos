@@ -1,7 +1,6 @@
 # DumbSpaceShip
 
-2D Open GL toolset.
+2D Open-GL toolset.
 
-Seems a smart approach. 
-
-Abstarct scene object handles autoimatically 2D characters.
+Plot images on screen, snapshots animation system.
+Handles 2D Animations
