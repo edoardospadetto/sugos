@@ -33,12 +33,14 @@ class Window_Class
 		 
 
 	public :
+		 const Uint8* kb;
 		  Window_Class(unsigned int fps_, Uint32 flags);
 		  ~Window_Class();
 		  unsigned int GetTime();
 		  bool IsAlive();
 		  void CycleStart();
 		  int CycleEnd();
+		  
 
 
 
@@ -106,6 +108,8 @@ Window_Class::Window_Class(unsigned int fps_, Uint32 flags)
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
+	
+	kb = SDL_GetKeyboardState(NULL);
 
 
 		
@@ -195,6 +199,9 @@ void Window_Class::WindowEvents()
         }
 	//Handle accordingly 
 	SDLQueue();
+	
+	
+	
 
 }
 

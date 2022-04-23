@@ -12,18 +12,16 @@
 *
 */
 
+enum Direction { ON_PRESS = 0 , ON_RELEASE = 1 };
+
+
 class AnimatedObject2D;
 class State;
 class State 
 {
 	private:
 	
-	
-	
-		  
-	
 	std::vector<unsigned int> duration;
-	
 	Texture* stateTexture;
 	
 	
@@ -53,9 +51,14 @@ class State
 	void SetFrameSize(float sizex_, float sizey_);
 	void Parser(const std::string& token_, int namedatainfo_[] );
 	void UpdateFrame(AnimatedObject2D* animObj);
-	void ConnectTo(State* p_stat);	
+	void ConnectTo(State* p_stat, SDL_Scancode key, Direction whichdirection);
+	void ConnectOnTimeOutTo(State* p_stat);	
 	unsigned int GetCurrentFrameDuration();
 	std::vector<State*> subsequents;
+	std::vector<SDL_Scancode> edges;
+	std::vector<Direction> direction;
+	
+	
 	
 };
 
@@ -87,17 +90,23 @@ class StateEngine
 	unsigned int frameInit;
 	
 	public:
+	
+	SDL_Scancode animGen;
 	Window_Class *window=nullptr;
 	unsigned int* clock;
 	int* State_duration;
 	std::vector<State*> statesNetwork;
-	int currentState=-1;
+	State* currentState= nullptr;
 	StateEngine(Window_Class *window);
 	void AddState(State *state_); 
 	void SetStateNetwork();
-	void AnimateState();
+	void AnimateState(bool &wentTimeOut);
 	void ElaborateStateChanges();
 	void UpdateVBatFrame(AnimatedObject2D* animObj) ;
+	void ChangeState(bool &wentTimeOut);
+	void IsIdle(int i);
+	
+	 
 	
 	//Topological Routine
 	//void NextFrame(int idx);	
@@ -105,38 +114,6 @@ class StateEngine
 
 };
 
-/*
-* Add frame, texture, coordinate in the texture, in pixels
-*
-*
-*
-*/
-/*
-void StateEngine::AddState(int row_,int col_,int w_,int h_,unsigned int duration_,GLuint textureId_)
-{
-	frames.push_back(State {row_,col_,w_, h_,duration_,textureId_);
-}
-*/
-// Starts counting from 0
-/*
-void  StateEngine::ConnectStatetoState(int i, int j)
-{
-	if (i < frames.size() && j < frames.size() ) frames[i].ConnectTo(&(frames[j]));
-}
-*/	
-/*
-void RunEngine(int idx)
-{
 
-}
-*/
-/*StateAnimation::StateAnimation(const std::string& conf_path_ , const std::string&  spritesheet_path_ ) : conf_path(conf_path_), spritesheet_path  (spritesheet_path_ )
-{
-	
-	
-
-
-}
-*/
 
 

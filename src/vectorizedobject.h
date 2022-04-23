@@ -40,7 +40,7 @@ class VectorizedObject
 	//IBO & VBO vars
 	std::vector<std::string> attributenames={}; 
 	std::vector<int> attributelocationsprogram={};
-	GLenum representation;
+	GLenum representation = -1;
 	std::vector<int> attributesizes={};
 	
 	//Geometry Info
@@ -68,6 +68,7 @@ class VectorizedObject
 
 	void SetToOrigin(int vblocation);
 	void Translate(int vblocation,float* val);
+	void Rescale(int vblocation, float factor);
 
 	
 	int LinkUniformToVariable(std::string&& uniformname, int uniformsize );
@@ -110,6 +111,20 @@ void VectorizedObject::GetBuffersInfo(uint &VBOsize , uint& IBOsize )
 	IBOsize= vertexxsurf*surfaces_num;
 }
 
+// Routine to rescale object, suggested to use after resetting to origin
+void  VectorizedObject::Rescale(int vblocation,float factor)
+{
+for (int i=0; i<vertex_num; i++){for(int j=0; j<space_dim; j++)
+{
+		vertex_buffer[ i*vertex_len + vblocation +j ] *= factor; 
+}}
+
+
+}
+
+// Set center of mass of object to center of coordinate system
+// vb location is the offster of the coordinates on the buffer.
+// coordinates are supposed subsequential.
 void VectorizedObject::SetToOrigin(int vblocation)
 {
 	if(vertex_buffer == nullptr) printf("ERROR: nullptr vertex buffer\n");
@@ -238,6 +253,8 @@ void VectorizedObject::Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint&
 		
 
 		}	
+		
+		
 		
 			
 	  	this->RenderTexture();

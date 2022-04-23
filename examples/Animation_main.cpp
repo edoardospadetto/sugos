@@ -30,7 +30,7 @@ int main( int argc, char* args[] )
 	Window_Class window = Window_Class(60,SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN ); 
 	
 	// Shader
-	GPUcodes gpucodes0=GPUcodes("shader0");	
+	GPUcodes gpucodes0=GPUcodes("./shaders/shader0");	
 	
 	gpucodes0.Load("simple0","simple2", "simpleb");
 	

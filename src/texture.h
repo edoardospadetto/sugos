@@ -1,3 +1,9 @@
+/*
+* Texture Class
+* It is in interface to the OpenGL Texture object.
+* From image. to Gl texture.
+* Uses the default constructor and load the image afterwards.
+*/
 class Texture
 {
 	public:
@@ -13,6 +19,11 @@ class Texture
 };
 
 
+/*
+* Generate Texture from image, with path filename, flip flips the ordering of the pixel, 
+* desiderchannels are the number of channels, color format GL_RGB or GL_RGBA so on. 
+*
+*/
 void Texture::LoadTexture(const std::string& filename,bool flip_, int desiredchannels, GLenum colorformat )
 {
 	

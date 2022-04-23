@@ -1,10 +1,17 @@
 
 
+//Set subsequent state to
+//if -1 is on time out  
 
 
-void State::ConnectTo(State* p_stat){
+void State::ConnectTo(State* p_stat, SDL_Scancode key, Direction whichdirection)
+{
+	
 	subsequents.push_back(p_stat);
+	edges.push_back(key);
+	direction.push_back(whichdirection);
 }
+
 
 
 /*
@@ -205,35 +212,36 @@ StateEngine::StateEngine(Window_Class *window_):window(window_)
 
 void StateEngine::UpdateVBatFrame(AnimatedObject2D* animObj) //count from 0 
 {	
-	int x = statesNetwork[currentState]->x;
-	int y = statesNetwork[currentState]->y;
-	dbglog(x,y,statesNetwork[currentState]->w,statesNetwork[currentState]->h);
+	int x = currentState->x;
+	int y = currentState->y;
+	dbglog(x,y,currentState->w,currentState->h);
 	int square[8] = {x,y+1,x+1,y+1,x+1,y,x,y};
 	for (int i =0; i<4; i++)
 	{
-	 	animObj->vertex_buffer[4*i+2] = square[2*i]*statesNetwork[currentState]->w;
-	 	animObj->vertex_buffer[4*i+3] = 1.0-square[2*i+1]*statesNetwork[currentState]->h;
+	 	animObj->vertex_buffer[4*i+2] = square[2*i]*currentState->w;
+	 	animObj->vertex_buffer[4*i+3] = 1.0-square[2*i+1]*currentState->h;
 	}
 }
 
-void StateEngine::AnimateState()
+void StateEngine::AnimateState(bool &wentTimeOut)
 {	
 
 	if (window == nullptr) printf("Error, clock not binded global context");
 	int timeNow = window->GetTime();
 	
-	if (timeNow-frameInit > statesNetwork[currentState]->GetCurrentFrameDuration())
+	if (timeNow-frameInit > currentState->GetCurrentFrameDuration())
 	{
-		++statesNetwork[currentState]->currentFrame; 
+		++currentState->currentFrame; 
 	
-		if(statesNetwork[currentState]->currentFrame >= statesNetwork[currentState]->frameNum )
+		wentTimeOut = ( currentState->currentFrame >= currentState->frameNum );
+		if(wentTimeOut)
 		{
-			statesNetwork[currentState]->currentFrame=0;
+			currentState->currentFrame=0;
 			
 		}
-		int tmp= statesNetwork[currentState]->currentFrame;
-		statesNetwork[currentState]->x=statesNetwork[currentState]->row[tmp]; 
-		statesNetwork[currentState]->y=statesNetwork[currentState]->col[tmp]; 
+		int tmp= currentState->currentFrame;
+		currentState->x=currentState->row[tmp]; 
+		currentState->y=currentState->col[tmp]; 
 		frameInit = timeNow;
 	}	
 			
@@ -245,6 +253,30 @@ void StateEngine::AddState(State *state_)
 	statesNetwork.push_back(state_);
 	if (statesNetwork.size() ==1)
 	{
-		currentState=0;
+		currentState=statesNetwork[0];
 	}
+}
+
+
+void StateEngine::ChangeState(bool &wentTimeOut)
+{
+	
+	
+	for (int i=0; i<currentState->edges.size() ; i++)
+	{
+		SDL_Scancode key  = currentState->edges[i];
+		
+		if (key == TIME_OUT )
+		{
+			if (wentTimeOut) currentState = currentState->subsequents[i];
+					
+		}
+		else if(window->kb[key] + int(currentState->direction[i]) == 1 )
+		{
+			currentState = currentState->subsequents[i];
+		}
+		
+	}
+	
+	
 }

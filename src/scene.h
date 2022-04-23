@@ -13,6 +13,11 @@ class Scene
 		uint vertexbuffersize=0, indexbuffersize=0;
 		std::vector<std::vector<VectorizedObject*>> assets;
 		std::vector<GLuint> programs;
+		std::vector<PhysicsObject2D*> collisionSet;
+		
+		bool ldbgcolliders = false;
+		GLuint collidersdbg_pragma;
+		GPUcodes collidersdebug = GPUcodes("./data/debugutils/colliders_debug.gls");
 	
 	public:
 	
@@ -22,7 +27,8 @@ class Scene
 		void Prepare();
 		void ProgramUniforms(VectorizedObject* obj);
 		void UnloadObject(VectorizedObject& obj);
-		
+		void Collisions();
+		void DebugColliders();
 		void Update();
 		void Animations();
 };
@@ -117,7 +123,35 @@ void Scene::LoadObj(VectorizedObject& obj, GLuint designatedprogram)
 		
 	}
 	
+	GLenum error = glGetError();
+	if(error!=GL_NO_ERROR) 
+	{
+		printf("ERROR: Load Object: \n", gl_error_string(error));
+		throw std::exception();
+	}
+	
+	
+	//Enable physics
+	PhysicsObject2D* temp_obj{ dynamic_cast<PhysicsObject2D*>(&obj) }; 
+			
+	if(temp_obj != nullptr) // Go on with animation temp_obj->Animate();
+	{	
+		
+		if (&(temp_obj->collider) == nullptr)
+		{
+			printf("ERROR, collider is not defined\n ");
+			throw std::exception();
+		} 
+		
+		collisionSet.push_back(temp_obj);	
+	}
+	
+	
+	
+	
 }
+
+
 
 /*
 * PURPOSE
@@ -155,6 +189,47 @@ void Scene::Render()
 			}
 				
 		}
+		error = glGetError();
+		if(error!=GL_NO_ERROR) 
+		{
+			printf("ERROR: Scene::Render \n");
+			throw std::exception();
+		}
+		
+		
+		//DEBUG COLLIDERS
+		
+		
+}
+
+
+void Scene::Collisions()
+{
+	
+	CollisionStatus *coupleStatus;
+	int Ncoll = collisionSet.size()-1;
+	int index = 0;
+	coupleStatus = new CollisionStatus[ ((Ncoll)*(Ncoll+1))/2 ];
+	for (int i=0; i<((Ncoll)*(Ncoll+1))/2; ++i)
+	{
+		coupleStatus[i] = TO_CHECK;
+	}   
+	for (int i=0;  i< Ncoll+1 ; i++ )
+	{
+		PhysicsObject2D *obj1 = collisionSet[i];
+		for (int j=0;  j< Ncoll+1;j++ )
+		{
+			if(i!=j)
+			{
+				index = std::min(i,j)*(Ncoll-1)+std::max(i,j)-1;
+				PhysicsObject2D *obj2 = collisionSet[j];
+				dbglog("                                          ", coupleStatus[index], TO_CHECK, index, i , j ) ;
+				obj1->collider->Check(obj2->collider, coupleStatus[index] );
+			}
+		} 
+	} 
+	dbglog("-----------");
+	delete[] coupleStatus;
 	
 }
 
@@ -173,6 +248,21 @@ void Scene::Update()
 {
 	//Update Animation System
 	this->Animations();
+	this->Collisions();
+	
+	//=======================================================================================
+	//=================================   Debug   ===========================================
+	//=======================================================================================
+	
+	if(ldbgcolliders)
+	{
+		for (auto obj : collisionSet )
+		{
+			obj->collider->colliderRep->SetUniform("c",0,*(obj->collider->xc));
+			obj->collider->colliderRep->SetUniform("c",1,*(obj->collider->yc));
+		}	
+	}
+	//=======================================================================================
 	
 	//Render
 	this->Render();
@@ -191,9 +281,12 @@ void Scene::Animations()
 			
 			if(temp_obj != nullptr) // Go on with animation temp_obj->Animate();
 			{
-				
-				temp_obj->selfStateEngine->AnimateState();
-				temp_obj->selfStateEngine->UpdateVBatFrame(temp_obj);
+				//Triggers not processed by SDL.
+				//wenttimeout : If the state just ended and restarted. 
+				bool wentTimeOut=false; 
+				temp_obj->selfStateEngine->AnimateState(wentTimeOut); // 1st 
+				temp_obj->selfStateEngine->ChangeState(wentTimeOut);  // 2nd
+				temp_obj->selfStateEngine->UpdateVBatFrame(temp_obj); // 3rd
 			}
 		} 
 	} 
@@ -201,27 +294,37 @@ void Scene::Animations()
 
 void Scene::Prepare()
 {
-	dbglog("SUMMARY");
+	
+	//dbglog("SUMMARY");
+	GLenum error = glGetError();
+	
+
+
+	
 	for(int i=0; i< assets.size(); i++)
 	{
-		dbglog("program", programs[i], "#assets", assets[i].size());
+		//dbglog("program", programs[i], "#assets", assets[i].size());
 	}
+	
 	
 	//Create VBO
 	
 	glBindBuffer( GL_ARRAY_BUFFER, VBO );
 	glBufferData( GL_ARRAY_BUFFER, vertexbuffersize*sizeof(GLfloat), NULL , GL_DYNAMIC_DRAW );
-	//Create IBO
 	
+	//Create IBO
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO );
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, indexbuffersize*sizeof(GLuint), NULL  , GL_DYNAMIC_DRAW );
-	GLenum error = glGetError();
-	if(error!=GL_NO_ERROR) printf("ERROR: Scene Prepare, Buffers Creation %s vbs %d ibs %d \n", gl_error_string(error), vertexbuffersize, indexbuffersize);
 	
-	dbglog("");
-	dbglog(" Indexbuffersize (NUM_SURF*VERT_X_SURF) =", indexbuffersize);
-	dbglog(" Vertexbuffersize (VERT_COUNT*VERT_SIZE) =", vertexbuffersize);
-	dbglog("");
+	if(error!=GL_NO_ERROR) 
+	{
+		printf("ERROR: Scene Prepare, Buffers Creation | %s | v.b.size %d |i.b.size %d |\n", gl_error_string(error), vertexbuffersize, indexbuffersize);
+		throw std::exception();
+	}
+	//dbglog("");
+	//dbglog(" Indexbuffersize (NUM_SURF*VERT_X_SURF) =", indexbuffersize);
+	//dbglog(" Vertexbuffersize (VERT_COUNT*VERT_SIZE) =", vertexbuffersize);
+	//dbglog("");
 
 	uint tmpvbo=0, tmpibo=0, vertxlen=0;
 	uint offsetvbo=0, offsetibo=0, offsetvbover=0;
@@ -231,13 +334,17 @@ void Scene::Prepare()
 	for(int j=0; j< assets[i].size(); j++)
 	{
 		assets[i][j]->GetBuffersInfo(tmpvbo, tmpibo, vertxlen);	
-		dbglog("Sizes: VBO =" ,tmpvbo, "| IBO  = ",tmpibo, "| VLEN  = ", vertxlen);
+		//dbglog("Sizes: VBO =" ,tmpvbo, "| IBO  = ",tmpibo, "| VLEN  = ", vertxlen);
 		glBufferSubData( GL_ARRAY_BUFFER, offsetvbo*sizeof(GLfloat), tmpvbo*vertxlen*sizeof(GLfloat), assets[i][j]->vertex_buffer );
 		
 		error = glGetError();
-		if(error!=GL_NO_ERROR) printf("ERROR: Scene Prepare, Vertex Buffer Filling %s asset program %d  index %d\n", gl_error_string(error), i, j);
-		printf("%d, %d, -> %d \n", offsetvbo,  tmpvbo*vertxlen, vertexbuffersize );
-
+		
+		if(error!=GL_NO_ERROR) 
+		{
+			printf("ERROR: Scene Prepare, Vertex Buffer Filling %s asset program %d  index %d\n", gl_error_string(error), i, j);
+			throw std::exception();
+		}
+		
 		//for(auto x = assets[i][j]->index_buffer; x != &assets[i][j]->index_buffer[assets[i][j]->surfaces_num*assets[i][j]->vertexxsurf]; ++x) {*x+=offsetvbover;}
 		glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, offsetibo*sizeof(GLuint), tmpibo*sizeof(GLuint), assets[i][j]->index_buffer );
 		//for(auto x = assets[i][j]->index_buffer; x != &assets[i][j]->index_buffer[assets[i][j]->surfaces_num*assets[i][j]->vertexxsurf]; ++x) {*x-=offsetvbover;}
@@ -247,12 +354,20 @@ void Scene::Prepare()
 		offsetvbover+=tmpvbo;
 	
 		error = glGetError();
-		if(error!=GL_NO_ERROR) printf("ERROR: Scene::Prepare-IBO filling: %s | AssetsProgram %d | AssetsProgramIndex %d\n", gl_error_string(error), i, j);
+		
+		if(error!=GL_NO_ERROR) 
+		{
+			printf("ERROR: Scene::Prepare-IBO filling: %s | AssetsProgram %d | AssetsProgramIndex %d\n", gl_error_string(error), i, j);
+			throw std::exception();
+		}
 	}
 	}
 	
 
-	dbglog("Buffers Filled ");
+	//dbglog("Buffers Filled ");
+	
+	
+	
 }
 
 
@@ -304,6 +419,20 @@ void Scene::UnloadObject(VectorizedObject& obj)
 	**Use the new buffer instead of the old one, both IBO and VBO*/
 
 }
+
+void Scene::DebugColliders()
+{
+
+	collidersdebug.Load("debug_colliders_vertex","debug_colliders_fragment", "debug_colliders");
+	
+	for (auto obj : collisionSet )
+	{
+		obj->collider->BuildVecObj();
+		this->LoadObj( *(obj->collider->colliderRep), collidersdebug.glprograms[0]);
+	}
+	ldbgcolliders=true;
+}
+
 
 // TO DO
 //void Scene::Renovate()
