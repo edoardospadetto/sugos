@@ -1,9 +1,12 @@
 # DumbSpaceShip
 
-2D Open-GL toolset.
+DumbSpaceShip is a 2D Open-GL toolset. By now it does not use parallel threads.
 
-Plot images on screen, snapshots animation system.
-Handles 2D Animations
-Handles collisions with a SAT, sequential, algorithm. 
+Functionalities:
+
+- Animate 2d character through a snapshot system.
+- Keyboard input to handle animations.
+- Collision of objects using SAT algorithm.
+
 
 Examples are found in the example folder.
