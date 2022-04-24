@@ -19,33 +19,54 @@ int main( int argc, char* args[] )
 	// Create Window
 	Window_Class window = Window_Class(60,SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN ); 
 	
-	Texture monkSpriteSheet;
-	monkSpriteSheet.LoadTexture("./assets/monkspritesheey.png", true,4, GL_RGBA);
-	State anim0char0("./conf/char0.anim", &monkSpriteSheet);
-	StateEngine monkanim(&window);
-	monkanim.AddState(&anim0char0);
+	
 	// Shader
-	GPUcodes gpucodes0=GPUcodes("shader_anim");	
+	GPUcodes gpucodes0=GPUcodes("./shaders/shader0");	
 
-	gpucodes0.Load("simpletexture0","simpletexture1", "simplea");
+	gpucodes0.Load("simple0","simple1", "simple");
 	
 	glClearColor( 0.f, 0.f, 0.f, 1.f );
-		
-	AnimatedObject2D MonkChar(4,4,1,2,4,&monkanim);
 
-	GenQuadText(MonkChar);
-		
-	MonkChar.SetToOrigin(0);
+	PhysicsObject2D Square(2,4,1,2,4), Triangle(2,3,1,2,3);
+	
+	
+	
+	
+	Triangle.SpecifyBuffersAttributes("aPos", 2, GL_TRIANGLES);
+	Square.SpecifyBuffersAttributes("aPos", 2, GL_QUADS);
+	
+	Square.LinkUniformToVariable("status", 2);
+	Triangle.LinkUniformToVariable("status", 2);
 
-	//MonkChar.SetSnapshot(0, 0);
+	//Square.position[0] = 0;
+	//Square.position[1] = 0;
+	
+			
+	
+	GenQuad(Square);
+	GenTriangle(Triangle);	
+	Square.SetToOrigin(0);
+	Triangle.SetToOrigin(0);
+	
+	Triangle.Rescale(0, 5.0);
+	Triangle.SetToOrigin(0);
+	Square.Rescale(0, 2.0);
+	
+	Triangle.SameShapeCollider(0);
+	Square.SameShapeCollider(0);
 
-	MonkChar.LinkUniformToVariable("status", 2);
-
-	MonkChar.SpecifyBuffersAttributes("aPos", 2, GL_QUADS);	
-	MonkChar.SpecifyBuffersAttributes("aTex", 2, GL_QUADS);
-
+	
+	
 	Scene test = Scene();
-	test.LoadObj(MonkChar, gpucodes0.glprograms[0]);	
+	test.LoadObj(Square, gpucodes0.glprograms[0]);
+	test.LoadObj(Triangle, gpucodes0.glprograms[0]);
+	
+	Square.collider->xc = &(Square.position[0]);
+	Square.collider->yc = &(Square.position[1]);
+	Triangle.collider->xc = &(Triangle.position[0]);
+	Triangle.collider->yc = &(Triangle.position[1]);
+	
+	//test.DebugColliders();	
 	test.Prepare();
 
 	const Uint8* kb = SDL_GetKeyboardState(NULL);
@@ -71,13 +92,19 @@ int main( int argc, char* args[] )
 		
 		//shootDirectionY = -kb[SDL_SCANCODE_UP] + kb[SDL_SCANCODE_DOWN];
 	    	
-		MonkChar.position[0]+= 0.02*(-kb[SDL_SCANCODE_A] + kb[SDL_SCANCODE_D]) - 2*float(MonkChar.position[0]>1.0) + 2*float(MonkChar.position[0]<-1.0);
-		MonkChar.position[1] += 0.02*(-kb[SDL_SCANCODE_S] + kb[SDL_SCANCODE_W]) - 2*float(MonkChar.position[1]>1.0) + 2*float(MonkChar.position[1]<-1.0);
-
-	
-
-		MonkChar.SetUniform("status",0,MonkChar.position[0]);
-		MonkChar.SetUniform("status",1,MonkChar.position[1]);
+		Triangle.position[0]+= 0.005*(-kb[SDL_SCANCODE_A] + kb[SDL_SCANCODE_D]) - 2*float(Triangle.position[0]>1.0) + 2*float(Triangle.position[0]<-1.0);
+		Triangle.position[1] += 0.005*(-kb[SDL_SCANCODE_S] + kb[SDL_SCANCODE_W]) - 2*float(Triangle.position[1]>1.0) + 2*float(Triangle.position[1]<-1.0);
+		Triangle.SetUniform("status",0,Triangle.position[0]);
+		Triangle.SetUniform("status",1,Triangle.position[1]);
+		Square.SetUniform("status",0,Square.position[0]);
+		Square.SetUniform("status",1,Square.position[1]);
+		
+		Square.collider->xc = &(Square.position[0]);
+		Square.collider->yc = &(Square.position[1]);
+		Triangle.collider->xc = &(Triangle.position[0]);
+		Triangle.collider->yc = &(Triangle.position[1]);
+		//MonkChar.SetUniform("status",0,MonkChar.position[0]);
+		//MonkChar.SetUniform("status",1,MonkChar.position[1]);
 	
 		//glProgramUniform3f(gpucodes0.glprograms[0],status,angle,Spaceship.position[0],Spaceship.position[1]);
 		

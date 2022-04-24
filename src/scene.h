@@ -208,6 +208,8 @@ void Scene::Collisions()
 	
 	CollisionStatus *coupleStatus;
 	int Ncoll = collisionSet.size()-1;
+	float adbg; 
+	int bdbg, cdbg; 
 	int index = 0;
 	coupleStatus = new CollisionStatus[ ((Ncoll)*(Ncoll+1))/2 ];
 	for (int i=0; i<((Ncoll)*(Ncoll+1))/2; ++i)
@@ -224,7 +226,7 @@ void Scene::Collisions()
 				index = std::min(i,j)*(Ncoll-1)+std::max(i,j)-1;
 				PhysicsObject2D *obj2 = collisionSet[j];
 				dbglog("                                          ", coupleStatus[index], TO_CHECK, index, i , j ) ;
-				obj1->collider->Check(obj2->collider, coupleStatus[index] );
+				obj1->collider->Check(obj2->collider, coupleStatus[index], bdbg, cdbg,adbg );
 			}
 		} 
 	} 

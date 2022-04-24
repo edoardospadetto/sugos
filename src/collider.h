@@ -17,7 +17,7 @@ class Collider2D
 	public : 
 	void ResetCenter(float x0, float y0);
 	Collider2D(std::vector<glm::vec2>&& x_, Polygon shape_);
-	glm::vec2 Check(Collider2D* collider_, CollisionStatus &status_ );
+	glm::vec2 Check(Collider2D* collider_, CollisionStatus &status_ , float& minoverlap_, int& hitdirection_, int& vertex_));
 	std::vector<glm::vec2> x;
 
 	std::vector<glm::vec2> n;

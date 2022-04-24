@@ -57,22 +57,48 @@ Collider2D::Collider2D(std::vector<glm::vec2>&& x_, Polygon shape_): x(x_), shap
 }
 
 
+/*
+* Check collisions between one colliders and the other. To check correctly use status variable
+* and call 2 times symmetrically. Status must be submitted as TO_CHECK and assumes the right value after two calls.
+* Min overlap is a float giving the minimum overlap for each normal, and direction is the index of the normal. 
+* If Status == TO_CHECK, all these variables are set to a default value. if the min overlap occurs in the second call, 
+* Then direction_ is this->normal.size() of the first call + the rigth index for this of the second call.
+*
+*/
 
-glm::vec2 Collider2D::Check(Collider2D* collider_, CollisionStatus &status_)
+
+glm::vec2 Collider2D::Check(Collider2D* collider_, CollisionStatus &status_, float& minoverlap_, int& hitdirection_, int& vertex_)
 {
 	
 	glm::vec2 tmpc1{*xc,*yc}, tmpc2{*(collider_->xc),*(collider_->yc)};
-	glm::vec2  rigidReactionDirection{0.0,0.0};
+	//glm::vec2  rigidReactionDirection{0.0,0.0};
 	float a1= 0, b1=0 ;
 	float a2=a1, b2= b1;
 	float tmp_=0;
+
 	bool overlap=true; 
 	int i=0;
 	dbglog("                   -- ", status_);
+	
+	
+	// Set variables to get hit direction
+	if(status_ == TO_CHECK) 
+	{
+		minoverlap_=std::numeric_limits<float>::max(); //abs of overlap
+		hitdirection_ =0;
+	}
+	else if (status_ == ON_CHECK) 
+	{
+		//min overlap stays.
+		hitdirection_ = (collider_->n).size();
+	}
+	
+	
+	//check if collision
 	if(this->PreCheck(collider_ ) ) status_ = NOT_COLLIDING;
 	if (status_ !=NOT_COLLIDING)
 	{
-		for ( auto normal : this->n)
+		for ( auto &normal : this->n)
 		{
 		
 			a1= -std::numeric_limits<float>::max();
@@ -98,8 +124,11 @@ glm::vec2 Collider2D::Check(Collider2D* collider_, CollisionStatus &status_)
 				//dbglog( (tmpc2+vertex).x, (tmpc2+vertex).y );
 			}
 			
+			bool cnd1= a2>=b1 && a2<a1, cnd2=b2>=b1 && b2<a1, cnd3= a1>=b2 && a1<a2, cnd4= b1>=b2 && b1<a2; 
+			bool check =  ( cnd1  or  cnd2  ) or (  cnd3 or cnd4  );
 			
-			bool check =  (  (  a2>=b1 && a2<a1)  or  (  b2>=b1 && b2<a1)   ) or (  (  a1>=b2 && a1<a2)  or  (  b1>=b2 && b1<a2)   );
+			
+			
 			
 			dbglog(i," a1 b1 =", a1, b1, a1-b1, "a2 b2 =", a2, b2, a2-b2, "|", normal.x, normal.y, "|" , status_ );
 			
@@ -110,9 +139,32 @@ glm::vec2 Collider2D::Check(Collider2D* collider_, CollisionStatus &status_)
 				return rigidReactionDirection;
 				break;
 			}
+			if (check) //store for hit direction
+			{	
+			
+				// Minimum overlap cannot occur on a direction
+				// Where one collider is inside the other one.
+				float tmp_ov = std::numeric_limits<float>::max();
+				if ( ( cnd1 && cnd4 )  || ( cnd2 && cnd3 ) )  tmp_ov = std::min( a2-b1, a1-b2); //get the smallest (where the collision occurs), the largest is trivial.
+				if ( tmp_ov < 0 )
+				{
+					printf("Error: Not expected");	
+					throw std::exception();
+				} 
+				
+				
+				if (tmp_ov < minoverlap_) 
+				{
+					minoverlap_=tmp_ov
+					dbglog("idx", &normal, normal);
+					hitdirection = 
+					
+				}
+			}
 		}
 		dbglog(" ");
 		
+		//If still on check at the end they must be colliding
 		if (overlap && status_==ON_CHECK)
 		{
 			status_= COLLIDING;
