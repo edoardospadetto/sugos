@@ -118,7 +118,7 @@ void GenTriangle(VectorizedObject& obj)
 	float vertex[]= 	//VBO data
 	{	
 		 0.05f,  0.0f,
-		-0.05f,  0.0f,
+		-0.05f,  -0.03f,
 		-0.00f,  sqrt(3)*0.05f,
 
 	};

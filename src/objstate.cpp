@@ -106,6 +106,11 @@ State::State(const std::string& confFile, Texture* texture_)
 	dbglog("        ----------------");
 }
 
+
+/*
+* Workhorse of the parsing function.
+*
+*/
 void State::Parser(const std::string& token_, int namedatainfo_[])
 {
 	dbglog(token_, namedatainfo_[0], namedatainfo_[1] );
@@ -200,15 +205,20 @@ unsigned int State::GetCurrentFrameDuration() {return duration[currentFrame]; }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /*
-* Update Vertex buffer of object to match the right frame of the state.
-*
+* Default Constrctor except for setting window
+* window needed just to get the time.
 *
 */
 
 StateEngine::StateEngine(Window_Class *window_):window(window_)
 {
-
 }
+
+/*
+* Update Vertex buffer of object to match the right frame of the state.
+*
+*/
+
 
 void StateEngine::UpdateVBatFrame(AnimatedObject2D* animObj) //count from 0 
 {	

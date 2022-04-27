@@ -33,25 +33,32 @@ Collider2D::Collider2D(std::vector<glm::vec2>&& x_, Polygon shape_): x(x_), shap
 		if (tmp_ >= radius) radius = tmp_;	
 	}
 	
-	//Get Edges normalized
-	/*int Nedges = N-1;
-	switch(shape)
+	
+	int Nedges = N-1;
+	// populate normals and edges
+	
+	int illnormals =0;
+	/*switch (shape)
 	{
-		
-		case SQUARE: 
-			Nedges=2
+		case SQUARE :
+			illnormals = 2-1;
+			break;
+	
 	}*/
-	
-	// populate normals
-	
-	for(int i=0; i<N-1; i++)
+	for(int i=0; i<N-1-illnormals; i++)
 	{
 		glm::vec2 edge_{glm::normalize(x[i+1]-x[i]) };
+
 	 	n.push_back( glm::vec2{edge_.y, -edge_.x}  );
 	}
-	glm::vec2 edge_{glm::normalize(x[N-1]-x[0])};
-	//last normal
-	n.push_back( glm::vec2{edge_.y, -edge_.x}  );
+	if(illnormals==0)
+	{
+		glm::vec2 edge_{glm::normalize(x[0]-x[N-1])};
+			//last normal & edge
+
+		n.push_back( glm::vec2{edge_.y, -edge_.x}  );
+	}
+
 	
 
 }
@@ -64,111 +71,135 @@ Collider2D::Collider2D(std::vector<glm::vec2>&& x_, Polygon shape_): x(x_), shap
 * If Status == TO_CHECK, all these variables are set to a default value. if the min overlap occurs in the second call, 
 * Then direction_ is this->normal.size() of the first call + the rigth index for this of the second call.
 *
+* The this object check its normals, the other object just his vertices. 
+*
 */
 
+//Test Version, collision direction not checked yet.
 
-glm::vec2 Collider2D::Check(Collider2D* collider_, CollisionStatus &status_, float& minoverlap_, int& hitdirection_, int& vertex_)
+void Collider2D::Check(Collider2D* collider_, CollisionStatus &status_,  glm::vec2* hitDirection_ , float* overlap_,float coeff)
 {
 	
-	glm::vec2 tmpc1{*xc,*yc}, tmpc2{*(collider_->xc),*(collider_->yc)};
-	//glm::vec2  rigidReactionDirection{0.0,0.0};
-	float a1= 0, b1=0 ;
-	float a2=a1, b2= b1;
-	float tmp_=0;
-
-	bool overlap=true; 
-	int i=0;
-	dbglog("                   -- ", status_);
+	const char* statuses[] =  { "NOT_COLLIDING" , "COLLIDING", "ON_CHECK" , "TO_CHECK"};
 	
+	glm::vec2 hit_direction{0.0,0.0} ;
+	glm::vec2 tmpc1{*xc,*yc}, tmpc2{*(collider_->xc),*(collider_->yc)};
+
+	float a1 = 0  , b1 = 0   ;
+	float a2 = a1 , b2 = b1  ; 
+	
+	
+	bool lHitDirection= true;
+	bool lOverlap=true; 
+	
+	int ii=-1;
+	float _tmp=0;
 	
 	// Set variables to get hit direction
-	if(status_ == TO_CHECK) 
+	if (lHitDirection)
 	{
-		minoverlap_=std::numeric_limits<float>::max(); //abs of overlap
-		hitdirection_ =0;
-	}
-	else if (status_ == ON_CHECK) 
-	{
-		//min overlap stays.
-		hitdirection_ = (collider_->n).size();
+		if(status_ == TO_CHECK) 
+		{
+			* overlap_ = std::numeric_limits<float>::max(); //abs of overlap
+			*hitDirection_ =glm::vec2(0.0,0.0);
+		}
+		
 	}
 	
 	
 	//check if collision
+	
+	printf("%s -> \n" , statuses[status_] );
 	if(this->PreCheck(collider_ ) ) status_ = NOT_COLLIDING;
 	if (status_ !=NOT_COLLIDING)
 	{
-		for ( auto &normal : this->n)
+		for ( auto normal : this->n)
 		{
-		
+			
 			a1= -std::numeric_limits<float>::max();
 			b1= std::numeric_limits<float>::max();
 			a2=a1;
 			b2=b1;
-			i++;
+			ii++;
 			//find largest projection
-			for ( auto vertex : this->x)
+			for ( auto vertex : this->x) 
 			{
-				tmp_=glm::dot(tmpc1+vertex, normal);
-				if (tmp_>=a1)  a1=tmp_; // higher
-				if (tmp_<b1)  b1=tmp_; // lower
-				//dbglog( (tmpc1+vertex).x, (tmpc1+vertex).y , "|");
+				_tmp=glm::dot(tmpc1+vertex, normal);
+				
+				if (_tmp>=a1)   a1=_tmp;
+				if (_tmp<b1)  	b1=_tmp;
 			}
-			//dbglog("");
+		
 			
 			for ( auto vertex : collider_->x)
 			{
-				tmp_=glm::dot(tmpc2+vertex, normal);
-				if (tmp_>=a2)  a2=tmp_;
-				if (tmp_<b2)  b2=tmp_;
-				//dbglog( (tmpc2+vertex).x, (tmpc2+vertex).y );
+				_tmp=glm::dot(tmpc2+vertex, normal);
+				
+				if ( _tmp>=a2) a2=_tmp;
+				if ( _tmp<b2 ) b2=_tmp;
 			}
 			
+			//verify intersection conditions
 			bool cnd1= a2>=b1 && a2<a1, cnd2=b2>=b1 && b2<a1, cnd3= a1>=b2 && a1<a2, cnd4= b1>=b2 && b1<a2; 
 			bool check =  ( cnd1  or  cnd2  ) or (  cnd3 or cnd4  );
 			
 			
-			
-			
-			dbglog(i," a1 b1 =", a1, b1, a1-b1, "a2 b2 =", a2, b2, a2-b2, "|", normal.x, normal.y, "|" , status_ );
-			
-			overlap = overlap && check;
-			if (!overlap) 
+			printf("   %f %f %d %d %d %d \n", normal.x, normal.y, cnd1, cnd2, cnd3, cnd4);
+			//Check if not colliding
+			lOverlap = lOverlap && check;
+			if (!lOverlap) 
 			{
 				status_=NOT_COLLIDING;
-				return rigidReactionDirection;
+				
+		
+				printf("  ->  %s \n " , statuses[status_] );
+				return;
 				break;
 			}
-			if (check) //store for hit direction
+			//If collision possible store for hit direction
+			if (check && lHitDirection) 
 			{	
 			
 				// Minimum overlap cannot occur on a direction
 				// Where one collider is inside the other one.
-				float tmp_ov = std::numeric_limits<float>::max();
-				if ( ( cnd1 && cnd4 )  || ( cnd2 && cnd3 ) )  tmp_ov = std::min( a2-b1, a1-b2); //get the smallest (where the collision occurs), the largest is trivial.
-				if ( tmp_ov < 0 )
+				float _tmpOv = std::numeric_limits<float>::max();
+				float direction = 0;
+				//Get the smallest (where the collision occurs), the largest is trivial.
+				//Get the direction of collision (before collision) of this
+				_tmpOv = std::min( a2-b1, a1-b2); 
+				
+				direction = +1*int(a1-b2 < a2-b1) -1*int(a1-b2 >= a2-b1);
+				
+				//dbglog(ii," a1 b1 =", a1, b1, a1-b1, "a2 b2 =", a2, b2, a2-b2, "|", normal.x, normal.y, "|" , status_  ,"|",
+				//	 cnd1,cnd2,cnd3,cnd4, " | ", direction); 
+				
+				if (_tmpOv < 0 )
 				{
-					printf("Error: Not expected");	
+					printf("Error: Not expected a negative overlap");	
 					throw std::exception();
 				} 
 				
 				
-				if (tmp_ov < minoverlap_) 
+				if (_tmpOv < *overlap_) 
 				{
-					minoverlap_=tmp_ov
-					dbglog("idx", &normal, normal);
-					hitdirection = 
+					*overlap_ = _tmpOv;
+					*hitDirection_ = direction * normal*coeff;
+					
 					
 				}
 			}
+			
 		}
-		dbglog(" ");
+	
 		
+		//if (status==ON_CHECK) hitdirection += collider_.size(n); 
+		//dbglog("idx", ii, minoverlap_);
 		//If still on check at the end they must be colliding
-		if (overlap && status_==ON_CHECK)
+		if (lOverlap && status_==ON_CHECK)
 		{
+			
 			status_= COLLIDING;
-			printf("COLLIDING\n");
+			//printf("COLLIDING\n");
 			
 		}
 		else
@@ -177,10 +208,10 @@ glm::vec2 Collider2D::Check(Collider2D* collider_, CollisionStatus &status_, flo
 		}
 		
 	}
+	printf("  ->  %s \n" , statuses[status_] );
 	
 	
 
-	return rigidReactionDirection;
 }
 
 
@@ -218,11 +249,7 @@ void Collider2D::BuildVecObj()
 	colliderRep->LinkUniformToVariable("c", 2);
 	
 		
-	
 }
 
-void Collider2D::ResetCenter(float x0, float y0)
-{
-	
-}
+
 

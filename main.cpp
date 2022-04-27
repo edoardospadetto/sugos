@@ -52,8 +52,8 @@ int main( int argc, char* args[] )
 	Triangle.SetToOrigin(0);
 	Square.Rescale(0, 2.0);
 	
-	Triangle.SameShapeCollider(0);
-	Square.SameShapeCollider(0);
+	Triangle.SameShapeCollider(0, GENERIC);
+	Square.SameShapeCollider(0, SQUARE);
 
 	
 	
@@ -66,7 +66,11 @@ int main( int argc, char* args[] )
 	Triangle.collider->xc = &(Triangle.position[0]);
 	Triangle.collider->yc = &(Triangle.position[1]);
 	
-	//test.DebugColliders();	
+	
+	Triangle.position[0]=0.5;
+	
+	
+	test.DebugColliders();	
 	test.Prepare();
 
 	const Uint8* kb = SDL_GetKeyboardState(NULL);
@@ -93,16 +97,21 @@ int main( int argc, char* args[] )
 		//shootDirectionY = -kb[SDL_SCANCODE_UP] + kb[SDL_SCANCODE_DOWN];
 	    	
 		Triangle.position[0]+= 0.005*(-kb[SDL_SCANCODE_A] + kb[SDL_SCANCODE_D]) - 2*float(Triangle.position[0]>1.0) + 2*float(Triangle.position[0]<-1.0);
-		Triangle.position[1] += 0.005*(-kb[SDL_SCANCODE_S] + kb[SDL_SCANCODE_W]) - 2*float(Triangle.position[1]>1.0) + 2*float(Triangle.position[1]<-1.0);
+		Triangle.position[1]+= 0.005*(-kb[SDL_SCANCODE_S] + kb[SDL_SCANCODE_W]) - 2*float(Triangle.position[1]>1.0) + 2*float(Triangle.position[1]<-1.0);
+		
+		Square.position[0]+= 0.005*(-kb[SDL_SCANCODE_J] + kb[SDL_SCANCODE_L]) - 2*float(Square.position[0]>1.0) + 2*float(Square.position[0]<-1.0);
+		Square.position[1]+= 0.005*(-kb[SDL_SCANCODE_K] + kb[SDL_SCANCODE_I]) - 2*float(Square.position[1]>1.0) + 2*float(Square.position[1]<-1.0);
+		
+		
 		Triangle.SetUniform("status",0,Triangle.position[0]);
 		Triangle.SetUniform("status",1,Triangle.position[1]);
 		Square.SetUniform("status",0,Square.position[0]);
 		Square.SetUniform("status",1,Square.position[1]);
 		
-		Square.collider->xc = &(Square.position[0]);
-		Square.collider->yc = &(Square.position[1]);
-		Triangle.collider->xc = &(Triangle.position[0]);
-		Triangle.collider->yc = &(Triangle.position[1]);
+		
+		//TEMP
+
+		
 		//MonkChar.SetUniform("status",0,MonkChar.position[0]);
 		//MonkChar.SetUniform("status",1,MonkChar.position[1]);
 	

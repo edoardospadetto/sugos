@@ -1,21 +1,217 @@
+/*class PhysicsEngine
+{
+	
+	
+	glm::vec2* hitDirection;
+	PhysicsEngine( size_t bodySetSize );
+	void EvolveObj();
+	
+};*/
+
+class CollisionEngine
+{
+	public: 
+	float* minOverlap;	
+	std::vector<int> collidingObjects;
+	std::vector<PhysicsObject2D*> collisionSet;
+	
+	glm::vec2* hitDirection ;
+	
+	int Ncoll;
+	
+	
+	void UpdateDbgColliders();
+	void StartCollisions();
+	void HandleCollisions();
+	void VerifyCollisions();
+	void EndCollisions();
+	
+	void LoadCollidingObject(PhysicsObject2D* tmpObj_);
+};
+
+
+//=======================================================================================
+//=================================   Debug   ===========================================
+//=======================================================================================
+
+void CollisionEngine::UpdateDbgColliders()
+{
+	for (auto obj : collisionSet )
+	{
+		obj->collider->colliderRep->SetUniform("c",0,*(obj->collider->xc));
+		obj->collider->colliderRep->SetUniform("c",1,*(obj->collider->yc));
+	}	
+
+
+}
+
+//=======================================================================================
+	
+
+void CollisionEngine::VerifyCollisions()
+{
+
+	CollisionStatus coupleStatus;
+	//debug
+	const char* statuses[] =  { "NOT_COLLIDING" , "COLLIDING", "ON_CHECK" , "TO_CHECK"};
+	
+	int index = 0;
+	
+	
+
+	for (int i=1;  i< Ncoll ; i++ )
+	{
+		//dbglog(i, Ncoll);
+		Collider2D *c1 = collisionSet[i]->collider;
+	
+	for (int j=0;  j< i ;j++ )
+	{
+	
+		coupleStatus=TO_CHECK;
+	
+		Collider2D *c2 = collisionSet[j]->collider;
+		
+		index = i*(i-1)/2 +j;
+		//dbglog("index ",index);
+		printf("c2 - c1 ");
+		
+		printf("c1 - c2 ");
+		
+		
+		/* 
+		* hit direction positive if c1 colliding towords right.
+		* if i<j then 1 else -1, to simmetrize hit direction
+		*/ 
+		
+		c1->Check(c2, coupleStatus, &(hitDirection[index]), &(minOverlap[index]), +1.0 );
+		c2->Check(c1, coupleStatus, &(hitDirection[index]), &(minOverlap[index]), -1.0 );
+		printf("\n");
+		
+		
+		
+		
+		if ( coupleStatus == COLLIDING ) collidingObjects.push_back(index);
+				
+		
+	}
+	}
+
+}
+
+void CollisionEngine::HandleCollisions()
+{
+
+	//TEMP
+	
+	
+	float eps = 0.0001;
+	
+	
+			
+	/*
+	* colliding objects contains linearized coordinates of a lower triangular matrix without
+	* diagonal. To get back the inices of row and column, i.e. the 2 objects we use the following.
+	*/
+	
+	
+	for (auto index : collidingObjects)	
+	{
+		int row =  ceil ((-1 + sqrt(2+8*index) )/2.0 -1 ) +1 ;
+	  	int col =  index- ( row*(row-1)/2 )  ;
+		
+		PhysicsObject2D *obj1 = collisionSet[row ];
+		PhysicsObject2D *obj2 = collisionSet[col ];
+		
+		
+		glm::vec2 edge{-hitDirection[index].y, hitDirection[index].x};
+		glm::vec2 velocity{obj1->velocity[0],obj1->velocity[1]};
+		
+		
+		if ( glm::length(velocity)  >= float(1e-10))
+		{
+			glm::vec2 final_move = glm::dot(edge,velocity)*edge;
+			glm::vec2 velocity_dir = glm::normalize(velocity);
+		
+			//obj1->position[0] -=  velocity.x - final_move.x;
+			//obj1->position[1] -=  velocity.y - final_move.y;
+			//obj1->lastPosition[0] = obj1->position[0] ;
+			//obj1->lastPosition[1] -= obj1->position[1] ;
+			//obj1->velocity[0] = final_move.x;
+			//obj1->velocity[1] = final_move.y;
+			minOverlap[index]+=eps;
+			obj1->position[0] -= minOverlap[index]*hitDirection[index].x;// -  final_move.x;
+			obj1->position[1] -= minOverlap[index]*hitDirection[index].y;// -  final_move.y;
+			
+			
+			//dbglog("dir ;", hitDirection[index].x, hitDirection[index].y, "ov " ,  velocity_dir.x,  velocity_dir.y );
+		}
+		
+	}
+
+
+}
+
+
+void CollisionEngine::LoadCollidingObject(PhysicsObject2D* tmpObj_)
+{
+	if(tmpObj_ != nullptr) // Go on with animation temp_obj->Animate();
+	{	
+		
+		if (&(tmpObj_->collider) == nullptr)
+		{
+			printf("ERROR, collider is not defined\n ");
+			throw std::exception();
+		} 
+		else this->collisionSet.push_back(tmpObj_);
+		
+	}
+	
+
+}
+
+void CollisionEngine::StartCollisions()
+{
+	Ncoll = collisionSet.size();
+	minOverlap = new float[ ((Ncoll)*(Ncoll-1))/2 ];
+	hitDirection = new glm::vec2[ ((Ncoll)*(Ncoll-1))/2 ];
+}
+
+
+void CollisionEngine::EndCollisions()
+{
+	collidingObjects.clear();
+	delete [] hitDirection ;
+	delete [] minOverlap;
+}
+
+
+
+
+
+
 /*
 * A scene is everything that is on screen now and on the near future.
 * It hangles all the call to OpenGL given the objects it has to draw.
 */
 
 
+
+
 class Scene
 {
 	private: 
-	
+		
+		bool ldbgcolliders = false;
+		CollisionEngine sceneCollisionEngine;
+		
 		GLuint VBO = 0;
 		GLuint IBO = 0;
 		uint vertexbuffersize=0, indexbuffersize=0;
 		std::vector<std::vector<VectorizedObject*>> assets;
 		std::vector<GLuint> programs;
-		std::vector<PhysicsObject2D*> collisionSet;
 		
-		bool ldbgcolliders = false;
+		
+		
 		GLuint collidersdbg_pragma;
 		GPUcodes collidersdebug = GPUcodes("./data/debugutils/colliders_debug.gls");
 	
@@ -31,6 +227,7 @@ class Scene
 		void DebugColliders();
 		void Update();
 		void Animations();
+		void Physics();
 };
 
 
@@ -71,6 +268,10 @@ Scene::Scene()
 
 void Scene::LoadObj(VectorizedObject& obj, GLuint designatedprogram)
 {
+
+// ================================================================
+//		            LOAD GRAPHICS
+// ================================================================
 
 	bool lfound = false;
 	
@@ -131,21 +332,13 @@ void Scene::LoadObj(VectorizedObject& obj, GLuint designatedprogram)
 	}
 	
 	
-	//Enable physics
-	PhysicsObject2D* temp_obj{ dynamic_cast<PhysicsObject2D*>(&obj) }; 
+// ================================================================
+//		            LOAD COLLISIONS
+// ================================================================
+
+	sceneCollisionEngine.LoadCollidingObject(dynamic_cast<PhysicsObject2D*>(&obj)); 
 			
-	if(temp_obj != nullptr) // Go on with animation temp_obj->Animate();
-	{	
-		
-		if (&(temp_obj->collider) == nullptr)
-		{
-			printf("ERROR, collider is not defined\n ");
-			throw std::exception();
-		} 
-		
-		collisionSet.push_back(temp_obj);	
-	}
-	
+
 	
 	
 	
@@ -163,6 +356,17 @@ void Scene::LoadObj(VectorizedObject& obj, GLuint designatedprogram)
 * Render each asset in the scene according to asset render method
 * using the right program
 */
+
+
+void Scene::Collisions()
+{
+	sceneCollisionEngine.StartCollisions();
+	sceneCollisionEngine.VerifyCollisions();
+	sceneCollisionEngine.HandleCollisions();
+	sceneCollisionEngine.EndCollisions();
+	
+	if(ldbgcolliders) sceneCollisionEngine.UpdateDbgColliders();	
+}
 
 
 
@@ -201,39 +405,17 @@ void Scene::Render()
 		
 		
 }
+/*
+* PURPOSE
+*
+* Handles collisions among physical objects
+* 
+* DESCRIPTION
+* 
+* 
+*
+*/
 
-
-void Scene::Collisions()
-{
-	
-	CollisionStatus *coupleStatus;
-	int Ncoll = collisionSet.size()-1;
-	float adbg; 
-	int bdbg, cdbg; 
-	int index = 0;
-	coupleStatus = new CollisionStatus[ ((Ncoll)*(Ncoll+1))/2 ];
-	for (int i=0; i<((Ncoll)*(Ncoll+1))/2; ++i)
-	{
-		coupleStatus[i] = TO_CHECK;
-	}   
-	for (int i=0;  i< Ncoll+1 ; i++ )
-	{
-		PhysicsObject2D *obj1 = collisionSet[i];
-		for (int j=0;  j< Ncoll+1;j++ )
-		{
-			if(i!=j)
-			{
-				index = std::min(i,j)*(Ncoll-1)+std::max(i,j)-1;
-				PhysicsObject2D *obj2 = collisionSet[j];
-				dbglog("                                          ", coupleStatus[index], TO_CHECK, index, i , j ) ;
-				obj1->collider->Check(obj2->collider, coupleStatus[index], bdbg, cdbg,adbg );
-			}
-		} 
-	} 
-	dbglog("-----------");
-	delete[] coupleStatus;
-	
-}
 
 /*
 * PURPOSE
@@ -250,28 +432,33 @@ void Scene::Update()
 {
 	//Update Animation System
 	this->Animations();
+	this->Physics();
 	this->Collisions();
 	
-	//=======================================================================================
-	//=================================   Debug   ===========================================
-	//=======================================================================================
 	
-	if(ldbgcolliders)
-	{
-		for (auto obj : collisionSet )
-		{
-			obj->collider->colliderRep->SetUniform("c",0,*(obj->collider->xc));
-			obj->collider->colliderRep->SetUniform("c",1,*(obj->collider->yc));
-		}	
-	}
-	//=======================================================================================
-	
+
 	//Render
 	this->Render();
 }
 
 
-// Safe? Unsafe? No idea...
+void Scene::Physics()
+{
+	for (auto & objset : assets )
+	{
+		for (auto & obj : objset )
+		{
+			obj->velocity[0] = obj->position[0]- obj->lastPosition[0];
+			obj->velocity[1] = obj->position[1]- obj->lastPosition[1];
+			obj->lastPosition[0] = obj->position[0];
+			obj->lastPosition[1] = obj->position[1];
+		}
+	}
+	
+}
+
+
+
 void Scene::Animations()
 {
 	
@@ -427,7 +614,7 @@ void Scene::DebugColliders()
 
 	collidersdebug.Load("debug_colliders_vertex","debug_colliders_fragment", "debug_colliders");
 	
-	for (auto obj : collisionSet )
+	for (auto obj : sceneCollisionEngine.collisionSet )
 	{
 		obj->collider->BuildVecObj();
 		this->LoadObj( *(obj->collider->colliderRep), collidersdebug.glprograms[0]);

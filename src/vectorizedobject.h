@@ -8,9 +8,6 @@
 * std::vector<std::string>  buffernames
 * Names given to each buffer,
 *
-*
-* std::vector<int> 	    buffersizes
-* std::vector<int> 	    bufferformat
 */
 
 
@@ -22,11 +19,16 @@ class VectorizedObject
 	void RenderProgramUniforms();
 		
 	public:
-	float*				vertex_buffer = NULL;
-	int* 				index_buffer = NULL;
+
+	// Physics
 	float*				position = NULL; 
+	float*				velocity = NULL; 
+	float*                         lastPosition=NULL;
 	
 	//Buffers 
+	float*				vertex_buffer = NULL;
+	int* 				index_buffer = NULL;
+	
 	std::vector<std::string>	buffernames = {};
 	std::vector<int> 		buffersizes = {};
 	std::vector<int> 		bufferformat = {};
@@ -91,18 +93,22 @@ class VectorizedObject
 VectorizedObject::VectorizedObject(int vertex_len_,int vertex_num_, int surfaces_num_, int space_dim_,int vertxsup_):
 vertex_len( vertex_len_), vertex_num(vertex_num_),  surfaces_num(surfaces_num_), space_dim(space_dim_), vertexxsurf(vertxsup_)
 {
-	position = new float[space_dim];
+	position      = new float[space_dim];
+	velocity      = new float[space_dim];
+	lastPosition  = new float[space_dim];
+	
 	vertex_buffer = new float[vertex_len_*vertex_num_];
-	index_buffer = new int[surfaces_num*vertxsup_];
+	index_buffer  = new int[surfaces_num*vertxsup_];
+	
 	uniformsizes.push_back(0);
 	attributesizes.push_back(0);
 }
 
 void VectorizedObject::GetBuffersInfo(uint &VBOsize , uint& IBOsize, uint& vertexlen_ )
 {
-	VBOsize = vertex_num;
-	IBOsize= vertexxsurf*surfaces_num;
-	vertexlen_=vertex_len;	
+	VBOsize    = vertex_num;
+	IBOsize    = vertexxsurf*surfaces_num;
+	vertexlen_ =vertex_len;	
 }
 
 void VectorizedObject::GetBuffersInfo(uint &VBOsize , uint& IBOsize )
@@ -164,6 +170,8 @@ VectorizedObject::~VectorizedObject()
 	delete [] index_buffer;
 	delete [] vertex_buffer;
 	if ( position != nullptr ) delete[] position; 
+	if ( velocity != nullptr ) delete[] velocity; 
+	if ( velocity != nullptr ) delete[] lastPosition; 
 
 
 }

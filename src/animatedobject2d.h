@@ -34,7 +34,7 @@ TexturedObject2D::TexturedObject2D(int vertex_len_,int vertex_num_,int surfaces_
 
 
 
-class  AnimatedObject2D  : public VectorizedObject
+class  AnimatedObject2D  : virtual public VectorizedObject
 {
 	public:
 	
@@ -69,7 +69,7 @@ VectorizedObject( vertex_len_, vertex_num_, surfaces_num_, space_dim_, vertxsup_
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-class  PhysicsObject2D  : public VectorizedObject
+class  PhysicsObject2D  : virtual public VectorizedObject
 {
 	public:
 	
@@ -79,7 +79,7 @@ class  PhysicsObject2D  : public VectorizedObject
 	//S SelfAnimationTree;
 	
 	PhysicsObject2D(int vertex_len_,int vertex_num_,int surfaces_num_,int space_dim_,int vertxsup_ );
-	void SameShapeCollider(int vblocation);
+	void SameShapeCollider(int vblocation, Polygon shape_);
 		
 	Collider2D *collider= nullptr; 
 	~PhysicsObject2D();
@@ -100,7 +100,7 @@ VectorizedObject( vertex_len_, vertex_num_, surfaces_num_, space_dim_, vertxsup_
 }
 
 
-void PhysicsObject2D::SameShapeCollider(int vblocation)
+void PhysicsObject2D::SameShapeCollider(int vblocation, Polygon shape_)
 {
 	std::vector<glm::vec2> x_;
 
@@ -111,12 +111,11 @@ void PhysicsObject2D::SameShapeCollider(int vblocation)
 			
 	}	
 	//printf("size : %d \n", x_.size());
-	collider = new Collider2D(std::move( x_ ), GENERIC);
+	collider = new Collider2D(std::move( x_ ), shape_);
 }
 
 PhysicsObject2D::~PhysicsObject2D()
 {
-	if(collider != nullptr) delete collider;
-	delete this;
+	if(collider != nullptr) delete collider;	
 }
 
