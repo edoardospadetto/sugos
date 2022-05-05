@@ -36,7 +36,7 @@ int main( int argc, char* args[] )
 	
 	glClearColor( 0.f, 0.f, 0.f, 1.f );
 		
-	AnimatedObject2D MonkChar(4,4,1,2,4,&monkanim);
+	AnimatedObject2D MonkChar(4,4,1,2,GL_QUADS,&monkanim);
 	
 	GenQuadText(MonkChar);	
 	MonkChar.SetToOrigin(0);
@@ -45,8 +45,8 @@ int main( int argc, char* args[] )
 
 	MonkChar.LinkUniformToVariable("status", 2);
 
-	MonkChar.SpecifyBuffersAttributes("aPos", 2, GL_QUADS);	
-	MonkChar.SpecifyBuffersAttributes("aTex", 2, GL_QUADS);
+	MonkChar.SpecifyBuffersAttributes("aPos", 2);	
+	MonkChar.SpecifyBuffersAttributes("aTex", 2);
 
 	Scene test = Scene();
 	test.LoadObj(MonkChar, gpucodes0.glprograms[0]);	

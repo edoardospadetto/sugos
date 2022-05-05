@@ -73,19 +73,14 @@ void CollisionEngine::VerifyCollisions()
 		
 		index = i*(i-1)/2 +j;
 		//dbglog("index ",index);
-		printf("c2 - c1 ");
-		
-		printf("c1 - c2 ");
-		
-		
-		/* 
+		/*
 		* hit direction positive if c1 colliding towords right.
 		* if i<j then 1 else -1, to simmetrize hit direction
 		*/ 
 		
 		c1->Check(c2, coupleStatus, &(hitDirection[index]), &(minOverlap[index]), +1.0 );
 		c2->Check(c1, coupleStatus, &(hitDirection[index]), &(minOverlap[index]), -1.0 );
-		printf("\n");
+	
 		
 		
 		
@@ -396,7 +391,8 @@ void Scene::Render()
 		error = glGetError();
 		if(error!=GL_NO_ERROR) 
 		{
-			printf("ERROR: Scene::Render \n");
+			printf("ERROR: Scene::Render ");
+			printf("%s \n" , gl_error_string(error));
 			throw std::exception();
 		}
 		
@@ -589,12 +585,12 @@ void Scene::UnloadObject(VectorizedObject& obj)
 
 	for(int i=0; i<assets.size(); i++)
 	{
-	printf("%d  -- ", i);
+
 		for (int j =0; j < assets[i].size(); j++ )
 	{
-		printf(" %d ", j);
+	
 	}
-	printf("\n");
+
 
 	}
 		

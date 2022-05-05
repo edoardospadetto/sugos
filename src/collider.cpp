@@ -8,21 +8,7 @@ Collider2D::Collider2D(std::vector<glm::vec2>&& x_, Polygon shape_): x(x_), shap
 	
 	int N = x.size();
 	float invN = 1/float(N);
-	/*
-	for (int i=0; i<N; i++)
-	{
-			*xc += x[i].x *invN;
-			*yc += x[i].y *invN;
-	}
-	
-	x=x ;
-	for (int i=0; i<N; i++)
-	{
-			x[i].x -= *xc *invN;
-			x[i].y -= *yc *invN;
-	}
-	*/
-	// Radius Max.
+
 	
 	radius =0;
 	float tmp_=0;
@@ -80,7 +66,7 @@ Collider2D::Collider2D(std::vector<glm::vec2>&& x_, Polygon shape_): x(x_), shap
 void Collider2D::Check(Collider2D* collider_, CollisionStatus &status_,  glm::vec2* hitDirection_ , float* overlap_,float coeff)
 {
 	
-	const char* statuses[] =  { "NOT_COLLIDING" , "COLLIDING", "ON_CHECK" , "TO_CHECK"};
+	//const char* statuses[] =  { "NOT_COLLIDING" , "COLLIDING", "ON_CHECK" , "TO_CHECK"};
 	
 	glm::vec2 hit_direction{0.0,0.0} ;
 	glm::vec2 tmpc1{*xc,*yc}, tmpc2{*(collider_->xc),*(collider_->yc)};
@@ -108,8 +94,7 @@ void Collider2D::Check(Collider2D* collider_, CollisionStatus &status_,  glm::ve
 	
 	
 	//check if collision
-	
-	printf("%s -> \n" , statuses[status_] );
+
 	if(this->PreCheck(collider_ ) ) status_ = NOT_COLLIDING;
 	if (status_ !=NOT_COLLIDING)
 	{
@@ -144,15 +129,12 @@ void Collider2D::Check(Collider2D* collider_, CollisionStatus &status_,  glm::ve
 			bool check =  ( cnd1  or  cnd2  ) or (  cnd3 or cnd4  );
 			
 			
-			printf("   %f %f %d %d %d %d \n", normal.x, normal.y, cnd1, cnd2, cnd3, cnd4);
 			//Check if not colliding
 			lOverlap = lOverlap && check;
 			if (!lOverlap) 
 			{
 				status_=NOT_COLLIDING;
-				
-		
-				printf("  ->  %s \n " , statuses[status_] );
+			
 				return;
 				break;
 			}
@@ -208,7 +190,7 @@ void Collider2D::Check(Collider2D* collider_, CollisionStatus &status_,  glm::ve
 		}
 		
 	}
-	printf("  ->  %s \n" , statuses[status_] );
+
 	
 	
 
@@ -232,7 +214,7 @@ void Collider2D::BuildVecObj()
 {
 	
 	
-	colliderRep = new VectorizedObject(2,x.size(),x.size(), 2, 2); // Set of Lines
+	colliderRep = new VectorizedObject(2,x.size(),x.size(), 2, GL_LINES); // Set of Lines
 	
 	
 	for (int i=0; i < x.size(); i++)
@@ -245,7 +227,7 @@ void Collider2D::BuildVecObj()
 	colliderRep->index_buffer[2*x.size()-1]=0;
 	
 	
-	colliderRep->SpecifyBuffersAttributes("aPos", 2, GL_LINES);
+	colliderRep->SpecifyBuffersAttributes("aPos", 2);
 	colliderRep->LinkUniformToVariable("c", 2);
 	
 		

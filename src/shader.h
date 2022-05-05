@@ -117,7 +117,7 @@ void GPUcodes::SplitRawInput(std::string rawin)
 		
 		}
 
-
+		
 }
 
 
@@ -129,11 +129,11 @@ void GPUcodes::Compile()
 	
    	for (int i =0 ; i<shaders.size() ; i++)
 	{	
-		dbglog("========================================");
+		/*dbglog("========================================");
 		dbglog("---------- SHADER ", i , "------------");
 		dbglog("----------------------------------------");
 		dbglog(shaders[i]);
-		dbglog("----------------------------------------");
+		dbglog("----------------------------------------");*/
 		const char *shader_input =  shaders[i].c_str();
 		
 		GLuint id = glCreateShader(shaders_type[i]);
@@ -158,6 +158,7 @@ void GPUcodes::Compile()
 				glGetShaderInfoLog( id, length, &length, info );
 				printf("%s", info);
 				delete[] info ;
+				throw std::exception();
 			 }
 			 else {printf("ERROR : Invalid Input for Shader %d, type %s name %s \n", i, types[shaders_type[i]].c_str(), shaders_name[i].c_str() );}
 			  
@@ -166,7 +167,7 @@ void GPUcodes::Compile()
 		{
 			shaders_id.push_back(id);
 			dbglog(" SUCCESSFULL  ", shaders_name[i], shaders_id[i]);
-			dbglog("========================================");
+			//dbglog("========================================");
 		}   
 		
 	}
@@ -213,7 +214,8 @@ void GPUcodes::Load(const std::string& vertexname, const std::string& fragmentna
 	if(!found1) printf("ERROR: Shader GLTYPE VERTEX , name |%s| not found. No shader in use.\n",vertexname.c_str());
 
 	for (int i=0; i<shaders.size(); i++)
-	{
+	{	
+		dbglog(shaders_name[i], shaders_type[i]);
 		if(shaders_type[i] == GL_FRAGMENT_SHADER)
 		{
 			if(shaders_name[i] == fragmentname)

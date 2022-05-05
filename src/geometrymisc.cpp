@@ -136,41 +136,119 @@ void GenTriangle(VectorizedObject& obj)
 	}
 	
 
-					 
+}
 
+void GenColoredPolygon(VectorizedObject *obj, int sides_, float radius_, float r,float g,float b, float a)
+{
 
+	 
+	float angle = 2*M_PI/float(sides_);
+	
+	obj->vertex_buffer[0] = 0.0;
+	obj->vertex_buffer[1] = 0.0; 
+	obj->vertex_buffer[2] = r;
+	obj->vertex_buffer[3] = g;
+	obj->vertex_buffer[4] = b;
+	obj->vertex_buffer[5] = a;
+	
+	for (int i =1; i<sides_+1; i++)
+	{
+		obj->vertex_buffer[6*i+0] = radius_*cos((i-1)*angle);
+		obj->vertex_buffer[6*i+1] = radius_*sin((i-1)*angle); 
+		obj->vertex_buffer[6*i+2] = r;
+		obj->vertex_buffer[6*i+3] = g;
+		obj->vertex_buffer[6*i+4] = b;
+		obj->vertex_buffer[6*i+5] = a;
+		
+	}
+	
+	for (int i =0; i<sides_; i++)
+	{
+		obj->index_buffer[3*i+0]=i+1;
+		obj->index_buffer[3*i+1]=0;
+		obj->index_buffer[3*i+2]=i+2;
+	
+	}	
+	obj->index_buffer[3*(sides_-1)+0]=sides_;
+	obj->index_buffer[3*(sides_-1)+2]=1;
+		
+	
 }
 
 
+void GenPolygon(VectorizedObject *obj, int sides_, float radius_)
+{
+
+	 
+	float angle = 2*M_PI/float(sides_);
+	
+	obj->vertex_buffer[0] = 0.0;
+	obj->vertex_buffer[1] = 0.0; 
+	
+	
+	for (int i =1; i<sides_+1; i++)
+	{
+		obj->vertex_buffer[2*i+0] = radius_*cos((i-1)*angle);
+		obj->vertex_buffer[2*i+1] = radius_*sin((i-1)*angle); 
+		
+	
+	}	
+	
+	for (int i =0; i<sides_; i++)
+	{
+		obj->index_buffer[3*i+0]=i+1;
+		obj->index_buffer[3*i+1]=0;
+		obj->index_buffer[3*i+2]=i+2;
+	
+	}	
+	obj->index_buffer[3*(sides_-1)+0]=sides_;
+	obj->index_buffer[3*(sides_-1)+2]=1;
+	
+	
+}
 
 
 /*
+void GenPolygonCollider(VectorizedObject *obj, int sides_, float radius_, float r,float g,float b)
+{
+
+	 
+	float angle = 2*M_PI/float(sides_);
+	
+	
+	
+	for (int i =1; i<sides_; i++)
+	{
+		obj->vertex_buffer[5*i+0] = radius_*cos((i-1)*angle);
+		obj->vertex_buffer[5*i+1] = radius_*sin((i-1)*angle); 
+		
+		
+	}
+	
+	
+	
+	
+}
+*/
+
 
 void GenColor(float* target, float r ,float g, float b)
 {
 	size_t vertices = sizeof(target)/(3*sizeof(target[0]));
 	
-	for( int i =0; i< vertices, i++  )
+	for( int i =0; i< vertices; i++  )
 	{
 		target[3*i+0] = r;
 		target[3*i+1] = g;
 		target[3*i+2] = b; 
 	}	
 }
-
-GenTriangleObj( VectorizedObject& obj, float x, float y, float z )
+/*
+GenPolygonObj( VectorizedObject& obj, int sides, float x, float y, float z )
 {
-
 	
-	for (int i =0; i<6; i++)
-	{
-		obj.vertex_buffer[i] = vertex[i];
-	}
-	
-	for (int i =0; i<3; i++)
-	{
-		obj.index_buffer[i]=i;
-	}	
+	float vtx    = new float[6]
+	float colors = new float[]
 
 }
 */

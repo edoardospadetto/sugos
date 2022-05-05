@@ -1,4 +1,4 @@
-TARGET = collider_ex2
+TARGET = VectObjShader
 TDIR = examples
 CC = g++
 XT = cpp
@@ -19,7 +19,7 @@ OBJ_NAME = run
 
 #This is the target that compiles our executable
 $(MAIN): 
-	$(CC) $(DEFS) $(SRCS) $(TDIR)/$(TARGET).$(XT) -w -lGL -lGLU -lGLEW -lSDL2 -lpthread -o $(TARGET) 
+	$(CC) $(DEFS) $(SRCS) $(TDIR)/$(TARGET).$(XT) -w -lGL -lGLU -lGLEW -lSDL2 -lpthread -o $(TARGET).app 
 
 clean:
-	rm -r $(TARGET) 
+	rm -r *.app

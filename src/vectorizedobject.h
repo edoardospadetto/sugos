@@ -21,6 +21,7 @@ class VectorizedObject
 	public:
 
 	// Physics
+	float                          angle = 0.0;
 	float*				position = NULL; 
 	float*				velocity = NULL; 
 	float*                         lastPosition=NULL;
@@ -58,10 +59,10 @@ class VectorizedObject
 	void Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint& offsetibo);
 
 
-	const int vertexxsurf = 0;
+	int vertexxsurf = 0;
 	
 	
-	VectorizedObject(int vertex_len_,int vertex_num_,int surfaces_num_,int space_dim_,int vertxsup_);
+	VectorizedObject(int vertex_len_,int vertex_num_,int surfaces_num_,int space_dim_,GLenum representation_);
 	~VectorizedObject();
 	
 	
@@ -76,8 +77,8 @@ class VectorizedObject
 	int LinkUniformToVariable(std::string&& uniformname, int uniformsize );
 	int LinkUniformToVariable(const std::string& uniformname, int uniformsize);
 	
-	int SpecifyBuffersAttributes(std::string&& name, int size, GLenum representation);
-	int SpecifyBuffersAttributes(const std::string& name, int size, GLenum representation);
+	int SpecifyBuffersAttributes(std::string&& name, int size);
+	int SpecifyBuffersAttributes(const std::string& name, int size);
 
 	int SetUniform(const std::string& uniformname,int idx, float value);
 	int SetUniform(std::string&& uniformname,int idx, float value);
@@ -90,15 +91,28 @@ class VectorizedObject
 
 
 
-VectorizedObject::VectorizedObject(int vertex_len_,int vertex_num_, int surfaces_num_, int space_dim_,int vertxsup_):
-vertex_len( vertex_len_), vertex_num(vertex_num_),  surfaces_num(surfaces_num_), space_dim(space_dim_), vertexxsurf(vertxsup_)
+VectorizedObject::VectorizedObject(int vertex_len_,int vertex_num_, int surfaces_num_, int space_dim_,GLenum representation_):
+vertex_len( vertex_len_), vertex_num(vertex_num_),  surfaces_num(surfaces_num_), space_dim(space_dim_), representation(representation_)
 {
+
+	switch(representation_)
+	{
+		case GL_LINES:	
+	 		vertexxsurf = 2;
+	 		break;
+	 	case GL_TRIANGLES:
+	 		vertexxsurf = 3;
+	 		break;
+	 	case GL_QUADS:
+	 		vertexxsurf = 4;
+	 		break;
+	}
 	position      = new float[space_dim];
 	velocity      = new float[space_dim];
 	lastPosition  = new float[space_dim];
 	
 	vertex_buffer = new float[vertex_len_*vertex_num_];
-	index_buffer  = new int[surfaces_num*vertxsup_];
+	index_buffer  = new int[surfaces_num*vertexxsurf];
 	
 	uniformsizes.push_back(0);
 	attributesizes.push_back(0);
@@ -186,14 +200,17 @@ int VectorizedObject::LinkUniformToVariable(const std::string& uniformname, int 
 	for(int i=0; i<uniformsize; i++){ uniformattributes.push_back(0.0);}	
 	uniformnames.push_back(uniformname);
 	uniformlocationsprogram.push_back(-1);
+	dbglog(uniformsizes[uniformsizes.size()-1], "test");
 	uniformsizes.push_back(uniformsize+uniformsizes[uniformsizes.size()-1]);
 	return(uniformnames.size()-1);
 
 }
 int VectorizedObject::SetUniform(const std::string& uniformname,int idx, float value)
 {
+	
 	for (int i=0; i<uniformnames.size(); i++)
 	{
+		
 		if(uniformname == uniformnames[i]){
 			 if(idx<uniformsizes[i+1]-uniformsizes[i] & idx >= 0){uniformattributes[uniformsizes[i]+idx] = value;	return(i);}
 			 else{printf("ERROR, invalid index for the requested uniform %d %s \n", uniformsizes[i+1]-uniformsizes[i], uniformnames[i].c_str());}
@@ -203,6 +220,8 @@ int VectorizedObject::SetUniform(const std::string& uniformname,int idx, float v
 	printf("ERROR, uniform not found\n");
 	return(-1);
 }
+
+
 
 
 
@@ -220,18 +239,18 @@ void VectorizedObject::SetUniform(int uniformidx,int idx, float value)
 
 
 
-int VectorizedObject::SpecifyBuffersAttributes(std::string&& name, int size, GLenum representation_){return SpecifyBuffersAttributes(name, size, representation_);}
+int VectorizedObject::SpecifyBuffersAttributes(std::string&& name, int size){return SpecifyBuffersAttributes(name, size);}
 
 
 
 
 
-int VectorizedObject::SpecifyBuffersAttributes(const std::string& name, int attributesize, GLenum representation_)
+int VectorizedObject::SpecifyBuffersAttributes(const std::string& name, int attributesize)
 {
 	attributenames.push_back(name);
 	attributesizes.push_back(attributesizes[attributesizes.size()-1]+attributesize);
 	attributelocationsprogram.push_back(-1);
-	representation = representation_;
+
 	return(attributenames.size()-1);
 }
 
@@ -297,6 +316,12 @@ void VectorizedObject::RenderProgramUniforms()
 				glUniform2f(this->uniformlocationsprogram[k],
 				this->uniformattributes[this->uniformsizes[k]],
 				this->uniformattributes[this->uniformsizes[k]+1]);
+			case 4: 
+				glUniform4f(this->uniformlocationsprogram[k],
+				this->uniformattributes[this->uniformsizes[k]],
+				this->uniformattributes[this->uniformsizes[k]+1],
+				this->uniformattributes[this->uniformsizes[k]+2],
+				this->uniformattributes[this->uniformsizes[k]+3]);
 				//dbglog("unif" , obj->uniformattributes[obj->uniformsizes[k]],obj->uniformattributes[obj->uniformsizes[k]+1 ]);
 		}
 	}
