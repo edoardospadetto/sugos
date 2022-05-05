@@ -1,118 +1,11 @@
+/* 
+*	       GEOMETRY MODULE
+* Geometry routines to generate basic shapes
+* Objects in input should be of the right size
+*/
 
 
-void GenQuad(VectorizedObject& obj)
-{
-	float vertex[]= 	//VBO data
-	{
-		-0.05f, -0.05f,
-		 0.05f, -0.05f,
-		 0.05f,  0.05f,
-		-0.05f,  0.05f
-	};
-
-	
-	
-	for (int i =0; i<8; i++)
-	{
-		obj.vertex_buffer[i] = vertex[i];
-		dbglog(i, obj.vertex_buffer[i]);
-	}
-	
-	for (int i =0; i<4; i++)
-	{
-		obj.index_buffer[i] = i;
-	}
-					 
-}
-
-
-void GenQuadText(VectorizedObject& obj)
-{
-	float vertex[]= 	//VBO data
-	{
-		-1.0f, -1.0f, 0.0f,  0.0f, // bottom left
-		 1.0f, -1.0f, 1.0f,  0.0f, // bottom right
-		 1.0f,  1.0f, 1.0f,  1.0f,
-		-1.0f,  1.0f, 0.0f,  1.0f
-	};
-
-	
-	
-	for (int i =0; i<16; i++)
-	{
-		obj.vertex_buffer[i] = vertex[i];
-		dbglog(i, obj.vertex_buffer[i]);
-	}
-	
-	for (int i =0; i<4; i++)
-	{
-		obj.index_buffer[i] = i;
-	}
-	
-	//SCALE
-	for (int i =0; i<4; i++)
-	{	
-		obj.vertex_buffer[4*i] *= 1;
-		obj.vertex_buffer[4*i+1] *= 1;
-		
-	}
-					 
-}
-
-
-
-void GenTriText(VectorizedObject& obj)
-{
-	float vertex[]= 	//VBO data
-	{
-		 0.05f, -0.3f, 1.0f, 1.0f,
-		-0.05f, -0.3f, 1.0f, 1.0f,
-		 0.00f, sqrt(3)*0.05f, 0.3f, 0.3f
-
-	};
-
-	
-	
-	for (int i =0; i<12; i++)
-	{
-		obj.vertex_buffer[i] = vertex[i];
-		dbglog(i, obj.vertex_buffer[i]);
-	}
-	
-	for (int i =0; i<3; i++)
-	{
-		obj.index_buffer[i] = i;
-	}
-					 
-}
-
-void GenProj(VectorizedObject& obj)
-{
-	float vertex[]= 	//VBO data
-	{
-		-0.01f, -0.01f,
-		 0.01f, -0.01f,
-		 0.01f,  0.01f,
-		-0.01f,  0.01f
-	};
-
-	
-	
-	for (int i =0; i<8; i++)
-	{
-		obj.vertex_buffer[i] = vertex[i];
-		dbglog(i, obj.vertex_buffer[i]);
-	}
-	
-	for (int i =0; i<4; i++)
-	{
-		obj.index_buffer[i] = i;
-	}
-	
-						 
-}
-
-
+// Generate Triangle 
 void GenTriangle(VectorizedObject& obj)
 {
 	float vertex[]= 	//VBO data
@@ -138,6 +31,65 @@ void GenTriangle(VectorizedObject& obj)
 
 }
 
+//Generate Square
+void GenQuad(VectorizedObject& obj)
+{
+	float vertex[]= 	//VBO data
+	{
+		-0.05f, -0.05f,
+		 0.05f, -0.05f,
+		 0.05f,  0.05f,
+		-0.05f,  0.05f
+	};
+
+	for (int i =0; i<8; i++)
+	{
+		obj.vertex_buffer[i] = vertex[i];
+		dbglog(i, obj.vertex_buffer[i]);
+	}
+	
+	for (int i =0; i<4; i++)
+	{
+		obj.index_buffer[i] = i;
+	}
+					 
+}
+
+// Generate a square with texture
+void GenQuadText(VectorizedObject& obj)
+{
+	float vertex[]= 	//VBO data
+	{
+		-1.0f, -1.0f, 0.0f,  0.0f, // bottom left
+		 1.0f, -1.0f, 1.0f,  0.0f, // bottom right
+		 1.0f,  1.0f, 1.0f,  1.0f,
+		-1.0f,  1.0f, 0.0f,  1.0f
+	};
+
+	for (int i =0; i<16; i++)
+	{
+		obj.vertex_buffer[i] = vertex[i];
+		dbglog(i, obj.vertex_buffer[i]);
+	}
+	
+	for (int i =0; i<4; i++)
+	{
+		obj.index_buffer[i] = i;
+	}
+	
+	
+	for (int i =0; i<4; i++)
+	{	
+		obj.vertex_buffer[4*i] *= 1;
+		obj.vertex_buffer[4*i+1] *= 1;
+		
+	}
+					 
+}
+
+
+
+// Generate Colored Polygon
 void GenColoredPolygon(VectorizedObject *obj, int sides_, float radius_, float r,float g,float b, float a)
 {
 
@@ -175,7 +127,7 @@ void GenColoredPolygon(VectorizedObject *obj, int sides_, float radius_, float r
 	
 }
 
-
+// Generate Polygon
 void GenPolygon(VectorizedObject *obj, int sides_, float radius_)
 {
 
@@ -208,50 +160,36 @@ void GenPolygon(VectorizedObject *obj, int sides_, float radius_)
 }
 
 
-/*
-void GenPolygonCollider(VectorizedObject *obj, int sides_, float radius_, float r,float g,float b)
+// Given obj as above 
+// colored or not, give back its collider 
+// It has to be initialized with 
+// void GenPolygon or void GenColoredPolygon
+
+Collider2D GenPolygonCollider(VectorizedObject *obj, bool colored)
 {
-
-	 
-	float angle = 2*M_PI/float(sides_);
+	int stride = 2;
+	int sides = sizeof(obj->vertex_buffer) / (sizeof(obj->vertex_buffer[0])*stride);
+	std::vector<glm::vec2> x;
+	if ( colored )  stride=6;
 	
-	
-	
-	for (int i =1; i<sides_; i++)
-	{
-		obj->vertex_buffer[5*i+0] = radius_*cos((i-1)*angle);
-		obj->vertex_buffer[5*i+1] = radius_*sin((i-1)*angle); 
-		
-		
-	}
-	
-	
-	
-	
-}
-*/
-
-
-void GenColor(float* target, float r ,float g, float b)
-{
-	size_t vertices = sizeof(target)/(3*sizeof(target[0]));
-	
-	for( int i =0; i< vertices; i++  )
-	{
-		target[3*i+0] = r;
-		target[3*i+1] = g;
-		target[3*i+2] = b; 
+	for (int i =1; i ; i++)
+	{ 	
+		x.push_back( glm::vec2 ( obj->vertex_buffer[stride*i+0] , 
+				          obj->vertex_buffer[stride*i+1] ) ) ;
 	}	
-}
-/*
-GenPolygonObj( VectorizedObject& obj, int sides, float x, float y, float z )
-{
 	
-	float vtx    = new float[6]
-	float colors = new float[]
-
+	return Collider2D(std::move(x), GENERIC);
 }
-*/
+
+
+
+
+
+// Attach together 2 arrays, 
+// Ax1 Ay1 Ax2 Ay2 Ax3 Ay3 this has stride 2
+// Bx1 By1 Bz1 Bx2 By2 Bz1 Bx3 By3 Bz3 this has stride 3
+// become
+// Ax1 Ay1 Bx1 By1 Bz1 Ax2 Ay2 Bx2 By2 Ax3 Ay3 Bz1 Bx3 By3 Bz3
 
 
 template<typename T>
@@ -289,5 +227,74 @@ void JoinBufferInstances(T* a_, int stridea_,  T* b_, int strideb_, T* c)
     	
 	
 }
+
+
+
+/*
+void GenProj(VectorizedObject& obj)
+{
+	float vertex[]= 	//VBO data
+	{
+		-0.01f, -0.01f,
+		 0.01f, -0.01f,
+		 0.01f,  0.01f,
+		-0.01f,  0.01f
+	};
+
+	
+	
+	for (int i =0; i<8; i++)
+	{
+		obj.vertex_buffer[i] = vertex[i];
+		dbglog(i, obj.vertex_buffer[i]);
+	}
+	
+	for (int i =0; i<4; i++)
+	{
+		obj.index_buffer[i] = i;
+	}
+	
+						 
+}
+
+
+
+void GenColor(float* target, float r ,float g, float b)
+{
+	size_t vertices = sizeof(target)/(3*sizeof(target[0]));
+	
+	for( int i =0; i< vertices; i++  )
+	{
+		target[3*i+0] = r;
+		target[3*i+1] = g;
+		target[3*i+2] = b; 
+	}	
+}
+
+
+void GenTriText(VectorizedObject& obj)
+{
+	float vertex[]= 	//VBO data
+	{
+		 0.05f, -0.3f, 1.0f, 1.0f,
+		-0.05f, -0.3f, 1.0f, 1.0f,
+		 0.00f, sqrt(3)*0.05f, 0.3f, 0.3f
+
+	};
+	
+	for (int i =0; i<12; i++)
+	{
+		obj.vertex_buffer[i] = vertex[i];
+		dbglog(i, obj.vertex_buffer[i]);
+	}
+	
+	for (int i =0; i<3; i++)
+	{
+		obj.index_buffer[i] = i;
+	}
+					 
+}
+
+*/
 
 
