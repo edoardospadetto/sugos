@@ -135,7 +135,7 @@ void Window_Class::CycleStart()
 	
 	glClear ( GL_COLOR_BUFFER_BIT );
 	glClear( GL_DEPTH_BUFFER_BIT );
-	glClearColor ( 0.3, 0.5, 0.3, 0.3 );
+	glClearColor ( 0.0, 0.0, 0.0, 1.0 );
     //
 	//EVENT THREAD
 	userWatchdog = new std::thread(&Window_Class::WindowEvents, this);

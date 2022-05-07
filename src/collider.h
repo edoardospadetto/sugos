@@ -29,7 +29,7 @@ class Collider2D
 	std::vector<glm::vec2> e;
 	std::vector<glm::vec2> n;
 	
-	float *xc, *yc;
+	float *xc, *yc, *angle;
 	float radius=0.0;
 	
 	

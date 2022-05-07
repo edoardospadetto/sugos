@@ -17,7 +17,7 @@ out vec4 Color;
 void main()
 {	
     
-      float angle = 180.0*CM[2]/M_PI;
+      float angle = CM[2];
       mat2 rotMat =  mat2(cos(angle),-sin(angle),
                      sin(angle),cos(angle));	
                    
@@ -25,8 +25,8 @@ void main()
  
     
     gl_Position = vec4(tmp_pos.x+CM[0], tmp_pos.y+CM[1] , CM[3] , 1.0);
-    
-    Color = c_;
+       
+     Color = c_;
 }
 
 ENDSHADER
@@ -43,6 +43,8 @@ uniform sampler2D ourTexture;
 void main()
 {	
 		
+	
+	
 	FragColor = Color;
 	
 } 

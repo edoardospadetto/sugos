@@ -23,8 +23,7 @@ class VectorizedObject
 	// Physics
 	float                          angle = 0.0;
 	float*				position = NULL; 
-	float*				velocity = NULL; 
-	float*                         lastPosition=NULL;
+	
 	
 	//Buffers 
 	float*				vertex_buffer = NULL;
@@ -108,8 +107,7 @@ vertex_len( vertex_len_), vertex_num(vertex_num_),  surfaces_num(surfaces_num_),
 	 		break;
 	}
 	position      = new float[space_dim];
-	velocity      = new float[space_dim];
-	lastPosition  = new float[space_dim];
+	
 	
 	vertex_buffer = new float[vertex_len_*vertex_num_];
 	index_buffer  = new int[surfaces_num*vertexxsurf];
@@ -184,8 +182,6 @@ VectorizedObject::~VectorizedObject()
 	delete [] index_buffer;
 	delete [] vertex_buffer;
 	if ( position != nullptr ) delete[] position; 
-	if ( velocity != nullptr ) delete[] velocity; 
-	if ( velocity != nullptr ) delete[] lastPosition; 
 
 
 }
@@ -316,12 +312,20 @@ void VectorizedObject::RenderProgramUniforms()
 				glUniform2f(this->uniformlocationsprogram[k],
 				this->uniformattributes[this->uniformsizes[k]],
 				this->uniformattributes[this->uniformsizes[k]+1]);
+				break;
+			case 3: 
+				glUniform3f(this->uniformlocationsprogram[k],
+				this->uniformattributes[this->uniformsizes[k]],
+				this->uniformattributes[this->uniformsizes[k]+1],
+				this->uniformattributes[this->uniformsizes[k]+2]);
+				break;
 			case 4: 
 				glUniform4f(this->uniformlocationsprogram[k],
 				this->uniformattributes[this->uniformsizes[k]],
 				this->uniformattributes[this->uniformsizes[k]+1],
 				this->uniformattributes[this->uniformsizes[k]+2],
 				this->uniformattributes[this->uniformsizes[k]+3]);
+				break;
 				//dbglog("unif" , obj->uniformattributes[obj->uniformsizes[k]],obj->uniformattributes[obj->uniformsizes[k]+1 ]);
 		}
 	}

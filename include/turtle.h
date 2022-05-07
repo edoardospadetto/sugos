@@ -37,8 +37,13 @@ static const SDL_Scancode TIME_OUT = static_cast<SDL_Scancode>(-1);
 #include "../src/collider.h"
 #include "../src/vectorizedobject.h"
 #include "../src/objstate.h"
-#include "../src/animatedobject2d.h"
+
+#include "../src/objects/animatedobject2D.h"
+#include "../src/objects/colliderobject2D.h"
+#include "../src/objects/physicsobject2D.h"
+
 #include "../src/objstate.cpp"
+#include "../src/collisionengine.h"
 #include "../src/scene.h"
 #include "../src/geometrymisc.cpp"
 #include "../src/collider.cpp"

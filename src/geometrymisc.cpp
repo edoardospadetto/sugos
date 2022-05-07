@@ -127,6 +127,22 @@ void GenColoredPolygon(VectorizedObject *obj, int sides_, float radius_, float r
 	
 }
 
+
+void SetColor(VectorizedObject *obj,int sides_, float r,float g,float b, float a)
+{
+
+	for (int i =0; i<sides_+1; i++)
+	{
+		
+		obj->vertex_buffer[6*i+2] = r;
+		obj->vertex_buffer[6*i+3] = g;
+		obj->vertex_buffer[6*i+4] = b;
+		obj->vertex_buffer[6*i+5] = a;
+		
+	}	
+}
+
+
 // Generate Polygon
 void GenPolygon(VectorizedObject *obj, int sides_, float radius_)
 {
@@ -165,20 +181,22 @@ void GenPolygon(VectorizedObject *obj, int sides_, float radius_)
 // It has to be initialized with 
 // void GenPolygon or void GenColoredPolygon
 
-Collider2D GenPolygonCollider(VectorizedObject *obj, bool colored)
+void GenPolygonCollider(PhysicsObject2D *obj, int sides_, bool colored)
 {
 	int stride = 2;
-	int sides = sizeof(obj->vertex_buffer) / (sizeof(obj->vertex_buffer[0])*stride);
+	//int sides = sizeof(obj->vertex_buffer) / (sizeof(obj->vertex_buffer[0])*stride);
+	
+	//dbglog("sides , ", sides, sizeof(obj->vertex_buffer),sizeof(obj->vertex_buffer[0] ));
 	std::vector<glm::vec2> x;
 	if ( colored )  stride=6;
 	
-	for (int i =1; i ; i++)
+	for (int i =1; i<  sides_+1; i++)
 	{ 	
-		x.push_back( glm::vec2 ( obj->vertex_buffer[stride*i+0] , 
-				          obj->vertex_buffer[stride*i+1] ) ) ;
+            x.push_back( glm::vec2 ( obj->vertex_buffer[stride*i+0] , 
+				       obj->vertex_buffer[stride*i+1] ) ) ;
 	}	
 	
-	return Collider2D(std::move(x), GENERIC);
+	obj-> collider = new Collider2D(std::move(x), GENERIC);
 }
 
 

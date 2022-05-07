@@ -7,6 +7,10 @@ Collider2D::Collider2D(std::vector<glm::vec2>&& x_, Polygon shape_): x(x_), shap
 
 	
 	int N = x.size();
+	if(N < 3)
+	{
+		printf("ERROR <s:s>: Invalid collider size");// __FILE__, __LINE__ );
+	}
 	float invN = 1/float(N);
 
 	
@@ -80,7 +84,11 @@ void Collider2D::Check(Collider2D* collider_, CollisionStatus &status_,  glm::ve
 	
 	int ii=-1;
 	float _tmp=0;
-	
+	float* angle2 = collider_->angle;
+	glm::mat2 rotM1 = glm::mat2(cos(*angle),-sin(*angle),
+                                    sin(*angle),cos(*angle));	
+	glm::mat2 rotM2 = glm::mat2(cos(*angle2),-sin(*angle2),
+                 	            sin(*angle2),cos(*angle2));	
 	// Set variables to get hit direction
 	if (lHitDirection)
 	{
@@ -109,7 +117,7 @@ void Collider2D::Check(Collider2D* collider_, CollisionStatus &status_,  glm::ve
 			//find largest projection
 			for ( auto vertex : this->x) 
 			{
-				_tmp=glm::dot(tmpc1+vertex, normal);
+				_tmp=glm::dot(tmpc1+rotM1*vertex, rotM1*normal);
 				
 				if (_tmp>=a1)   a1=_tmp;
 				if (_tmp<b1)  	b1=_tmp;
@@ -118,7 +126,7 @@ void Collider2D::Check(Collider2D* collider_, CollisionStatus &status_,  glm::ve
 			
 			for ( auto vertex : collider_->x)
 			{
-				_tmp=glm::dot(tmpc2+vertex, normal);
+				_tmp=glm::dot(tmpc2+rotM2*vertex, rotM1*normal);
 				
 				if ( _tmp>=a2) a2=_tmp;
 				if ( _tmp<b2 ) b2=_tmp;
@@ -165,7 +173,7 @@ void Collider2D::Check(Collider2D* collider_, CollisionStatus &status_,  glm::ve
 				if (_tmpOv < *overlap_) 
 				{
 					*overlap_ = _tmpOv;
-					*hitDirection_ = direction * normal*coeff;
+					*hitDirection_ = direction*rotM1*normal*coeff;
 					
 					
 				}
@@ -213,25 +221,37 @@ bool Collider2D::PreCheck(Collider2D* collider_ )
 void Collider2D::BuildVecObj()
 {
 	
-	
+	dbglog(x.size());
 	colliderRep = new VectorizedObject(2,x.size(),x.size(), 2, GL_LINES); // Set of Lines
 	
 	
 	for (int i=0; i < x.size(); i++)
 	{
-		colliderRep->vertex_buffer[2*i]= (x[i].x);
-		colliderRep->vertex_buffer[2*i+1]= (x[i].y);
-		colliderRep->index_buffer[2*i]= i ;
-		colliderRep->index_buffer[2*i+1]= i+1 ;
+		colliderRep->vertex_buffer[2*i]   = x[i].x;
+		colliderRep->vertex_buffer[2*i+1] = x[i].y;
+		colliderRep->index_buffer[2*i]    = i ;
+		colliderRep->index_buffer[2*i+1]  = i+1 ;
 	}
+	
 	colliderRep->index_buffer[2*x.size()-1]=0;
-	
-	
 	colliderRep->SpecifyBuffersAttributes("aPos", 2);
-	colliderRep->LinkUniformToVariable("c", 2);
+	colliderRep->LinkUniformToVariable("c", 3);
 	
 		
 }
 
+/*
+void Collider2D::(Collider2D&& collider_)
+{
+	this->x =  std::move( collider_.x ) ;
+	this->x =  std::move( collider_.e ) ;
+	this->x =  std::move( collider_.n ) ;
+	
+	
+	xc= collider_.xc; 
+	yc= collider_.yc; 
+	
+}
+*/
 
 
