@@ -17,8 +17,8 @@ int main( int argc, char* args[] )
 {
 	
 	// Create Window
-	Window_Class window = Window_Class(60,SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN ); 
-	
+	Window_Class window = Window_Class(60,SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Animation", 640, 640 ); 
+	window.SetMainWindow();
 	Texture monkSpriteSheet;
 	monkSpriteSheet.LoadTexture("./assets/monkspritesheey.png", true, 4, GL_RGBA);
 	

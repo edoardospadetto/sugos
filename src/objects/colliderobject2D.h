@@ -2,7 +2,7 @@
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-class  PhysicsObject2D  : virtual public VectorizedObject
+class  ColliderObject2D  : virtual public VectorizedObject
 {
 	public:
 	
@@ -11,11 +11,11 @@ class  PhysicsObject2D  : virtual public VectorizedObject
 	
 	//S SelfAnimationTree;
 	
-	PhysicsObject2D(int vertex_len_,int vertex_num_,int surfaces_num_,int space_dim_,int vertxsup_ );
+	ColliderObject2D(int vertex_len_,int vertex_num_,int surfaces_num_,int space_dim_,int vertxsup_ );
 	void SameShapeCollider(int vblocation, Polygon shape_);
 		
 	Collider2D *collider= nullptr; 
-	~PhysicsObject2D();
+	~ColliderObject2D();
 	/*
 	void RightSnapshot();
 	void SetSnapshotCoords(float x, float y);
@@ -26,14 +26,14 @@ class  PhysicsObject2D  : virtual public VectorizedObject
 
 };
 
-PhysicsObject2D::PhysicsObject2D(int vertex_len_,int vertex_num_,int surfaces_num_,int space_dim_,int vertxsup_) : 
+ColliderObject2D::ColliderObject2D(int vertex_len_,int vertex_num_,int surfaces_num_,int space_dim_,int vertxsup_) : 
 VectorizedObject( vertex_len_, vertex_num_, surfaces_num_, space_dim_, vertxsup_)
 {
 	
 }
 
 
-void PhysicsObject2D::SameShapeCollider(int vblocation, Polygon shape_)
+void ColliderObject2D::SameShapeCollider(int vblocation, Polygon shape_)
 {
 	std::vector<glm::vec2> x_;
 
@@ -47,7 +47,7 @@ void PhysicsObject2D::SameShapeCollider(int vblocation, Polygon shape_)
 	collider = new Collider2D(std::move( x_ ), shape_);
 }
 
-PhysicsObject2D::~PhysicsObject2D()
+ColliderObject2D::~ColliderObject2D()
 {
 	if(collider != nullptr) delete collider;	
 }

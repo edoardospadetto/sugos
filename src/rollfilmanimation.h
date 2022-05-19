@@ -7,7 +7,7 @@ class RollFilmAnimation
 	std::vector<float> 	coordinates;
 	 
 	// Redundant Info
-	std::vector<GLuint*>	texture_P; 
+	std::vector<GLuint*>	       texture_P; 
 	float* 			x_unif_P,y_unif_P; 
 	float* 			sizex_unif_P, sizey_unif_P;
 		 

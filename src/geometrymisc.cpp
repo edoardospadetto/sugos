@@ -181,7 +181,7 @@ void GenPolygon(VectorizedObject *obj, int sides_, float radius_)
 // It has to be initialized with 
 // void GenPolygon or void GenColoredPolygon
 
-void GenPolygonCollider(PhysicsObject2D *obj, int sides_, bool colored)
+void GenPolygonCollider(ColliderObject2D *obj, int sides_, bool colored)
 {
 	int stride = 2;
 	//int sides = sizeof(obj->vertex_buffer) / (sizeof(obj->vertex_buffer[0])*stride);

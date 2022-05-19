@@ -1,4 +1,4 @@
-TARGET = CollidersExample
+TARGET = Term
 TDIR = examples
 CC = g++
 XT = cpp
@@ -23,7 +23,7 @@ OBJ_NAME = run
 #This is the target that compiles our executable
 $(MAIN): 
 	make clean
-	$(CC) $(DEFS) $(SRCS) $(TDIR)/$(TARGET).$(XT) -Bstatic -w -lGL -lGLU -lGLEW -lSDL2 -lpthread -o $(TARGET).$(X) 
+	$(CC) $(DEFS) $(SRCS) $(TDIR)/$(TARGET).$(XT) -Bstatic -w -lGL -lGLU -lGLEW -lSDL2 -lpthread -lSDL2_image -o $(TARGET).$(X) 
 
 clean:
 	rm -rf *.app

@@ -89,7 +89,7 @@ int main( int argc, char* args[] )
 	
 	// Create Window
 	Window_Class window = Window_Class(60,SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN ); 
-	
+	window.OpenGLInit();
 	
 	// Shader
 	GPUcodes gpucodes0=GPUcodes("./shaders/light0attempt.shader");	

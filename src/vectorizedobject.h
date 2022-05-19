@@ -83,7 +83,7 @@ class VectorizedObject
 	int SetUniform(std::string&& uniformname,int idx, float value);
 	void SetUniform(int uniformidx,int idx, float value);
 	
-	virtual void RenderTexture() {};
+	virtual void RenderTexture() ;
 	virtual void UnbindTexture() {};
 
 };
@@ -94,6 +94,12 @@ VectorizedObject::VectorizedObject(int vertex_len_,int vertex_num_, int surfaces
 vertex_len( vertex_len_), vertex_num(vertex_num_),  surfaces_num(surfaces_num_), space_dim(space_dim_), representation(representation_)
 {
 
+	dbglog("============= Object ============");
+	dbglog("vertex length   = ", vertex_len_ );
+	dbglog("vertex number   = ", vertex_num_ );
+	dbglog("surfaces number = ", surfaces_num_ );
+
+	
 	switch(representation_)
 	{
 		case GL_LINES:	
@@ -331,5 +337,11 @@ void VectorizedObject::RenderProgramUniforms()
 	}
 
 
+}
+
+void  VectorizedObject::RenderTexture()
+{
+
+	//printf("Error virtual method\n");
 }
 

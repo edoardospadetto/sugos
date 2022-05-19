@@ -53,12 +53,14 @@ void Texture::LoadTexture(const std::string& filename,bool flip_, int desiredcha
 
 	}
 	stbi_image_free(data); 
+	glCheckError(); 
 	
 }
 
 void Texture::LoadTexture(std::string&& filename,bool flip_, int desiredchannels, GLenum colorformat)
 {
 	LoadTexture(filename,flip_,desiredchannels,colorformat);
+	glCheckError();
 }
 
 
@@ -69,11 +71,13 @@ void Texture::RenderTexture()
 	if(textureId != -1 )
 	{
 		glBindTexture(GL_TEXTURE_2D, this->textureId);
+		glCheckError();
 	}
 }
 
 void Texture::UnbindTexture()
 {
 	glBindTexture(GL_TEXTURE_2D, NULL );
+	glCheckError();
 }
 

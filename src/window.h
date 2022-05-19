@@ -11,11 +11,12 @@ class Window_Class
 		  //Screen dimension constants
 		  int WIDTH = 640;
 		  int HEIGHT = 640;
-		 
+		  
 		  float fps = 60 ;
 		  std::thread *userWatchdog =NULL;
 		  
-		  bool lpixelart=true;
+		  bool lpixelart   = true;
+		  bool lmainWindow = false; 
 
 		  // state vars 
 		   
@@ -24,8 +25,7 @@ class Window_Class
 		void WindowEvents();
 		void SDLQueue();
 		void GLQueue();
-	
-
+		
 		bool lresize=false;
 		void Resize();
 		
@@ -33,13 +33,19 @@ class Window_Class
 		 
 
 	public :
+		 SDL_Renderer* renderer;
 		 const Uint8* kb;
-		  Window_Class(unsigned int fps_, Uint32 flags);
+		  Window_Class(unsigned int fps_, Uint32 flags,  std::string && name);
+		  Window_Class(unsigned int fps_, Uint32 flags, std::string && name, int width_, int height_);
 		  ~Window_Class();
 		  unsigned int GetTime();
 		  bool IsAlive();
 		  void CycleStart();
+		 
+
+		  void Close();
 		  int CycleEnd();
+		  void SetMainWindow();
 		  
 
 
@@ -48,29 +54,34 @@ class Window_Class
 };
 
 
-
-
-
-
-Window_Class::Window_Class(unsigned int fps_, Uint32 flags)
+void Window_Class::SetMainWindow()
 {
-	
+	lmainWindow = true;
+}
+
+Window_Class::Window_Class(unsigned int fps_, Uint32 flags, std::string && name, int width_, int height_):
+WIDTH(width_), HEIGHT(height_)
+{
+
 	fps = float(fps_);
-	
-	//Initialize SDL
-	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+	if (SDL_WasInit(SDL_INIT_VIDEO) == 0) 
 	{
-		printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
-		
+		//Initialize SDL
+		if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+		{
+			printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
+			
+		}
 	}
 	
 	//Use OpenGL 3.1 core
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
-
+	kb = SDL_GetKeyboardState(NULL);
+	
 	//Create window
-	gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, flags );
+	gWindow = SDL_CreateWindow( name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, flags );
 	if( gWindow == NULL )
 	{
 		printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -78,7 +89,9 @@ Window_Class::Window_Class(unsigned int fps_, Uint32 flags)
 	}
 		
 	//Create context
-	GLcontext = SDL_GL_CreateContext( gWindow );
+	
+
+	GLcontext = SDL_GL_CreateContext(this->gWindow );
 	if( GLcontext == NULL )
 	{
 		printf( "OpenGL context could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -92,6 +105,7 @@ Window_Class::Window_Class(unsigned int fps_, Uint32 flags)
 	{
 		printf( "Error initializing GLEW! %s\n", glewGetErrorString( glewError ) );
 	}
+	
 
 	//Use Vsync
 	if( SDL_GL_SetSwapInterval( 1 ) < 0 )
@@ -109,19 +123,29 @@ Window_Class::Window_Class(unsigned int fps_, Uint32 flags)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 	
-	kb = SDL_GetKeyboardState(NULL);
 
+
+
+}
+
+
+
+Window_Class::Window_Class(unsigned int fps_, Uint32 flags, std::string && name): Window_Class(fps_, flags, std::move(name), 640,640) 
+{
+	
 
 		
 }
+
+
 
 Window_Class::~Window_Class()
 {
 
 	//Destroy window
-    SDL_DestroyWindow( gWindow );
+    	SDL_DestroyWindow( gWindow );
 	//Quit SDL subsystems
-    SDL_Quit();
+    	SDL_Quit();
 	gWindow = NULL;
 	//screenSurface = NULL;
 
@@ -132,27 +156,34 @@ Window_Class::~Window_Class()
 void Window_Class::CycleStart()
 {
 	frame_start = SDL_GetTicks();
-	
+	SDL_GL_MakeCurrent(this->gWindow, GLcontext);
 	glClear ( GL_COLOR_BUFFER_BIT );
 	glClear( GL_DEPTH_BUFFER_BIT );
 	glClearColor ( 0.0, 0.0, 0.0, 1.0 );
+
+	
     //
 	//EVENT THREAD
-	userWatchdog = new std::thread(&Window_Class::WindowEvents, this);
-
+	
+	if(lmainWindow) userWatchdog = new std::thread(&Window_Class::WindowEvents, this);
+	
 }
 int Window_Class::CycleEnd()
 {
 
-	userWatchdog->join();
+	if (lmainWindow) userWatchdog->join();
 	GLQueue(); // What was not possible to execute in the thread;
-	delete userWatchdog;
-	SDL_GL_SwapWindow(gWindow);
+	if (lmainWindow) delete userWatchdog;
+	
+	SDL_GL_MakeCurrent(this->gWindow, GLcontext);
+	SDL_GL_SwapWindow(this->gWindow);
 
 	unsigned int now_frame = SDL_GetTicks() - frame_start;
-
-	if ( now_frame < 1000/fps ) SDL_Delay(1000/fps - now_frame);
-		
+	
+	if(lmainWindow)
+	{
+		if ( now_frame < 1000/fps ) SDL_Delay(1000/fps - now_frame);
+	}	
 		
 	//printf("%d \n", now_frame);
 	//printf("\n");
@@ -168,16 +199,20 @@ void Window_Class::WindowEvents()
 {
 	//Handle events on queue
 	//Set Logicals for other functions
-	SDL_Event event; 
+	SDL_Event event;
+	
         while( SDL_PollEvent( &event ) != 0 )
         {
+        	 
             //User requests quit
             switch( event.type)
 			{
 			
 				case SDL_QUIT :
-					exit = true; 
+					exit = true;
 					break;
+					
+				
 				case SDL_WINDOWEVENT :
 					
 					//-------------------------
@@ -189,6 +224,10 @@ void Window_Class::WindowEvents()
 							lresize = true;							
 							//this->Resize();
 							break;
+						case SDL_WINDOWEVENT_CLOSE:
+						exit = true;
+						
+						break;
 						
 					}
 					break;
@@ -203,6 +242,11 @@ void Window_Class::WindowEvents()
 	
 	
 
+}
+
+void Window_Class::Close()
+{
+	exit = true;
 }
 
 void Window_Class::Resize()
@@ -232,4 +276,24 @@ unsigned int Window_Class::GetTime()
 	
 	return SDL_GetTicks();
 }
+
+
+/*
+void Window_Class::InitCPURender()
+{
+	 // We must call SDL_CreateRenderer in order for draw calls to affect this window.
+        renderer = SDL_CreateRenderer(gWindow, -1, 0);
+
+        // Select the color for drawing. It is set to red here.
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+
+        // Clear the entire screen to our selected color.
+        SDL_RenderClear(renderer);
+
+        // Up until now everything was drawn behind the scenes.
+        // This will show the new, red contents of the window.
+        SDL_RenderPresent(renderer);
+
+}
+*/
 

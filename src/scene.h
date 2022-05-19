@@ -147,7 +147,7 @@ void Scene::LoadObj(VectorizedObject& obj, GLuint designatedprogram)
 //		            LOAD COLLISIONS
 // ================================================================
 
-	sceneCollisionEngine.LoadCollidingObject(dynamic_cast<PhysicsObject2D*>(&obj)); 
+	sceneCollisionEngine.LoadCollidingObject(dynamic_cast<ColliderObject2D*>(&obj)); 
 			
 
 	
@@ -376,9 +376,9 @@ void Scene::Prepare()
 
 void Scene::UnloadObject(VectorizedObject& obj)
 {	
-	dbglog("test A1", assets[obj.sceneprog].size());
+	
 	assets[obj.sceneprog].erase(assets[obj.sceneprog].begin()+obj.sceneprogidx);
-	dbglog("test A2", assets[obj.sceneprog].size());
+	
 	uint tmpvbo, tmpibo, vtlen;
 	obj.GetBuffersInfo(tmpvbo, tmpibo, vtlen);
 	vertexbuffersize -= tmpvbo*vtlen;

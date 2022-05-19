@@ -18,7 +18,7 @@ int main( int argc, char* args[] )
 	
 	// Create Window
 	Window_Class window = Window_Class(60,SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN ); 
-	
+	window.OpenGLInit();
 	
 	// Shader
 	GPUcodes gpucodes0=GPUcodes("./shaders/vectorizedobjectnc.shader");	
@@ -27,7 +27,7 @@ int main( int argc, char* args[] )
 	
 	glClearColor( 0.f, 0.f, 0.f, 1.f );
 
-	PhysicsObject2D Square(2,4,1,2,GL_QUADS), Triangle(2,3,1,2,GL_TRIANGLES);
+	ColliderObject2D Square(2,4,1,2,GL_QUADS), Triangle(2,3,1,2,GL_TRIANGLES);
 	
 	
 	

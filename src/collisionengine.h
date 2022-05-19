@@ -5,7 +5,7 @@ class CollisionEngine
 	public: 
 	float* minOverlap;	
 	std::vector<int> collidingObjects;
-	std::vector<PhysicsObject2D*> collisionSet;
+	std::vector<ColliderObject2D*> collisionSet;
 	
 	glm::vec2* hitDirection ;
 	
@@ -18,7 +18,7 @@ class CollisionEngine
 	void VerifyCollisions();
 	void EndCollisions();
 	
-	void LoadCollidingObject(PhysicsObject2D* tmpObj_);
+	void LoadCollidingObject(ColliderObject2D* tmpObj_);
 };
 
 
@@ -108,8 +108,8 @@ void CollisionEngine::HandleCollisions()
 		int row =  ceil ((-1 + sqrt(2+8*index) )/2.0 -1 ) +1 ;
 	  	int col =  index- ( row*(row-1)/2 )  ;
 		
-		PhysicsObject2D *obj1 = collisionSet[row ];
-		PhysicsObject2D *obj2 = collisionSet[col ];
+		ColliderObject2D *obj1 = collisionSet[row ];
+		ColliderObject2D *obj2 = collisionSet[col ];
 		
 		
 		glm::vec2 edge{-hitDirection[index].y, hitDirection[index].x};
@@ -133,7 +133,7 @@ void CollisionEngine::HandleCollisions()
 }
 
 
-void CollisionEngine::LoadCollidingObject(PhysicsObject2D* tmpObj_)
+void CollisionEngine::LoadCollidingObject(ColliderObject2D* tmpObj_)
 {
 	if(tmpObj_ != nullptr) // Go on with animation temp_obj->Animate();
 	{	
