@@ -1,7 +1,14 @@
+
 class GPUcodes
 {
+	
+	private:
+	
+	Window_Class* parent = nullptr;
+	
 		
 	public:
+	
 	const std::vector<std::string> types {"VERTEX" , "FRAGMENT"};
 
 	std::string path;
@@ -18,10 +25,8 @@ class GPUcodes
 	void Compile();
 	
 
-
-
-	GPUcodes(std::string&& path_);
-	GPUcodes(std::string& path_);
+	GPUcodes(Window_Class* parent_, std::string&& path_);
+	GPUcodes(Window_Class* parent_, std::string& path_);
 	std::vector<GLuint> shaders_id;
 
 	void Load(const std::string& name1, const std::string& name2, const std::string& name3  );
@@ -62,8 +67,8 @@ void GPUcodes::ParseRaw(std::string& path_)
 
 }
 
-GPUcodes::GPUcodes(std::string&& t) {ParseRaw(t);Compile();}
-GPUcodes::GPUcodes(std::string& t) {ParseRaw(t);Compile();}
+GPUcodes::GPUcodes(Window_Class* parent_, std::string&& t): parent(parent_) {parent->MakeCurrent(); ParseRaw(t);Compile();}
+GPUcodes::GPUcodes(Window_Class* parent_, std::string& t): parent(parent_) {parent->MakeCurrent();ParseRaw(t);Compile();}
 
 	
 
@@ -188,6 +193,7 @@ void GPUcodes::Load(std::string&& vertexname, std::string&& fragmentname, std::s
 
 void GPUcodes::Load(const std::string& vertexname, const std::string& fragmentname, const std::string& programname )
 {
+	parent->MakeCurrent();
 	bool found1 = false,found2 = false ;
 	GLuint program =  glCreateProgram();
 	dbglog("\n Load Shaders...");

@@ -1,4 +1,4 @@
-TARGET = Term
+TARGET = MultiWindow
 TDIR = examples
 CC = g++
 XT = cpp

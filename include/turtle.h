@@ -34,8 +34,8 @@ enum Graphics {GPU = 0, CPU=1};
 static const SDL_Scancode TIME_OUT = static_cast<SDL_Scancode>(-1);
 
 #include "../src/misc.cpp"
-#include "../src/shader.h"
 #include "../src/window.h"
+#include "../src/shader.h"
 //#include "../src/textrender.cpp"
 #include "../src/texture.h"
 #include "../src/collider.h"

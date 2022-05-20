@@ -2,6 +2,8 @@
 class Window_Class
 
 {
+
+
 	
 		  SDL_Window* gWindow = NULL;
 		  SDL_Surface* screenSurface = NULL;
@@ -20,7 +22,7 @@ class Window_Class
 
 		  // state vars 
 		   
-	private:  
+     private:  
 		bool exit = false; 
 		void WindowEvents();
 		void SDLQueue();
@@ -32,8 +34,8 @@ class Window_Class
 		unsigned int frame_start = 0; 
 		 
 
-	public :
-		 SDL_Renderer* renderer;
+         public :	
+	
 		 const Uint8* kb;
 		  Window_Class(unsigned int fps_, Uint32 flags,  std::string && name);
 		  Window_Class(unsigned int fps_, Uint32 flags, std::string && name, int width_, int height_);
@@ -41,6 +43,7 @@ class Window_Class
 		  unsigned int GetTime();
 		  bool IsAlive();
 		  void CycleStart();
+		  void MakeCurrent();
 		 
 
 		  void Close();
@@ -57,16 +60,23 @@ class Window_Class
 void Window_Class::SetMainWindow()
 {
 	lmainWindow = true;
+	
+	
+	
+
+	
+	
 }
 
+void Window_Class::MakeCurrent(){ SDL_GL_MakeCurrent(this->gWindow, this->GLcontext);  }
+
 Window_Class::Window_Class(unsigned int fps_, Uint32 flags, std::string && name, int width_, int height_):
-WIDTH(width_), HEIGHT(height_)
+WIDTH(width_), HEIGHT(height_), fps(float(fps_))
 {
 
-	fps = float(fps_);
 	if (SDL_WasInit(SDL_INIT_VIDEO) == 0) 
 	{
-		//Initialize SDL
+	//Initialize SDL
 		if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 		{
 			printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
@@ -80,6 +90,7 @@ WIDTH(width_), HEIGHT(height_)
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 	kb = SDL_GetKeyboardState(NULL);
 	
+	
 	//Create window
 	gWindow = SDL_CreateWindow( name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, flags );
 	if( gWindow == NULL )
@@ -89,8 +100,6 @@ WIDTH(width_), HEIGHT(height_)
 	}
 		
 	//Create context
-	
-
 	GLcontext = SDL_GL_CreateContext(this->gWindow );
 	if( GLcontext == NULL )
 	{
@@ -124,8 +133,6 @@ WIDTH(width_), HEIGHT(height_)
 	}
 	
 
-
-
 }
 
 
@@ -156,7 +163,7 @@ Window_Class::~Window_Class()
 void Window_Class::CycleStart()
 {
 	frame_start = SDL_GetTicks();
-	SDL_GL_MakeCurrent(this->gWindow, GLcontext);
+	SDL_GL_MakeCurrent(this->gWindow, this->GLcontext);
 	glClear ( GL_COLOR_BUFFER_BIT );
 	glClear( GL_DEPTH_BUFFER_BIT );
 	glClearColor ( 0.0, 0.0, 0.0, 1.0 );
@@ -175,7 +182,7 @@ int Window_Class::CycleEnd()
 	GLQueue(); // What was not possible to execute in the thread;
 	if (lmainWindow) delete userWatchdog;
 	
-	SDL_GL_MakeCurrent(this->gWindow, GLcontext);
+	
 	SDL_GL_SwapWindow(this->gWindow);
 
 	unsigned int now_frame = SDL_GetTicks() - frame_start;

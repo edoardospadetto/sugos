@@ -12,6 +12,8 @@ class Scene
 {
 	private: 
 		
+	
+	        Window_Class* parent = nullptr;
 		bool ldbgcolliders = false;
 		CollisionEngine sceneCollisionEngine;
 		
@@ -24,11 +26,11 @@ class Scene
 		
 		
 		GLuint collidersdbg_pragma;
-		GPUcodes collidersdebug = GPUcodes("./data/debugutils/colliders_debug.gls");
+		GPUcodes *collidersdebug;
 	
 	public:
 	
-		Scene();		 
+		Scene(Window_Class* parent);		 
 		void Render();
 		void LoadObj(VectorizedObject& obj, GLuint designatedprogram);
 		void Prepare();
@@ -39,6 +41,7 @@ class Scene
 		void Update();
 		void Animations();
 		void Physics();
+		~Scene();
 };
 
 
@@ -46,8 +49,10 @@ class Scene
 * Dummy constructor, it performs just a call to OpenGL
 */
 
-Scene::Scene()
+Scene::Scene(Window_Class* parent_): parent(parent_) 
 {
+
+        collidersdebug = new GPUcodes(parent , "./data/debugutils/colliders_debug.gls");
 	glGenBuffers( 1, &VBO );
 	glGenBuffers( 1, &IBO );
 }
@@ -200,6 +205,7 @@ void Scene::Render()
 			{
 			
 				assets[i][j]->Render(VBO,IBO,offsetvbo,offsetibo);
+				
 			
 			}
 				
@@ -425,16 +431,21 @@ void Scene::UnloadObject(VectorizedObject& obj)
 void Scene::DebugColliders()
 {
 
-	collidersdebug.Load("debug_colliders_vertex","debug_colliders_fragment", "debug_colliders");
+	collidersdebug->Load("debug_colliders_vertex","debug_colliders_fragment", "debug_colliders");
 	
 	for (auto obj : sceneCollisionEngine.collisionSet )
 	{
 		obj->collider->BuildVecObj();
-		this->LoadObj( *(obj->collider->colliderRep), collidersdebug.glprograms[0]);
+		this->LoadObj( *(obj->collider->colliderRep), collidersdebug->glprograms[0]);
 	}
 	ldbgcolliders=true;
 }
 
+
+Scene::~Scene()
+{
+	delete collidersdebug;
+}
 
 // TO DO
 //void Scene::Renovate()

@@ -264,8 +264,9 @@ void VectorizedObject::Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint&
 	
 		uint tmpibo = 0, tmpvbo = 0; 
 		this->RenderProgramUniforms();
+		glCheckError();
 		this->GetBuffersInfo(tmpvbo, tmpibo);	
-		
+		glCheckError();
 		
 
 		for(int k=0; k<this->attributenames.size(); k++ )
@@ -279,7 +280,7 @@ void VectorizedObject::Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint&
 						(void*) ((offsetvbo+this->attributesizes[k])*sizeof(GLfloat)) );
 						glEnableVertexAttribArray(this->attributelocationsprogram[k]);
 							
-		
+		        glCheckError();
 
 		}	
 		
@@ -287,23 +288,25 @@ void VectorizedObject::Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint&
 		
 			
 	  	this->RenderTexture();
-			
+		glCheckError();
 		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO );
+		glCheckError();
 		glDrawElements( this->representation , 
 				this->surfaces_num*this->vertexxsurf, 
 				GL_UNSIGNED_INT, 
 				(void*) (offsetibo*sizeof(GLuint)) );
-			
+		glCheckError();
 		int nbuffersize, vbsi; 
 		this->UnbindTexture();
 		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &nbuffersize);
-		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &vbsi);	
+		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &vbsi);
+		glCheckError();	
 
 		offsetibo +=this->surfaces_num*this->vertexxsurf;
 		offsetvbo += tmpvbo*this->vertex_len;
 				
 		for(int k=0; k<this->attributenames.size(); k++ ){glDisableVertexAttribArray( this->attributelocationsprogram[k]);}	
-		
+		glCheckError();
 
 }
 
