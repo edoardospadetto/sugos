@@ -24,7 +24,6 @@ int main()
 
   
   std::string str1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,!?";
-  
   GPUcodes gpucodes0=GPUcodes(&w1, "./shaders/font.shader");
 
   gpucodes0.Load("fontV","fontF", "font");
