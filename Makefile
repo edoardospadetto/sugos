@@ -1,6 +1,6 @@
 CC = g++
 XT = cpp
-EXAMPLE = JumpingShape
+EXAMPLE = Animation_input_main
 TDIR = examples
 X = app
 
@@ -19,12 +19,13 @@ OBJ_NAME = run
 
 
 
+
 example: 
 	
 	#CC=x86_64-w64-mingw32-g++
 	#X=.exe
 	
-	$(CC) -c $(DEFS) $(TDIR)/$(EXAMPLE).$(XT) $(LIBS)  -o ./obj/example.o 
+	$(CC) -c $(DEFS) $(TDIR)/$(EXAMPLE).$(XT) $(LIBS) -I ./src/  -o ./obj/example.o 
 	$(CC)  $(DEFS)  ./obj/example.o libturtle2d.a $(LIBS)   -o $(EXAMPLE).$(X) 
 
 

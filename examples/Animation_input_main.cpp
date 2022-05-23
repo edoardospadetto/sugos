@@ -1,6 +1,6 @@
 
 
-#include "turtle.h"
+#include <turtle.h>
 
 void render();
 
@@ -24,13 +24,13 @@ int main( int argc, char* args[] )
 	
 	State run("./conf/monkrun.anim", &monkSpriteSheet), attack("./conf/monkattack.anim", &monkSpriteSheet);
 	run.ConnectTo(&attack, SDL_SCANCODE_UP , ON_PRESS);
-	attack.ConnectTo(&run, SDL_SCANCODE_UP , ON_RELEASE );
+	attack.ConnectTo(&run, TIME_OUT , UNDEFINED );
 	
 	StateEngine monkanim(&window); 
 	monkanim.AddState(&run);
 	monkanim.AddState(&attack);
 	// Shader
-	GPUcodes gpucodes0=GPUcodes("./shaders/shader_anim");	
+	GPUcodes gpucodes0=GPUcodes(&window, "./shaders/shader_anim");	
 
 	gpucodes0.Load("simpletexture0","simpletexture1", "simplea");
 	
@@ -48,7 +48,7 @@ int main( int argc, char* args[] )
 	MonkChar.SpecifyBuffersAttributes("aPos", 2);	
 	MonkChar.SpecifyBuffersAttributes("aTex", 2);
 
-	Scene test = Scene();
+	Scene test = Scene(&window);
 	test.LoadObj(MonkChar, gpucodes0.glprograms[0]);	
 	test.Prepare();
 

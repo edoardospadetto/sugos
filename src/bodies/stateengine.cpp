@@ -50,6 +50,7 @@ void StateEngine::AnimateState(bool &wentTimeOut)
 		{
 			currentState->currentFrame=0;
 			
+			
 		}
 		int tmp= currentState->currentFrame;
 		currentState->x=currentState->row[tmp]; 
