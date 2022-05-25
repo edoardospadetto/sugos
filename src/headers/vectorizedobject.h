@@ -16,10 +16,12 @@
 
 class VectorizedObject
 {
-
+	protected:
+	
 	void GetBuffersInfo(uint& sizevbo,uint& sizeibo);
 	void RenderProgramUniforms();
-		
+	
+			
 	public:
 
 	// Physics
@@ -57,7 +59,7 @@ class VectorizedObject
 	int sceneprog=0; 
 	int sceneprogidx =0;
 
-	void Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint& offsetibo);
+	virtual void Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint& offsetibo);
 
 
 	int vertexxsurf = 0;

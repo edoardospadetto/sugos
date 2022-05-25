@@ -35,11 +35,11 @@ vertex_len( vertex_len_), vertex_num(vertex_num_),  surfaces_num(surfaces_num_),
 	attributesizes.push_back(0);
 }
 
-void VectorizedObject::GetBuffersInfo(uint &VBOsize , uint& IBOsize, uint& vertexlen_ )
+void VectorizedObject::GetBuffersInfo(uint &VBOsize , uint &IBOsize, uint &vertexlen_ )
 {
 	VBOsize    = vertex_num;
 	IBOsize    = vertexxsurf*surfaces_num;
-	vertexlen_ =vertex_len;	
+	vertexlen_ = vertex_len;	
 }
 
 void VectorizedObject::GetBuffersInfo(uint &VBOsize , uint& IBOsize )
@@ -191,7 +191,7 @@ void VectorizedObject::Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint&
 						GL_FALSE, 
 						(this->attributesizes[this->attributesizes.size()-1])*sizeof(GLfloat), 
 						(void*) ((offsetvbo+this->attributesizes[k])*sizeof(GLfloat)) );
-						glEnableVertexAttribArray(this->attributelocationsprogram[k]);
+			glEnableVertexAttribArray(this->attributelocationsprogram[k]);
 							
 		        glCheckError();
 

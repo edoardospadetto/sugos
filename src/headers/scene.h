@@ -19,7 +19,10 @@ class Scene
 		
 		GLuint VBO = 0;
 		GLuint IBO = 0;
-		uint vertexbuffersize=0, indexbuffersize=0;
+		//Instanced
+		GLuint TBO = 0;
+		
+		uint vertexbuffersize=0, indexbuffersize=0, instancebuffersize=0;
 		std::vector<std::vector<VectorizedObject*>> assets;
 		std::vector<GLuint> programs;
 		

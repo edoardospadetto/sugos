@@ -1,6 +1,6 @@
 CC = g++
 XT = cpp
-EXAMPLE = Animation_input_main
+EXAMPLE = InstancedRendering
 TDIR = examples
 X = app
 
@@ -8,7 +8,7 @@ X = app
 SRCPATH=src/bodies/
 SRCS=$(shell find src -type f -iname '*.cpp' | cut -d'/' -f3- )
 FILES=$(foreach x, $(basename $(SRCS)), $(x).o)
-OBJECTS=$(patsubst %, obj/%, $(FILES))
+OBJECTS=$(patsubst %, build/%, $(FILES))
 SOURCES=$(patsubst %, src/bodies/%.cpp, $(SRCS))
 
 TARGET = libturtle2d
@@ -25,8 +25,8 @@ example:
 	#CC=x86_64-w64-mingw32-g++
 	#X=.exe
 	
-	$(CC) -c $(DEFS) $(TDIR)/$(EXAMPLE).$(XT) $(LIBS) -I ./src/  -o ./obj/example.o 
-	$(CC)  $(DEFS)  ./obj/example.o libturtle2d.a $(LIBS)   -o $(EXAMPLE).$(X) 
+	$(CC) -c $(DEFS) $(TDIR)/$(EXAMPLE).$(XT) $(LIBS) -I ./src/  -o ./build/example.o 
+	$(CC)  $(DEFS)  ./build/example.o libturtle2d.a $(LIBS)   -o $(EXAMPLE).$(X) 
 
 
 
@@ -34,21 +34,23 @@ example:
 lib: clean dirs $(FILES)
 	ar rcs  $(TARGET).a $(OBJECTS)
  	
-	
+lib0:	
+	ar rcs  $(TARGET).a $(OBJECTS)
 
 %.o:
-	$(CC) -c $(CFLAGS)   $(SRCPATH)$(basename $@).cpp -o ./obj/$@ 2>err
+	$(CC) -c $(CFLAGS) $(DEFS)  $(SRCPATH)$(basename $@).cpp -o ./build/$@ 2>err
 	
 
 
 dirs:	
-	mkdir -p obj
-	mkdir -p obj/objects
-	mkdir -p obj/modules
+	mkdir -p build
+	mkdir -p build/objects
+	mkdir -p build/modules
 	
 
 clean:
 	rm -rf *.app
-	rm -rf obj
+	rm -rf build
+	rm -rf 
 	
 

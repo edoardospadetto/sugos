@@ -199,6 +199,8 @@ void GenPolygonCollider(ColliderObject2D *obj, int sides_, bool colored)
 
 
 
+
+
 // Attach together 2 arrays, 
 // Ax1 Ay1 Ax2 Ay2 Ax3 Ay3 this has stride 2
 // Bx1 By1 Bz1 Bx2 By2 Bz1 Bx3 By3 Bz3 this has stride 3
@@ -241,6 +243,7 @@ void JoinBufferInstances(T* a_, int stridea_,  T* b_, int strideb_, T* c)
     	
 	
 }
+
 
 
 

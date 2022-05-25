@@ -55,6 +55,7 @@ static const SDL_Scancode TIME_OUT = static_cast<SDL_Scancode>(-1);
 #include "./headers/state.h"
 #include "./headers/stateengine.h"
 #include "./headers/vectorizedobject.h"
+#include "./headers/objects/instancedobject.h"
 #include "./headers/objects/animatedobject2D.h"
 #include "./headers/objects/colliderobject2D.h"
 #include "./headers/objects/physicsobject2D.h"
