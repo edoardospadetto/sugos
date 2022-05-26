@@ -105,8 +105,9 @@ void Scene::LoadObj(VectorizedObject& obj, GLuint designatedprogram)
 		for (int i =0; i<tmpInstanced->instanceattributenames.size(); i++)
 		{
 		
+			//std::cout << tmpInstanced->instanceattributenames[i].c_str() << "\n";
 			tmpInstanced->instanceattributelocationsprogram[i] = 
-							glGetAttribLocation( designatedprogram, tmpInstanced->instanceattributenames[i].c_str() );	
+					glGetAttribLocation( designatedprogram, tmpInstanced->instanceattributenames[i].c_str() );	
 			tmpInstanced->InstancedBufferInfo(tmptbo, instancesize );
 			instancebuffersize += tmptbo*instancesize;
 			

@@ -24,15 +24,43 @@ InstancedObject::~InstancedObject()
 
 }
 
-int InstancedObject::SpecifyBuffersInstanceAttributes(const std::string& name, int instanceattributesize_)
+int InstancedObject::SpecifyBuffersInstanceAttributes(const std::string& name, int instanceattributesize_, int divisor_)
 {
 	instanceattributenames.push_back(name);
 	instanceattributesizes.push_back(attributesizes[instanceattributesizes.size()-1]+instanceattributesize_);
 	instanceattributelocationsprogram.push_back(-1);
-
+	instanceattributedivisors.push_back(divisor_);
+	
 	return(instanceattributenames.size()-1);
 }
 
+
+void InstancedObject::EnableTBOAttributes(GLuint TBO,GLuint& offsettbo)
+{
+
+	glBindBuffer( GL_ARRAY_BUFFER, TBO );
+	
+	for(int k=0; k<this->instanceattributenames.size(); k++ )
+	{
+		
+			
+		glVertexAttribPointer(  this->instanceattributelocationsprogram[k], 
+					(this->instanceattributesizes[k+1] - this->instanceattributesizes[k]), 
+					GL_FLOAT, 
+					GL_FALSE, 
+					(this->instanceattributesizes[this->instanceattributesizes.size()-1])*sizeof(GLfloat), 
+					(void*) ((offsettbo+this->instanceattributesizes[k])*sizeof(GLfloat)) );
+				
+
+		glCheckError();
+		glVertexAttribDivisor(this->instanceattributelocationsprogram[k], this->instanceattributedivisors[k]);
+		glCheckError();
+		glEnableVertexAttribArray(this->instanceattributelocationsprogram[k]);
+		glCheckError();
+	}
+
+
+}
 
 
 void InstancedObject::Render(GLuint VBO, GLuint IBO, GLuint TBO, GLuint& offsetvbo, GLuint& offsetibo, GLuint& offsettbo)
@@ -40,76 +68,41 @@ void InstancedObject::Render(GLuint VBO, GLuint IBO, GLuint TBO, GLuint& offsetv
 	
 		
 	
-		uint tmpibo = 0, tmpvbo = 0, tmptbo = 0; 
+	
 		this->RenderProgramUniforms();
 		glCheckError();
-		this->GetBuffersInfo(tmpvbo, tmpibo);	
+		
+		this->EnableVBOAttributes(VBO, offsetvbo);
 		glCheckError();
 		
-		glBindBuffer( GL_ARRAY_BUFFER, VBO );
-		for(int k=0; k<this->attributenames.size(); k++ )
-		{
-			
-			glVertexAttribPointer(  this->attributelocationsprogram[k], 
-						(this->attributesizes[k+1] - this->attributesizes[k]), 
-						GL_FLOAT, 
-						GL_FALSE, 
-						(this->attributesizes[this->attributesizes.size()-1])*sizeof(GLfloat), 
-						(void*) ((offsetvbo+this->attributesizes[k])*sizeof(GLfloat)) );
-			glVertexAttribDivisor(this->instanceattributelocationsprogram[k], 1);
-			glEnableVertexAttribArray(this->attributelocationsprogram[k]);
-			
-		        glCheckError();
-
-		}	
-		glBindBuffer( GL_ARRAY_BUFFER, TBO );
-		for(int k=0; k<this->instanceattributenames.size(); k++ )
-		{
-		
-			/*std::cout << this->instanceattributelocationsprogram[k] << " h " 
-				  << (this->instanceattributesizes[k+1] - this->instanceattributesizes[k]) << " h "
-				  << (this->instanceattributesizes[this->instanceattributesizes.size()-1])*sizeof(GLfloat) << " h "
-				  << (void*) ((offsettbo+this->instanceattributesizes[k])*sizeof(GLfloat)) ;*/
-			
-			glVertexAttribPointer(  this->instanceattributelocationsprogram[k], 
-						(this->instanceattributesizes[k+1] - this->instanceattributesizes[k]), 
-						GL_FLOAT, 
-						GL_FALSE, 
-						(this->instanceattributesizes[this->instanceattributesizes.size()-1])*sizeof(GLfloat), 
-						(void*) ((offsettbo+this->instanceattributesizes[k])*sizeof(GLfloat)) );
-						
-			/*std::cout << (this->instanceattributesizes[k+1] - this->instanceattributesizes[k]) << "  "
-			          << (offsetvbo+this->instanceattributesizes[k]) << "  "
-			          << this->instanceattributesizes[this->instanceattributesizes.size()-1] << "  " 
-			          << this->instanceattributesizes.size()<< "\n";*/
-			glCheckError();
-			//
-			glEnableVertexAttribArray(this->instanceattributelocationsprogram[k]);
-			
-		        glCheckError();
-		}
-		
-		
+		this->EnableTBOAttributes(TBO,offsettbo);
+		glCheckError();
 			
 	  	this->RenderTexture();
 		glCheckError();
+		
 		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO );
 		glCheckError();
 		glDrawElementsInstanced( this->representation , 
-				this->surfaces_num*this->vertexxsurf, 
-				GL_UNSIGNED_INT, 
-				(void*) (offsetibo*sizeof(GLuint)), 
-				this->instance_num );
+				          this->surfaces_num*this->vertexxsurf, 
+				          GL_UNSIGNED_INT, 
+				          (void*) (offsetibo*sizeof(GLuint)), 
+				          this->instance_num );
 		glCheckError();
-		int nbuffersize, vbsi; 
+		
+	
 		this->UnbindTexture();
+		glCheckError();
+		
+		int nbuffersize, vbsi; 
 		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &nbuffersize);
 		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &vbsi);
 		glCheckError();	
 
-		offsetibo +=this->surfaces_num*this->vertexxsurf;
-		offsetvbo += tmpvbo*this->vertex_len;
+		offsetibo += this->surfaces_num*this->vertexxsurf;
+		offsetvbo += this->vertex_num*this->vertex_len;
 		offsettbo+=  this->instance_num * this->instance_len;
+		
 		for(int k=0; k<this->attributenames.size(); k++ ){glDisableVertexAttribArray( this->attributelocationsprogram[k]);}
 		for(int k=0; k<this->instanceattributenames.size(); k++ )
 		{glDisableVertexAttribArray( this->instanceattributelocationsprogram[k]);}	

@@ -25,7 +25,7 @@ void velset(float* vel)
 	int N = 1000;
 	for (int i=0; i<N; i++)
 	{
-		vel[i*2] = (rand()%100 - 50 )/100.0;
+		vel[i*2] = 0;
 		vel[2*i+1] = abs(rand()%100)/10000.0+0.005;
 	}
 
@@ -39,7 +39,7 @@ void UpdatePhys(float* pos, float* vel )
 	{
 		
 		vel[2*i+1] += (rand()%100 - 50 )/100000;
-		vel[2*i] += -0.5*pos[2*i] - 0.5*vel[2*i]*(pos[2*i+1]+0.8)  ;
+		vel[2*i] += 0 ;
 		pos[2*i]    += vel[2*i];
 		pos[2*i+1]  += vel[2*i+1];
 		
@@ -47,7 +47,7 @@ void UpdatePhys(float* pos, float* vel )
 		{
 			pos[i*2] = (rand()%100)/200.0-0.25;
 			pos[i*2+1] =-0.5;
-			vel[i*2] = (rand()%100 - 50 )/10000.0;
+			//vel[i*2] = (rand()%100 - 50 )/10000.0;
 			vel[2*i+1] = abs(rand()%100)/1000.0+0.005;
 			
 		}
@@ -69,6 +69,7 @@ int main( int argc, char* args[] )
 	
 	int N = 1000;
 	
+  	
 	InstancedObject Triangle(2,4,3,2,GL_TRIANGLES, N,2);
 	
 	float* velocities=new float[2*N];
@@ -76,8 +77,7 @@ int main( int argc, char* args[] )
 	velset(velocities);
 	
 	Triangle.SpecifyBuffersAttributes("vposition", 2) ;
-	Triangle.SpecifyBuffersInstanceAttributes("voffset", 2) ;
-  
+	Triangle.SpecifyBuffersInstanceAttributes("voffset", 2,1) ;
   	
 	GenPolygon(&Triangle,3,0.02);
 	Triangle.SetToOrigin(0);

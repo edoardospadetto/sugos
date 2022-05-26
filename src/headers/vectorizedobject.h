@@ -20,7 +20,7 @@ class VectorizedObject
 	
 	void GetBuffersInfo(uint& sizevbo,uint& sizeibo);
 	void RenderProgramUniforms();
-	
+	void EnableVBOAttributes(GLuint VBO, GLuint& offsetvbo);
 			
 	public:
 

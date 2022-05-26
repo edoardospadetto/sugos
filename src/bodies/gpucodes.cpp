@@ -140,10 +140,7 @@ void GPUcodes::Compile()
 		
 	}
 
-	for (int i=0; i<shaders_id.size();i++)
-	{
-		std::cout << shaders_id[i] << std::endl;
-	}
+	
 	
 	
 }
@@ -161,10 +158,6 @@ void GPUcodes::Load(const std::string& vertexname, const std::string& fragmentna
 	GLuint program =  glCreateProgram();
 	dbglog("\n Load Shaders...");
 
-	for (int i=0; i<shaders_id.size();i++)
-	{
-		std::cout << shaders_id[i] << std::endl;
-	}
 
 	for (int i=0; i<shaders.size(); i++)
 	{

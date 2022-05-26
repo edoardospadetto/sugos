@@ -170,40 +170,45 @@ int VectorizedObject::SpecifyBuffersAttributes(const std::string& name, int attr
 }
 
 
+void VectorizedObject::EnableVBOAttributes(GLuint VBO, GLuint& offsetvbo)
+{
+	uint tmpvbo = this->vertex_num;
+	
+	glBindBuffer( GL_ARRAY_BUFFER, VBO );
+	for(int k=0; k<this->attributenames.size(); k++ )
+	{
+		glVertexAttribPointer(  this->attributelocationsprogram[k], 
+					(this->attributesizes[k+1] - this->attributesizes[k]), 
+					GL_FLOAT, 
+					GL_FALSE, 
+					(this->attributesizes[this->attributesizes.size()-1])*sizeof(GLfloat), 
+					(void*) ((offsetvbo+this->attributesizes[k])*sizeof(GLfloat)) );
+		glEnableVertexAttribArray(this->attributelocationsprogram[k]);	
+		//glVertexAttribDivisor(this->instanceattributelocationsprogram[k], divisor[k]);		
+		glCheckError();
+
+	}
+
+}
+
 void VectorizedObject::Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint& offsetibo)
 {
 	
 		
 	
-		uint tmpibo = 0, tmpvbo = 0; 
+		
 		this->RenderProgramUniforms();
 		glCheckError();
-		this->GetBuffersInfo(tmpvbo, tmpibo);	
+		
+		this->EnableVBOAttributes(VBO, offsetvbo);
 		glCheckError();
-		
-
-		for(int k=0; k<this->attributenames.size(); k++ )
-		{
-			
-			glVertexAttribPointer(  this->attributelocationsprogram[k], 
-						(this->attributesizes[k+1] - this->attributesizes[k]), 
-						GL_FLOAT, 
-						GL_FALSE, 
-						(this->attributesizes[this->attributesizes.size()-1])*sizeof(GLfloat), 
-						(void*) ((offsetvbo+this->attributesizes[k])*sizeof(GLfloat)) );
-			glEnableVertexAttribArray(this->attributelocationsprogram[k]);
-							
-		        glCheckError();
-
-		}	
-		
-		
-		
-			
+	
 	  	this->RenderTexture();
 		glCheckError();
+		
 		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO );
 		glCheckError();
+		
 		glDrawElements( this->representation , 
 				this->surfaces_num*this->vertexxsurf, 
 				GL_UNSIGNED_INT, 
@@ -216,7 +221,7 @@ void VectorizedObject::Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint&
 		glCheckError();	
 
 		offsetibo +=this->surfaces_num*this->vertexxsurf;
-		offsetvbo += tmpvbo*this->vertex_len;
+		offsetvbo += this->vertex_num*this->vertex_len;
 				
 		for(int k=0; k<this->attributenames.size(); k++ ){glDisableVertexAttribArray( this->attributelocationsprogram[k]);}	
 		glCheckError();

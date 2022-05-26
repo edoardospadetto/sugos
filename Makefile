@@ -12,7 +12,7 @@ OBJECTS=$(patsubst %, build/%, $(FILES))
 SOURCES=$(patsubst %, src/bodies/%.cpp, $(SRCS))
 
 TARGET = libturtle2d
-DEFS = -D DEBUG -g -Wall
+DEFS = -o3 #-D DEBUG -ggdb3  -Wall
 LIBS = -Bstatic -w -lGL -lGLU -lGLEW -lSDL2 -lpthread -lSDL2_image
 #OBJ_NAME specifies the name of our exectuable
 OBJ_NAME = run

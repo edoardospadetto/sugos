@@ -7,7 +7,7 @@ layout(location = 2) in vec2 voffset;     // the per instance offset
 out vec4 fcolor;    
 
 void main() {    
-	fcolor = vec4(1.0,abs(voffset.x),abs(voffset.y),0.5);
+	fcolor = vec4(abs(voffset.y+1),0,abs(voffset.y-1)*abs(voffset.y-1),1);
 	gl_Position =  vec4(voffset.x+vposition.x,voffset.y+vposition.y, 0, 1.0);
 }
 
