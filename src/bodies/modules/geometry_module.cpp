@@ -50,6 +50,28 @@ void GenQuad(VectorizedObject& obj)
 					 
 }
 
+void GenColorQuad(VectorizedObject& obj, float xa,float ya,float x1,float y1)
+{
+	float vertex[]= 	//VBO data
+	{
+		xa, ya, 1.0,0.5,0.5,1.0,
+		x1, ya, 1.0,0.5,0.5,1.0,
+		x1, y1, 1.0,0.5,0.5,1.0,
+		xa, y1, 1.0,0.5,0.5,1.0
+	};
+
+	for (int i =0; i<24; i++)
+	{
+		obj.vertex_buffer[i] = vertex[i];
+	}
+	
+	for (int i =0; i<4; i++)
+	{
+		obj.index_buffer[i] = i;
+	}
+					 
+}
+
 // Generate a square with texture
 void GenQuadText(VectorizedObject& obj)
 {

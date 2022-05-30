@@ -9,8 +9,8 @@ void Window_Class::SetMainWindow()
 
 void Window_Class::MakeCurrent(){ SDL_GL_MakeCurrent(this->gWindow, this->GLcontext);  }
 
-Window_Class::Window_Class(unsigned int fps_, Uint32 flags, std::string && name, int width_, int height_):
-WIDTH(width_), HEIGHT(height_), fps(float(fps_))
+Window_Class::Window_Class( Uint32 flags, std::string && name, int width_, int height_):
+WIDTH(width_), HEIGHT(height_)
 {
 
 	if (SDL_WasInit(SDL_INIT_VIDEO) == 0) 
@@ -32,6 +32,7 @@ WIDTH(width_), HEIGHT(height_), fps(float(fps_))
 	
 	//Create window
 	gWindow = SDL_CreateWindow( name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, flags );
+	IDWindow = SDL_GetWindowID( gWindow );
 	if( gWindow == NULL )
 	{
 		printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -76,7 +77,7 @@ WIDTH(width_), HEIGHT(height_), fps(float(fps_))
 
 
 
-Window_Class::Window_Class(unsigned int fps_, Uint32 flags, std::string && name): Window_Class(fps_, flags, std::move(name), 640,640) 
+Window_Class::Window_Class( Uint32 flags, std::string && name): Window_Class(flags, std::move(name), 640,640) 
 {
 	
 
@@ -91,6 +92,7 @@ Window_Class::~Window_Class()
 	//Destroy window
     	SDL_DestroyWindow( gWindow );
 	//Quit SDL subsystems
+	std::cout << "HEYYY\n" ;
     	SDL_Quit();
 	gWindow = NULL;
 	//screenSurface = NULL;
@@ -101,7 +103,7 @@ Window_Class::~Window_Class()
 
 void Window_Class::CycleStart()
 {
-	frame_start = SDL_GetTicks();
+	
 	SDL_GL_MakeCurrent(this->gWindow, this->GLcontext);
 	glClear ( GL_COLOR_BUFFER_BIT );
 	glClear( GL_DEPTH_BUFFER_BIT );
@@ -111,28 +113,21 @@ void Window_Class::CycleStart()
     //
 	//EVENT THREAD
 	
-	if(lmainWindow) userWatchdog = new std::thread(&Window_Class::WindowEvents, this);
+	//if(lmainWindow) userWatchdog = new std::thread(&Window_Class::, this);
 	
 }
 int Window_Class::CycleEnd()
 {
 
-	if (lmainWindow) userWatchdog->join();
-	GLQueue(); // What was not possible to execute in the thread;
-	if (lmainWindow) delete userWatchdog;
+	//if (lmainWindow) userWatchdog->join();
+	// What was not possible to execute in the thread;
+	//if (lmainWindow) delete userWatchdog;
 	
 	
 	SDL_GL_SwapWindow(this->gWindow);
 
-	unsigned int now_frame = SDL_GetTicks() - frame_start;
 	
-	if(lmainWindow)
-	{
-		if ( now_frame < 1000/fps ) SDL_Delay(1000/fps - now_frame);
-	}	
-		
-	//printf("%d \n", now_frame);
-	//printf("\n");
+	
 	return 0; 
 }
 
@@ -141,53 +136,20 @@ bool Window_Class::IsAlive()
 	return(!exit);
 }
 
-void Window_Class::WindowEvents()
+Uint32  Window_Class::GetMousePosition(float &x, float&y)
 {
-	//Handle events on queue
-	//Set Logicals for other functions
-	SDL_Event event;
+	//Get Mouse Position
+	int w,h;
+	Uint32 button;
 	
-        while( SDL_PollEvent( &event ) != 0 )
-        {
-        	 
-            //User requests quit
-            switch( event.type)
-			{
-			
-				case SDL_QUIT :
-					exit = true;
-					break;
-					
-				
-				case SDL_WINDOWEVENT :
-					
-					//-------------------------
-					switch (event.window.event) 
-					{
-						 case SDL_WINDOWEVENT_RESIZED:				 	
-						 case SDL_WINDOWEVENT_MAXIMIZED:
-						
-							lresize = true;							
-							//this->Resize();
-							break;
-						case SDL_WINDOWEVENT_CLOSE:
-						exit = true;
-						
-						break;
-						
-					}
-					break;
-					//-------------------------
-				
-			}	
-            
-        }
-	//Handle accordingly 
-	SDLQueue();
+	button = SDL_GetMouseState(&w,&h);
+	mouseX = 2*float(w)/this->WIDTH-1.0;
+	mouseY = -2*float(h)/this->HEIGHT+1.0;
+	x= mouseX;
+	y= mouseY;
 	
+	return(button);
 	
-	
-
 }
 
 void Window_Class::Close()
@@ -213,7 +175,7 @@ void Window_Class::SDLQueue()
 //OpenGl actions according to userWatchdog
 void Window_Class::GLQueue()
 {
-	if(lresize) glViewport(0, 0, WIDTH, HEIGHT); lresize=false;
+	if(lresize) {glViewport(0, 0, WIDTH, HEIGHT); lresize=false;}
 	
 }
 

@@ -1,7 +1,7 @@
 CC = g++
 XT = cpp
-EXAMPLE = InstancedRendering
-TDIR = examples
+EXAMPLE = turtleengine
+TDIR = Engine
 X = app
 
 
@@ -12,7 +12,7 @@ OBJECTS=$(patsubst %, build/%, $(FILES))
 SOURCES=$(patsubst %, src/bodies/%.cpp, $(SRCS))
 
 TARGET = libturtle2d
-DEFS = -o3 #-D DEBUG -ggdb3  -Wall
+DEFS = -D DEBUG -ggdb3  -Wall
 LIBS = -Bstatic -w -lGL -lGLU -lGLEW -lSDL2 -lpthread -lSDL2_image
 #OBJ_NAME specifies the name of our exectuable
 OBJ_NAME = run
@@ -20,7 +20,7 @@ OBJ_NAME = run
 
 
 
-example: 
+example: dirs
 	
 	#CC=x86_64-w64-mingw32-g++
 	#X=.exe

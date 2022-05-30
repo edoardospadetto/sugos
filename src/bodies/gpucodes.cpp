@@ -30,10 +30,11 @@ void GPUcodes::ParseRaw(std::string& path_)
 
 }
 
-GPUcodes::GPUcodes(Window_Class* parent_, std::string&& t): parent(parent_) {parent->MakeCurrent(); ParseRaw(t);Compile();}
+GPUcodes::GPUcodes(Window_Class* parent_, std::string&& t): parent(parent_) {parent->MakeCurrent();ParseRaw(t);Compile();}
 GPUcodes::GPUcodes(Window_Class* parent_, std::string& t): parent(parent_) {parent->MakeCurrent();ParseRaw(t);Compile();}
 
-	
+
+void GPUcodes::SetParentWindow(Window_Class* parent_) {parent = parent_;} 
 
 void GPUcodes::SplitRawInput(std::string rawin)
 {
@@ -195,14 +196,13 @@ void GPUcodes::Load(const std::string& vertexname, const std::string& fragmentna
 	if(found1 & found2) glprograms.push_back(program); programnames.push_back(programname); glLinkProgram(program);
 	
 	GLint programSuccess = GL_TRUE;
-    glGetProgramiv( program, GL_LINK_STATUS, &programSuccess );
-    if( programSuccess != GL_TRUE )
-    {
-        printf( "ERROR: linking program %d!\n", program );
+        glGetProgramiv( program, GL_LINK_STATUS, &programSuccess );
+        if( programSuccess != GL_TRUE )
+       {
+               printf( "ERROR: linking program %d!\n", program );
 		glDeleteProgram(program);
-        //printProgramLog( program );
-        //success = false;
-    }
+       
+       }
 
 
 }

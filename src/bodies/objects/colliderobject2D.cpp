@@ -1,7 +1,7 @@
 #include "../../turtle.h"
 
-ColliderObject2D::ColliderObject2D(int vertex_len_,int vertex_num_,int surfaces_num_,int space_dim_,int vertxsup_) : 
-VectorizedObject( vertex_len_, vertex_num_, surfaces_num_, space_dim_, vertxsup_)
+ColliderObject2D::ColliderObject2D(int vertex_len_,int vertex_num_, int surfaces_num_, int space_dim_,GLenum representation_) : 
+VectorizedObject(vertex_len_,vertex_num_,surfaces_num_,space_dim_,representation_)
 {
 	
 }

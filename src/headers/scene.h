@@ -13,7 +13,7 @@ class Scene
 	private: 
 		
 	
-	        Window_Class* parent = nullptr;
+	    Window_Class* parent = nullptr;
 		bool ldbgcolliders = false;
 		CollisionEngine sceneCollisionEngine;
 		
@@ -33,14 +33,15 @@ class Scene
 	
 	public:
 	
-		Scene(Window_Class* parent);		 
+		Scene();		 
 		void Render();
+		void SetCollisionHandler(void (*CollisionHandler_)(std::vector<ColliderObject2D*>&, std::vector<int>&, glm::vec2*, float* ) );
 		void LoadObj(VectorizedObject& obj, GLuint designatedprogram);
 		void Prepare();
 		void ProgramUniforms(VectorizedObject* obj);
 		void UnloadObject(VectorizedObject& obj);
 		void Collisions();
-		void DebugColliders();
+		void DebugColliders(Window_Class* parent);
 		void Update();
 		void Animations();
 		void Physics();

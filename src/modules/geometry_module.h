@@ -17,6 +17,7 @@ void GenPolygonCollider(ColliderObject2D *obj, int sides_, bool colored);
 template<typename T>
 void JoinBufferInstances(T* a_, int stridea_,  T* b_, int strideb_, T* c);
 void GenColoredPolygon(VectorizedObject *obj, int sides_, float radius_, float r,float g,float b, float a);
+void GenColorQuad(VectorizedObject& obj, float xa,float ya,float x1,float y1);
 #endif
 
 

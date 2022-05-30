@@ -77,6 +77,7 @@ void Collider2D::Check(Collider2D* collider_, CollisionStatus &status_,  glm::ve
 	//const char* statuses[] =  { "NOT_COLLIDING" , "COLLIDING", "ON_CHECK" , "TO_CHECK"};
 	
 	glm::vec2 hit_direction{0.0,0.0} ;
+	
 	glm::vec2 tmpc1{*xc,*yc}, tmpc2{*(collider_->xc),*(collider_->yc)};
 
 	float a1 = 0  , b1 = 0   ;

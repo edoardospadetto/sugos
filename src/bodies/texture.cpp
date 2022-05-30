@@ -15,10 +15,10 @@
 * desiderchannels are the number of channels, color format GL_RGB or GL_RGBA so on. 
 *
 */
-void Texture::LoadTexture(const std::string& filename,bool flip_, int desiredchannels, GLenum colorformat )
+void Texture::LoadTexture(Window_Class *w, const std::string& filename,bool flip_, int desiredchannels, GLenum colorformat )
 {
 	
-	
+	w->MakeCurrent();
 	glGenTextures(1, &( textureId));
 	glBindTexture(GL_TEXTURE_2D,  textureId);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
@@ -48,10 +48,9 @@ void Texture::LoadTexture(const std::string& filename,bool flip_, int desiredcha
 	
 }
 
-void Texture::LoadTexture(std::string&& filename,bool flip_, int desiredchannels, GLenum colorformat)
+void Texture::LoadTexture(Window_Class *w,std::string&& filename,bool flip_, int desiredchannels, GLenum colorformat)
 {
-	LoadTexture(filename,flip_,desiredchannels,colorformat);
-	glCheckError();
+	LoadTexture(w, filename,flip_,desiredchannels,colorformat);
 }
 
 
@@ -63,6 +62,11 @@ void Texture::RenderTexture()
 	{
 		glBindTexture(GL_TEXTURE_2D, this->textureId);
 		glCheckError();
+	}
+	else
+	{
+		printf("ERROR, invalid textureID\n");
+		throw std::exception();
 	}
 }
 

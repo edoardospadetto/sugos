@@ -1,15 +1,20 @@
 #include "../turtle.h" 
 
+void Scene::SetCollisionHandler(void (*CollisionHandler_)( std::vector<ColliderObject2D*>&, std::vector<int>& , glm::vec2*, float* ) )
+{
 
+	sceneCollisionEngine.SetCollisionHandler(CollisionHandler_);
+
+}
 
 /*
 * Dummy constructor, it performs just a call to OpenGL
 */
 
-Scene::Scene(Window_Class* parent_): parent(parent_) 
+Scene::Scene()
 {
 
-        collidersdebug = new GPUcodes(parent , "./data/debugutils/colliders_debug.gls");
+       
 	glGenBuffers( 1, &VBO );
 	glGenBuffers( 1, &IBO );
 	glGenBuffers( 1, &TBO );
@@ -432,16 +437,20 @@ void Scene::UnloadObject(VectorizedObject& obj)
 		assets[obj.sceneprog][j]->sceneprogidx = j ;
 	}
 
-	for(int i=0; i<assets.size(); i++)
+	/*for(int i=0; i<assets.size(); i++)
 	{
 
 		for (int j =0; j < assets[i].size(); j++ )
 	{
 	
 	}
-
-
 	}
+	*/
+	ColliderObject2D *tmpCollider = dynamic_cast<ColliderObject2D*>(&obj);
+	if(tmpCollider != nullptr) sceneCollisionEngine.UnloadObject(tmpCollider);
+		
+		
+	
 		
 	//TEMP
 	Prepare();
@@ -454,9 +463,9 @@ void Scene::UnloadObject(VectorizedObject& obj)
 
 }
 
-void Scene::DebugColliders()
+void Scene::DebugColliders(Window_Class* parent)
 {
-
+	collidersdebug = new GPUcodes(parent , "./data/debugutils/colliders_debug.gls");
 	collidersdebug->Load("debug_colliders_vertex","debug_colliders_fragment", "debug_colliders");
 	
 	for (auto obj : sceneCollisionEngine.collisionSet )

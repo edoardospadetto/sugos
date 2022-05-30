@@ -65,8 +65,16 @@ y(0.0)
 
 }
 
+void Textbox::SetColor(float r_, float g_,  float b_, float a_ )
+{
+	for (int i=0; i<trow*tcol; i++)
+	{
+		SetLetterColor(i, r_, g_, b_, a_ );
+	}
+}
 
-void Textbox::EnableShader()
+
+void Textbox::SetUpDefaultShader()
 {
 
 	  lEnabledShader=true;
@@ -105,10 +113,10 @@ void Textbox::SetLetterColor(int idx_, float r_, float g_, float b_, float a_ )
 	}
 	
 }
-/*void Textbox::RenderTexture()
+void Textbox::RenderTexture()
 {
 	font->texture->RenderTexture();
-}*/
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -14,8 +14,8 @@ class Texture
 	int tx_width, tx_height; // in pixel
 	GLuint textureId=-1;
 	bool ltexture = false;
-	void LoadTexture(const std::string& filename,bool flip_, int desiredchannels, GLenum colorformat );
-	void LoadTexture(std::string&& filename,bool flip_, int desiredchannels, GLenum colorformat  );
+	void LoadTexture(Window_Class *w,const std::string& filename,bool flip_, int desiredchannels, GLenum colorformat );
+	void LoadTexture(Window_Class *w,std::string&& filename,bool flip_, int desiredchannels, GLenum colorformat  );
 	void RenderTexture();
 	void UnbindTexture();
 

@@ -30,6 +30,8 @@ class GPUcodes
 
 	GPUcodes(Window_Class* parent_, std::string&& path_);
 	GPUcodes(Window_Class* parent_, std::string& path_);
+
+	void SetParentWindow(Window_Class* parent_);
 	std::vector<GLuint> shaders_id;
 
 	void Load(const std::string& name1, const std::string& name2, const std::string& name3  );

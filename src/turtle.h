@@ -34,7 +34,7 @@ enum Graphics {GPU = 0, CPU=1};
 enum Direction { ON_PRESS = 0 , ON_RELEASE = 1, UNDEFINED = -1 };
 enum Polygon {GENERIC =0, SQUARE = 1};
 enum CollisionStatus { NOT_COLLIDING = 0 , COLLIDING = 1, ON_CHECK=2 , TO_CHECK=3};
-
+enum MouseButton {LEFT =1 , WHEEL = 2, RIGHT = 4};
 
 static const SDL_Scancode TIME_OUT = static_cast<SDL_Scancode>(-1);
 
@@ -46,6 +46,7 @@ static const SDL_Scancode TIME_OUT = static_cast<SDL_Scancode>(-1);
 
 //headers 
 #include "./headers/window.h"
+#include "./headers/eventengine.h"
 #include "./headers/gpucodes.h"
 
 #include "./headers/texture.h"
@@ -57,10 +58,12 @@ static const SDL_Scancode TIME_OUT = static_cast<SDL_Scancode>(-1);
 #include "./headers/vectorizedobject.h"
 #include "./headers/objects/instancedobject.h"
 #include "./headers/objects/animatedobject2D.h"
+
 #include "./headers/objects/colliderobject2D.h"
 #include "./headers/objects/physicsobject2D.h"
 #include "./headers/objects/fontobject2D.h"
 #include "./modules/geometry_module.h"
+#include "./modules/collisionhandlingmodule.h"
 
 #include "./headers/collisionengine.h"
 #include "./headers/scene.h"
