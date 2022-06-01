@@ -1,4 +1,4 @@
-# Simple Graphic Toolset
+# Simple Utility for Graphics Oriented Software 
 
 Library based on OpenGL and SDL2.
 
