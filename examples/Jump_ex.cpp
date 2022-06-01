@@ -1,6 +1,4 @@
-
-
-#include "../src/turtle.h"
+#include <turtle.h>
 
 void render();
 
@@ -13,10 +11,10 @@ GLint gVertexPos2DLocation = -1;
 
 
 
-ColliderObject2D BuildPentagon()
+VectorizedObject BuildPentagon()
 {
-
-	ColliderObject2D Pentagon(6,5+1,5,2,GL_TRIANGLES);
+	
+	VectorizedObject Pentagon(6,5+1,5,2,GL_TRIANGLES);
 	
 	GenColoredPolygon(&Pentagon,5,0.3,0.5,1.0,1.0,1.0);
 	
@@ -26,7 +24,6 @@ ColliderObject2D BuildPentagon()
 	
 	Pentagon.SetToOrigin(0);
 	
-	Collider2D GenPolygonCollider(VectorizedObject &Pentagon, bool colored=true);
 	
 	Pentagon.LinkUniformToVariable("CM", 4);
 	
@@ -37,7 +34,7 @@ float angle0 = 0;
 float vii = 0.1;
 float vinst = 0.0;
 bool anim = false;
-void MovePentagon(const Uint8* kb , ColliderObject2D & Pentagon) 
+void MovePentagon(const Uint8* kb , VectorizedObject & Pentagon) 
 {
 
 	
@@ -92,19 +89,20 @@ int main( int argc, char* args[] )
 {
 	
 	// Create Window
-	Window_Class window = Window_Class(60,SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Jumping Shape", 640,640 ); 
-	window.SetMainWindow();
+	EventEngine MainEngine=EventEngine(60);
+	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Jumping Shape", 640,640 ); 
+	MainEngine.HandleWindow(&window);
 	
 	// Shader
-	GPUcodes gpucodes0=GPUcodes(&window,"./shaders/light0attempt.shader");	
+	GPUcodes gpucodes0=GPUcodes(&window,"./src/shaders_/vectorizedobject.shader");	
 	gpucodes0.Load("vecv","vecf", "PositionRotationColor");
 	glClearColor( 0.f, 0.f, 0.f, 1.f );
 	
 	// A polygon will be made of triangles
 	// As many as the sides
 	
-	Scene test = Scene(&window);
-	ColliderObject2D Pentagon = BuildPentagon();
+	Scene test = Scene();
+	VectorizedObject Pentagon = BuildPentagon();
 	test.LoadObj(Pentagon, gpucodes0.glprograms[0]);
 	
 		
@@ -127,6 +125,7 @@ int main( int argc, char* args[] )
 		test.Prepare();
 		test.Update();
 		window.CycleEnd();
+		MainEngine.WindowsEvents();
 	}
 	
 

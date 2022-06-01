@@ -17,8 +17,9 @@ int main( int argc, char* args[] )
 {
 	
 	// Create Window
-	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN ); 
-	
+	EventEngine MainEngine=EventEngine(60);
+	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Vob_ex", 640,640 ); 
+	MainEngine.HandleWindow(&window);
 	
 	// Shader
 	GPUcodes gpucodes0=GPUcodes(&window,"./src/shaders_/vectorizedobject.shader");	
@@ -81,6 +82,7 @@ int main( int argc, char* args[] )
 		test.Prepare();
 		test.Update();
 		window.CycleEnd();
+		MainEngine.WindowsEvents();
 	}
 	
 

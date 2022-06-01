@@ -58,11 +58,11 @@ void UpdatePhys(float* pos, float* vel )
 
 int main( int argc, char* args[] )
 {
-	
+	EventEngine MainEngine=EventEngine(60);
 	Window_Class window = Window_Class(60,SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Instanced Rendering", 620,620 ); 
 	window.SetMainWindow();
 	
-	GPUcodes gpumodule=GPUcodes(&window,"./shaders/instanced.shader");	
+	GPUcodes gpumodule=GPUcodes(&window,"./src/shaders_/instanced.shader");	
 
 	gpumodule.Load("instancedv","instancedf", "shader");
 	glClearColor( 0.f, 0.f, 0.f, 1.f );

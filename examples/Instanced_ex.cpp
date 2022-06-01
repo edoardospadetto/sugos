@@ -17,12 +17,13 @@ int main( int argc, char* args[] )
 {
 	
 	// Create Window
-	Window_Class window = Window_Class(60,SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Name", 620,620 ); 
-	window.SetMainWindow();
+	EventEngine MainEngine=EventEngine(60);
+	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Name", 620,620 ); 
+	MainEngine.HandleWindow(&window);
 	
 	// Shader
 	//GPUcodes gpucodes0=GPUcodes(&window,"./shaders/vectorizedobject.shader");	
-	GPUcodes gpucodes0=GPUcodes(&window,"./shaders/instanced.shader");	
+	GPUcodes gpucodes0=GPUcodes(&window,"./src/shaders_/instanced.shader");	
 
 	//gpucodes0.Load("vecv","vecf", "PositionRotationColor");
 	gpucodes0.Load("instancedv","instancedf", "shader");
@@ -82,6 +83,7 @@ int main( int argc, char* args[] )
 		test.Prepare();
 		test.Update();
 		window.CycleEnd();
+		MainEngine.WindowsEvents();
 	}
 	
 
