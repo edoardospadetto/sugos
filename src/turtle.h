@@ -1,4 +1,3 @@
-
 // STD C++ LIB
 #include <sstream>
 #include <vector>
@@ -27,46 +26,32 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "include/enums.h"
 
+#include "./modules_/debugmisc_module.h"
 
-// enum defs
-enum Graphics {GPU = 0, CPU=1};
-enum Direction { ON_PRESS = 0 , ON_RELEASE = 1, UNDEFINED = -1 };
-enum Polygon {GENERIC =0, SQUARE = 1};
-enum CollisionStatus { NOT_COLLIDING = 0 , COLLIDING = 1, ON_CHECK=2 , TO_CHECK=3};
-enum MouseButton {LEFT =1 , WHEEL = 2, RIGHT = 4};
+#include "./context_/window.h"
+#include "./context_/eventengine.h"
+#include "./context_/gpucodes.h"
 
-static const SDL_Scancode TIME_OUT = static_cast<SDL_Scancode>(-1);
+#include "./attributes_/texture.h"
+#include "./attributes_/pngtablefont.h"
 
-// modules 
+#include "./attributes_/collider.h"
+#include "./attributes_/state.h"
+#include "./engines_/stateengine.h"
+#include "./objects_/vectorizedobject.h"
+#include "./objects_/instancedobject.h"
+#include "./objects_/animatedobject2D.h"
 
-#include "./modules/debugmisc_module.h"
+#include "./objects_/colliderobject2D.h"
+#include "./objects_/physicsobject2D.h"
+#include "./objects_/fontobject2D.h"
+#include "./modules_/geometry_module.h"
+#include "./modules_/collisionhandlingmodule.h"
 
-
-
-//headers 
-#include "./headers/window.h"
-#include "./headers/eventengine.h"
-#include "./headers/gpucodes.h"
-
-#include "./headers/texture.h"
-#include "./modules/pngtablefont.h"
-
-#include "./headers/collider.h"
-#include "./headers/state.h"
-#include "./headers/stateengine.h"
-#include "./headers/vectorizedobject.h"
-#include "./headers/objects/instancedobject.h"
-#include "./headers/objects/animatedobject2D.h"
-
-#include "./headers/objects/colliderobject2D.h"
-#include "./headers/objects/physicsobject2D.h"
-#include "./headers/objects/fontobject2D.h"
-#include "./modules/geometry_module.h"
-#include "./modules/collisionhandlingmodule.h"
-
-#include "./headers/collisionengine.h"
-#include "./headers/scene.h"
+#include "./engines_/collisionengine.h"
+#include "./context_/scene.h"
 
 
 

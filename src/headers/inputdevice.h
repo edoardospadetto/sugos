@@ -1,6 +1,0 @@
-class InputDevices
-{
-
-
-
-}

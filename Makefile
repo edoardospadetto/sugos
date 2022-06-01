@@ -1,51 +1,52 @@
+#Supreme Utility for Graphics Overpowered Software
+#Simple Utility for Graphics Oriented Software
+
 CC = g++
 XT = cpp
-EXAMPLE = turtleengine
-TDIR = Engine
 X = app
 
 
-SRCPATH=src/bodies/
-SRCS=$(shell find src -type f -iname '*.cpp' | cut -d'/' -f3- )
-FILES=$(foreach x, $(basename $(SRCS)), $(x).o)
-OBJECTS=$(patsubst %, build/%, $(FILES))
-SOURCES=$(patsubst %, src/bodies/%.cpp, $(SRCS))
-
-TARGET = libturtle2d
 DEFS = -D DEBUG -ggdb3  -Wall
+
+TARGET = sugos
+ 
+
+
 LIBS = -Bstatic -w -lGL -lGLU -lGLEW -lSDL2 -lpthread -lSDL2_image
-#OBJ_NAME specifies the name of our exectuable
-OBJ_NAME = run
+SRC_DIR = src/
+OBJ_DIR = build/
+SRCS = $(wildcard $(SRC_DIR)*/*.cpp)
+OBJS = $(patsubst $(SRC_DIR)%.cpp,$(OBJ_DIR)%.o,$(SRCS))
 
 
 
+foo: dirs $(OBJS)
 
-example: dirs
+
+%_ex:
+	$(CC) -c $(DEFS) ./examples/$@.cpp $(LIBS) -I ./src/ -o ./build/$@.o 
+	$(CC)  $(DEFS)  ./build/$@.o  $(TARGET).a $(LIBS) -o $@.$(X) 
 	
-	#CC=x86_64-w64-mingw32-g++
-	#X=.exe
+lib: dirs $(OBJS)
+	ar rcs  $(TARGET).a $(OBJS)
+
+
+
+
 	
-	$(CC) -c $(DEFS) $(TDIR)/$(EXAMPLE).$(XT) $(LIBS) -I ./src/  -o ./build/example.o 
-	$(CC)  $(DEFS)  ./build/example.o libturtle2d.a $(LIBS)   -o $(EXAMPLE).$(X) 
 
-
-
-
-lib: clean dirs $(FILES)
-	ar rcs  $(TARGET).a $(OBJECTS)
- 	
-lib0:	
-	ar rcs  $(TARGET).a $(OBJECTS)
-
-%.o:
-	$(CC) -c $(CFLAGS) $(DEFS)  $(SRCPATH)$(basename $@).cpp -o ./build/$@ 2>err
-	
+$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
+	echo $@
+	$(CC) $(CFLAGS) $(DEFS) $(CPPFLAGS) -c $< -o ./$@
 
 
 dirs:	
-	mkdir -p build
-	mkdir -p build/objects
-	mkdir -p build/modules
+	@mkdir -p build
+	@mkdir -p build/objects_
+	@mkdir -p build/modules_
+	@mkdir -p build/context_
+	@mkdir -p build/attributes_
+	@mkdir -p build/engines_
 	
 
 clean:
