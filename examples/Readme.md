@@ -1,6 +1,6 @@
 ## Examples
 
-```diff
+````diff
 Puch_ex V
 ```
 
