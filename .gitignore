@@ -1,5 +1,5 @@
 /*.app
-/.o
-/.a
+/*.o
+/*.a
 /build
 /etc/tmp
