@@ -18,7 +18,7 @@ int main( int argc, char* args[] )
 	
 	// Create Window
 	EventEngine MainEngine=EventEngine(60);
-	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Name", 620,620 ); 
+	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Instanced", 620,620 ); 
 	MainEngine.HandleWindow(&window);
 	
 	// Shader
@@ -45,7 +45,7 @@ int main( int argc, char* args[] )
 	
 	//Pentagon.LinkUniformToVariable("CM", 4);
 	
-	Scene test = Scene(&window);
+	Scene test = Scene();
 	test.LoadObj(Pentagon, gpucodes0.glprograms[0]);
 	
 		

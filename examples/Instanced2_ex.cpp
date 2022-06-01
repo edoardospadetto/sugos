@@ -59,8 +59,8 @@ void UpdatePhys(float* pos, float* vel )
 int main( int argc, char* args[] )
 {
 	EventEngine MainEngine=EventEngine(60);
-	Window_Class window = Window_Class(60,SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Instanced Rendering", 620,620 ); 
-	window.SetMainWindow();
+	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Instanced Rendering", 620,620 ); 
+	MainEngine.HandleWindow(&window);
 	
 	GPUcodes gpumodule=GPUcodes(&window,"./src/shaders_/instanced.shader");	
 
@@ -83,7 +83,7 @@ int main( int argc, char* args[] )
 	Triangle.SetToOrigin(0);
 	GenOffset(&Triangle, N, 2);	
 	
-	Scene test = Scene(&window);
+	Scene test = Scene();
 	
 	test.LoadObj(Triangle, gpumodule.glprograms[0]);
 		
@@ -103,6 +103,7 @@ int main( int argc, char* args[] )
 		//GenOffset(&Triangle, 20, 2);
 		
 		window.CycleEnd();
+		MainEngine.WindowsEvents();
 	}
 	
 
