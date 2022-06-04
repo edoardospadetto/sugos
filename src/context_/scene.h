@@ -11,17 +11,21 @@ class GPUcodes;
 #include "../engines_/collisionengine.h"
 class VectorizedObject2D;
 class ColliderObject2D;
-
+class InstancedObject;
 class Scene
 {
 	private: 
-		
 	
+	
+		void BufferVBO(VectorizedObject* obj,uint& tmpvbo, uint& vertxlen, uint& offsetvbo, uint& offsetvbover);
+		void BufferTBO(InstancedObject* obj,uint& tmptbo, uint& tbolen, uint& offsettbo);
+		void BufferIBO(VectorizedObject* obj, uint& tmpibo, uint& offsetibo);
 	        Window_Class* parent = nullptr;
 		bool ldbgcolliders = false;
 		CollisionEngine sceneCollisionEngine;
 		
 		GLuint VBO = 0;
+		
 		GLuint IBO = 0;
 		//Instanced
 		GLuint TBO = 0;
@@ -35,11 +39,13 @@ class Scene
 	
 	public:
 	
-		Scene();		 
+		Scene();	
+		void ReBuffer();	 
 		void Render();
 		void SetCollisionHandler(void (*CollisionHandler_)(std::vector<ColliderObject2D*>&, std::vector<int>&, glm::vec2*, float* ) );
 		void LoadObj(VectorizedObject& obj, GLuint designatedprogram);
 		void Prepare();
+		void PrepareAdd();
 		void ProgramUniforms(VectorizedObject* obj);
 		void UnloadObject(VectorizedObject& obj);
 		void Collisions();
@@ -47,6 +53,8 @@ class Scene
 		void Update();
 		void Animations();
 		void Physics();
+		
+		
 		~Scene();
 };
 // TO DO

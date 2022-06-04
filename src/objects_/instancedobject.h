@@ -16,6 +16,9 @@ class  InstancedObject  : virtual public VectorizedObject
 	public:
 	
 		float* instance_buffer = NULL;
+		void ModTB(int idx, float val);
+		bool lmodtb;
+		
 		std::vector<std::string> instanceattributenames;
 		std::vector<int> instanceattributesizes;
 		std::vector<int> instanceattributelocationsprogram;

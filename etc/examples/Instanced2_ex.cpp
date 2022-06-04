@@ -96,10 +96,11 @@ int main( int argc, char* args[] )
 	{
 		window.CycleStart();
 
-
+		Triangle.lmodtb=true;
 		UpdatePhys(Triangle.instance_buffer, velocities);
 		test.Update();
 		test.Prepare();
+		//test.ReBuffer();
 		//GenOffset(&Triangle, 20, 2);
 		
 		window.CycleEnd();

@@ -6,12 +6,8 @@ XT = cpp
 X = app
 
 
-DEFS = -D DEBUG -ggdb3  -Wall
-
-TARGET = sugos
- 
-
-
+DEFS = -D DEBUG -ggdb3  -Wall #-D SHOWFPS
+TARGET = libsugos
 LIBS = -Bstatic -w -lGL -lGLU -lGLEW -lSDL2 -lpthread -lSDL2_image
 SRC_DIR = src/
 OBJ_DIR = build/
@@ -19,21 +15,18 @@ SRCS = $(wildcard $(SRC_DIR)*/*.cpp)
 OBJS = $(patsubst $(SRC_DIR)%.cpp,$(OBJ_DIR)%.o,$(SRCS))
 
 
-
-foo: dirs $(OBJS)
-
-
-%_ex:
-	$(CC) -c $(DEFS) ./examples/$@.cpp $(LIBS) -I ./src/ -o ./build/$@.o 
-	$(CC)  $(DEFS)  ./build/$@.o  $(TARGET).a $(LIBS) -o $@.$(X) 
-	
 lib: dirs $(OBJS)
 	ar rcs  $(TARGET).a $(OBJS)
 
 
 
+%_ex:
+	$(CC) -c $(DEFS) ./etc/examples/$@.cpp $(LIBS) -I ./src/ -o ./build/$@.o 
+	$(CC)  $(DEFS)  ./build/$@.o  $(TARGET).a $(LIBS) -o $@.$(X) 
 
-	
+%_tool:
+	$(CC) -c $(DEFS) ./etc/tools/$@/$@.cpp $(LIBS) -I ./src/ -o ./build/$@.o 
+	$(CC)  $(DEFS)  ./build/$@.o  $(TARGET).a $(LIBS) -o $@.$(X) 	
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	echo $@
@@ -50,8 +43,8 @@ dirs:
 	
 
 clean:
-	rm -rf *.app
-	rm -rf build
-	rm -rf 
+	@rm -rf *.app
+	@rm -rf build
+	@rm -rf 
 	
 

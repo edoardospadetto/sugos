@@ -266,7 +266,7 @@ void Scene::Update()
 	this->Collisions();
 	
 	
-
+	//this->ReBuffer();
 	//Render
 	this->Render();
 }
@@ -359,60 +359,28 @@ void Scene::Prepare()
 	{
 	for(int j=0; j< assets[i].size(); j++)
 	{
-		assets[i][j]->GetBuffersInfo(tmpvbo, tmpibo, vertxlen);	
+		assets[i][j]->GetBuffersInfo(tmpvbo, tmpibo, vertxlen);
 	
-		glBindBuffer( GL_ARRAY_BUFFER, VBO );
-		glBufferSubData( GL_ARRAY_BUFFER, offsetvbo*sizeof(GLfloat), tmpvbo*vertxlen*sizeof(GLfloat), assets[i][j]->vertex_buffer );
-		
-		error = glGetError();
-		
-		if(error!=GL_NO_ERROR) 
-		{
-			printf("ERROR: Scene Prepare, Vertex Buffer Filling %s asset program %d  index %d\n", gl_error_string(error), i, j);
-			throw std::exception();
-		}
-		
-
-		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO );
-		glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, offsetibo*sizeof(GLuint), tmpibo*sizeof(GLuint), assets[i][j]->index_buffer );
-
+		this->BufferVBO(assets[i][j],tmpvbo, vertxlen, offsetvbo,  offsetvbover);
 		
 		offsetvbo+=tmpvbo*vertxlen;
-		offsetibo+=tmpibo;
 		offsetvbover+=tmpvbo;
+
+		this->BufferIBO(assets[i][j], tmpibo, offsetibo);
 		
-		error = glGetError();
-		
-		if(error!=GL_NO_ERROR) 
-		{
-			printf("ERROR: Scene::Prepare-IBO filling: %s | AssetsProgram %d | AssetsProgramIndex %d\n", gl_error_string(error), i, j);
-			throw std::exception();
-		}
+		offsetibo+=tmpibo;
 		
 		InstancedObject* instancedTmp = dynamic_cast<InstancedObject*>(assets[i][j]);
 		if(instancedTmp != nullptr)
 		{
 			instancedTmp->InstancedBufferInfo(tmptbo, tbolen);
-			glBindBuffer( GL_ARRAY_BUFFER, TBO );
-			glCheckError();
-			glBufferSubData( GL_ARRAY_BUFFER, 
-					  offsettbo*sizeof(GLfloat), 
-					  tmptbo*tbolen*sizeof(GLfloat), 
-					  instancedTmp->instance_buffer );
-					  
-		
-			error = glGetError();
-		
-			if(error!=GL_NO_ERROR) 
-			{
-				printf("ERROR: Scene::Prepare-TBO filling: %s | AssetsProgram %d | AssetsProgramIndex %d\n",
-							 gl_error_string(error), i, j);
-				throw std::exception();
-			}
+			this->BufferTBO( instancedTmp, tmptbo, tbolen, offsettbo);
+			//offsettbo+=tmptbo*tbolen; 	
+			// ?? Never Texted, this comment can be removed when two particle system are present at once
 		
 		}
-	
 		
+	
 		
 		
 	}
@@ -450,15 +418,7 @@ void Scene::UnloadObject(VectorizedObject& obj)
 		assets[obj.sceneprog][j]->sceneprogidx = j ;
 	}
 
-	/*for(int i=0; i<assets.size(); i++)
-	{
 
-		for (int j =0; j < assets[i].size(); j++ )
-	{
-	
-	}
-	}
-	*/
 	ColliderObject2D *tmpCollider = dynamic_cast<ColliderObject2D*>(&obj);
 	if(tmpCollider != nullptr) sceneCollisionEngine.UnloadObject(tmpCollider);
 		
@@ -490,9 +450,105 @@ void Scene::DebugColliders(Window_Class* parent)
 }
 
 
+void Scene::ReBuffer()
+{
+
+	uint tmpvbo=0, tmpibo=0, vertxlen=0;
+	uint offsetvbo=0, offsetibo=0, offsetvbover=0;
+	uint offsettbo=0, tmptbo=0, tbolen=0;
+
+	for(int i=0; i< assets.size(); i++)
+	{
+	for(int j=0; j< assets[i].size(); j++)
+	{
+		
+		assets[i][j]->GetBuffersInfo(tmpvbo, tmpibo, vertxlen);
+		if(assets[i][j]->lmodvb) this->BufferVBO(assets[i][j],tmpvbo, vertxlen, offsetvbo,  offsetvbover);
+		offsetvbo+=tmpvbo*vertxlen;
+		offsetvbover+=tmpvbo;
+		if(assets[i][j]->lmodib) this->BufferIBO(assets[i][j], tmpibo, offsetibo);
+		
+		offsetibo+=tmpibo;
+		
+		InstancedObject* instancedTmp = dynamic_cast<InstancedObject*>(assets[i][j]);
+		if(instancedTmp != nullptr)
+		{
+			instancedTmp->InstancedBufferInfo(tmptbo, tbolen);
+			if(instancedTmp->lmodtb) this->BufferTBO( instancedTmp, tmptbo, tbolen, offsettbo);
+			//offsettbo+=tmptbo*tbolen; 	
+			// ?? Never Texted, this comment can be removed when two particle system are present at once
+		}
+	
+		
+		
+		
+	}
+	}
+
+}
+
+
 Scene::~Scene()
 {
 	if(ldbgcolliders) delete collidersdebug;
 }
 
+void Scene::BufferVBO(VectorizedObject* obj,uint& tmpvbo, uint& vertxlen, uint& offsetvbo, uint& offsetvbover)
+{
+		
+	glBindBuffer( GL_ARRAY_BUFFER, VBO );
+	glCheckError();
+	glBufferSubData( GL_ARRAY_BUFFER, offsetvbo*sizeof(GLfloat), tmpvbo*vertxlen*sizeof(GLfloat), obj->vertex_buffer );
+
+
+	GLenum error = glGetError();
+
+	if(error!=GL_NO_ERROR) 
+	{
+	printf("ERROR: Scene Prepare, Vertex Buffer Filling %s ", gl_error_string(error));
+	throw std::exception();
+	}
+	
+
+}
+
+void Scene::BufferIBO(VectorizedObject* obj, uint& tmpibo, uint& offsetibo)
+{
+	int i=0,j=0;   
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO );
+	glCheckError();
+	glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, offsetibo*sizeof(GLuint), tmpibo*sizeof(GLuint), obj->index_buffer );
+      
+
+	GLenum error = glGetError();
+	
+	if(error!=GL_NO_ERROR) 
+	{
+		printf("ERROR: Scene::Prepare-IBO filling: %s | AssetsProgram %d | AssetsProgramIndex %d\n", gl_error_string(error), i, j);
+		throw std::exception();
+	}
+
+}
+
+void Scene::BufferTBO(InstancedObject* obj,uint& tmptbo, uint& tbolen, uint& offsettbo)
+{
+        int i=0,j=0;    
+	glBindBuffer( GL_ARRAY_BUFFER, TBO );
+	glCheckError();
+	glBufferSubData( GL_ARRAY_BUFFER, 
+			  offsettbo*sizeof(GLfloat), 
+			  tmptbo*tbolen*sizeof(GLfloat), 
+			  obj->instance_buffer );
+			  
+
+	GLenum error = glGetError();
+
+	if(error!=GL_NO_ERROR) 
+	{
+		printf("ERROR: Scene::Prepare-TBO filling: %s | AssetsProgram %d | AssetsProgramIndex %d\n",
+		gl_error_string(error), i, j);
+		throw std::exception();
+	}
+
+}
 

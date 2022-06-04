@@ -36,6 +36,12 @@ class VectorizedObject
 	float*				vertex_buffer = NULL;
 	int* 				index_buffer = NULL;
 	
+	void ModIB(int idx, int val);
+	void ModVB(int idx, float val);
+	
+	bool lmodib;
+	bool lmodvb;
+	
 	std::vector<std::string>	buffernames = {};
 	std::vector<int> 		buffersizes = {};
 	std::vector<int> 		bufferformat = {};

@@ -44,8 +44,16 @@ void RecursiveCout(T t, Args... args)
 
 }
 
-
-
+template<typename T>
+void add_to_array(T *&array,T value) // add & to make "array" a reference
+{
+    int size = sizeof(array)/ sizeof(T);
+    T *newArr = new T[size + 1];
+    memcpy(newArr, array, size * sizeof(T));
+    delete[] array;
+    array = newArr;
+    array[size] = value;
+}
 
 
 template<typename... Args>

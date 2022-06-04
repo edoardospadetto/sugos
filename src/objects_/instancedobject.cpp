@@ -111,4 +111,12 @@ void InstancedObject::Render(GLuint VBO, GLuint IBO, GLuint TBO, GLuint& offsetv
 		glCheckError();
 
 }
+/*
+void ModTB(int idx, float val)
+{
+	lmodtb=true;
+	this->instance_buffer[idx]=val;
 
+}
+
+*/

@@ -272,6 +272,16 @@ void VectorizedObject::RenderProgramUniforms()
 
 }
 
+void ModIB(int idx, int val)
+{
+
+}
+
+void ModVB(int idx, float val)
+{
+
+}
+
 void  VectorizedObject::RenderTexture()
 {
 

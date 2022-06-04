@@ -13,23 +13,24 @@ int main()
 {
  //std::string font0 = "!\"#$%_'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_'abcdefghiklmnopqrstuvwxyz{|}~ç€£&à";
  //"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,!?"
-  Window_Class menu = Window_Class(60,SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Editor", 640,320 ); 
-  menu.SetMainWindow();
+ EventEngine MainEngine=EventEngine(60);
+  Window_Class menu = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Editor", 640,320 ); 
+  MainEngine.HandleWindow(&menu);
   
   std::string str1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,!?";
-  GPUcodes gpucodes0=GPUcodes("./shaders/font.shader");	
+  GPUcodes gpucodes0=GPUcodes(&menu,"./src/shaders_/font.shader");	
   gpucodes0.Load("fontV","fontF", "font");
   
   Texture fontTexture = Texture();
  
-  fontTexture.LoadTexture("./data/fonts/font.png",true,4, GL_RGBA);
+  fontTexture.LoadTexture(&menu,"./etc/fonts/font.png",true,4, GL_RGBA);
   dbglog(fontTexture.tx_width, fontTexture.tx_height );
   //BitmapFont pixelFont =  BitmapFont("ABCD", 2, 2, 16, 16, &fontTexture);
   BitmapFont pixelFont =  BitmapFont("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,!?", 5, 8, 8, 10, &fontTexture);
   
   
   Textbox tbtext = Textbox("LIL RUSSIAN", &pixelFont,1,11,0.1,0.2);
-  tbtext.EnableShader();
+  tbtext.SetUpDefaultShader();
   tbtext.SetCoords(-0.7,-0.2,0.0,0.3);
   tbtext.SetLetterColor(2,1.0,0.0,0.0,1.0);
   tbtext.SetLetterColor(3,0.0,1.0,0.0,1.0);
@@ -52,6 +53,7 @@ int main()
   	
 	
 	menu.CycleEnd();
+	MainEngine.WindowsEvents();
   }
   menu.Close();
   
