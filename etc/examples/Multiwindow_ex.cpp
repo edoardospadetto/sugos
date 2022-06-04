@@ -7,8 +7,6 @@
 #include <turtle.h>
 
 
-//Problems multiwindow.
-//Focus textbox single window
 int main()
 {
  
@@ -56,7 +54,7 @@ int main()
   tbtext4.SetLetterColor(4,0.0,1.0,1.0,1.0);
   
   Textbox tbtext2 = Textbox("IS     U     G     O     SUPER", &pixelFont2,5,6,0.1,0.2);
-  tbtext2.SetUpDefaultShader();
+  tbtext2.SetUpDefaultShader(); //Make control for warning
   tbtext2.SetCoords(0.3,-0.5,0.0,0.0);
   tbtext2.SetLetterColor(0,1.0,0.0,0.0,1.0);
   tbtext2.SetLetterColor(1,0.0,1.0,0.0,1.0);
