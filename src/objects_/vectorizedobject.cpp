@@ -281,10 +281,15 @@ void ModVB(int idx, float val)
 {
 
 }
-
-void  VectorizedObject::RenderTexture()
+/*
+virtual void  VectorizedObject::RenderTexture()
 {
 
 	//printf("Error virtual method\n");
 }
 
+virtual void  VectorizedObject::UnbindTexture()
+{
+
+	//printf("Error virtual method\n");
+}*/

@@ -21,31 +21,38 @@
 #include <vector>
 #include <SDL2/SDL.h>
 class State;
-class Window_Class;
+class EventEngine;
 class AnimatedObject2D;
 
 class StateEngine
 {	
 	private:
 	
-	unsigned int frameInit;
+		unsigned int frameInit;
+		bool lkeypress=false;
+		int triggerkeycode;
 	
 	public:
 	
-	SDL_Scancode animGen;
-	Window_Class *window=nullptr;
-	unsigned int* clock;
-	int* State_duration;
-	std::vector<State*> statesNetwork;
-	State* currentState= nullptr;
-	StateEngine(Window_Class *window);
-	void AddState(State *state_); 
-	void SetStateNetwork();
-	void AnimateState(bool &wentTimeOut);
-	void ElaborateStateChanges();
-	void UpdateVBatFrame(AnimatedObject2D* animObj) ;
-	void ChangeState(bool &wentTimeOut);
-	void IsIdle(int i);
+		SDL_Scancode animGen;
+		EventEngine *eventengine=nullptr;
+		//Window_Class *window=nullptr;
+		unsigned int* clock;
+		int* State_duration;
+		std::vector<State*> statesNetwork;
+		State* currentState= nullptr;
+		StateEngine(EventEngine *eventengine_);
+		void AddState(State *state_); 
+		void SetStateNetwork();
+		bool TriggerFrameChangeOnKeyPress(int keycode_);
+		bool CheckFrameUpdate();
+		bool NextFrame();
+		
+		void ElaborateStateChanges();
+		void UpdateVBatFrame(AnimatedObject2D* animObj) ;
+		void ChangeState(bool &wentTimeOut);
+		void IsIdle(int i);
+
 	
 	 
 	

@@ -1,7 +1,7 @@
 #include "./stateengine.h"
 
 #include "../modules_/debugmisc_module.h"
-#include "../context_/window.h"
+#include "../context_/eventengine.h"
 #include "../attributes_/state.h"
 #include "../objects_/animatedobject2D.h"
 /*
@@ -10,7 +10,7 @@
 *
 */
 
-StateEngine::StateEngine(Window_Class *window_):window(window_)
+StateEngine::StateEngine(EventEngine *eventengine_): eventengine(eventengine_)
 {
 }
 
@@ -33,30 +33,99 @@ void StateEngine::UpdateVBatFrame(AnimatedObject2D* animObj) //count from 0
 	}
 }
 
-void StateEngine::AnimateState(bool &wentTimeOut)
+/*
+*  Check if the frame of the animation has to be update
+*  returns wheter the animation has been restarted because reaching
+*  the last frame.
+*/
+
+
+bool StateEngine::CheckFrameUpdate()
 {	
 
-	if (window == nullptr) printf("Error, clock not binded global context");
-	int timeNow = window->GetTime();
-	
-	if (timeNow-frameInit > currentState->GetCurrentFrameDuration())
+	if (eventengine == nullptr) printf("Error, clock not binded global context");
+	int timeNow = eventengine->GetTime();
+	if(lkeypress) 
 	{
-		++currentState->currentFrame; 
-	
-		wentTimeOut = ( currentState->currentFrame >= currentState->frameNum );
-		if(wentTimeOut)
-		{
-			currentState->currentFrame=0;
-			
-			
-		}
-		int tmp= currentState->currentFrame;
-		currentState->x=currentState->row[tmp]; 
-		currentState->y=currentState->col[tmp]; 
-		frameInit = timeNow;
-	}	
+		//std::cout << "info  "  << (eventengine->GetState(triggerkeycode)) << " \n";
+		return (eventengine->GetState(triggerkeycode) == PRESSED ) ;
+	}
+	else 
+	{
+		return ( timeNow-frameInit > currentState->GetCurrentFrameDuration() );
+	}
+	//if (time_above_threshold)
+	//{
+	//this->NextFrame(wentTimeOut, timeNow);
+	//}	
 			
 
+}
+
+
+/*
+*  Override time triggers of frame update with a keycode
+*/
+
+
+bool StateEngine::TriggerFrameChangeOnKeyPress(int keycode_)
+{
+	lkeypress = true;
+	triggerkeycode = keycode_;
+	eventengine->TrackButton(keycode_);
+}
+
+/*
+*  Updates the frame to the subsequent.
+*/
+
+bool StateEngine::NextFrame() // TRUE if animation RESTARTED
+{
+
+	++currentState->currentFrame; 
+	
+	bool restartedAnimation = ( currentState->currentFrame >= currentState->frameNum );
+	if(restartedAnimation)
+	{
+		currentState->currentFrame=0;	
+	}
+	int tmp= currentState->currentFrame;
+	currentState->x=currentState->row[tmp]; 
+	currentState->y=currentState->col[tmp]; 
+	frameInit = eventengine->GetTime(); // in principle should be the one from above, but should be fine 
+	
+	return restartedAnimation;
+}
+
+/*
+*  Change animation.
+*  Input is the time trigger, if the animation ended it can proceed with another animation
+*  if specified, buttons triggger have to be specified unsing the interface
+*/
+
+void StateEngine::ChangeState(bool &wentTimeOut)
+{
+	
+	
+	for (int i=0; i<currentState->edges.size() ; i++)
+	{
+		SDL_Scancode key  = currentState->edges[i];
+		
+
+		if (key == TIME_OUT )
+		{
+			if (wentTimeOut) currentState = currentState->subsequents[i];
+					
+		}
+		else if(eventengine->keyboard[key] + int(currentState->direction[i]) == 1 )
+		{
+			//std::cout << window->kb[key] << "\n" ;
+			currentState = currentState->subsequents[i];
+		}
+		
+	}
+	
+	
 }
 
 void StateEngine::AddState(State *state_)
@@ -69,26 +138,4 @@ void StateEngine::AddState(State *state_)
 }
 
 
-void StateEngine::ChangeState(bool &wentTimeOut)
-{
-	
-	
-	for (int i=0; i<currentState->edges.size() ; i++)
-	{
-		SDL_Scancode key  = currentState->edges[i];
-		
-		if (key == TIME_OUT )
-		{
-			if (wentTimeOut) currentState = currentState->subsequents[i];
-					
-		}
-		else if(window->kb[key] + int(currentState->direction[i]) == 1 )
-		{
-			//std::cout << window->kb[key] << "\n" ;
-			currentState = currentState->subsequents[i];
-		}
-		
-	}
-	
-	
-}
+

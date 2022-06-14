@@ -18,22 +18,6 @@ Window_Class::Window_Class( Uint32 flags, std::string && name, int width_, int h
 WIDTH(width_), HEIGHT(height_)
 {
 
-	if (SDL_WasInit(SDL_INIT_VIDEO) == 0) 
-	{
-	//Initialize SDL
-		if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-		{
-			printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
-			
-		}
-	}
-	
-	//Use OpenGL 3.1 core
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
-	kb = SDL_GetKeyboardState(NULL);
-	
 	
 	//Create window
 	gWindow = SDL_CreateWindow( name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, flags );

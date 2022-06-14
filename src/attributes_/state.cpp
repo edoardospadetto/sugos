@@ -108,6 +108,12 @@ State::State(const std::string& confFile, Texture* texture_)
 	dbglog("        ----------------");
 }
 
+Texture* State::GetTexture()
+{
+	return stateTexture;
+}
+
+
 /*
 * Constructor of a state with one single frame, no links.
 * Thought for fontobject2D. Also bitmat fonts have spritesheets.

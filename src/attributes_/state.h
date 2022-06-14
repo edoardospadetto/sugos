@@ -61,7 +61,8 @@ class State
 	void Parser(const std::string& token_, int namedatainfo_[] );
 	void UpdateFrame(AnimatedObject2D* animObj);
 	void ConnectTo(State* p_stat, SDL_Scancode key, Direction whichdirection);
-	void ConnectOnTimeOutTo(State* p_stat);	
+	void ConnectOnTimeOutTo(State* p_stat);
+	Texture* GetTexture();
 	unsigned int GetCurrentFrameDuration();
 	std::vector<State*> subsequents;
 	std::vector<SDL_Scancode> edges;

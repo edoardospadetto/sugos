@@ -49,7 +49,7 @@ class Window_Class
 
          public :	
 		  bool mouseInside=false;
-		  const Uint8* kb;
+		 
 		  Window_Class(Uint32 flags,  std::string && name);
 		  Window_Class(Uint32 flags, std::string && name, int width_, int height_);
 		  ~Window_Class();

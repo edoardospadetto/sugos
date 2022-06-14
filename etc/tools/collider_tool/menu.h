@@ -10,7 +10,7 @@ class Menu
 	int idx=0;
 	const Uint8* kb;
 	Menu(Window_Class* w_,Scene* s_);
-	void MenuLogic();
+	int MenuLogic();
 	~Menu();
 	
 };
@@ -28,8 +28,8 @@ Menu::Menu(Window_Class* w_,Scene* s_) : s(s_), w(w_)
 	pixelFont =  new BitmapFont("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,!?", 5, 8, 8, 10, fontTexture); // check if pointer is dead
 
 	tbtext.push_back(new Textbox("EDITOR MODE", pixelFont,1,11,0.05,0.1));
-	
 	tbtext.push_back(new Textbox("GAME MODE", pixelFont,1,9,0.05,0.1));
+	tbtext.push_back(new Textbox("CLOSE", pixelFont,1,5,0.05,0.1));
 
 
 	std::cout <<'loaded\n' ;
@@ -49,7 +49,7 @@ Menu::Menu(Window_Class* w_,Scene* s_) : s(s_), w(w_)
 
 }
 
-void Menu::MenuLogic( )
+int Menu::MenuLogic( )
 {	
 	 kb = SDL_GetKeyboardState(NULL);
 	if(kb[SDL_SCANCODE_UP]!=upstate | kb[SDL_SCANCODE_DOWN]!=downstate|
@@ -84,6 +84,7 @@ void Menu::MenuLogic( )
   		tbtext[idx]->SetColor(1.0,1.0,0.0,1.0);
   		
   	}
+  	return idx;
 }
 
 Menu::~Menu()

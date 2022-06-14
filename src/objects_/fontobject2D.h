@@ -19,7 +19,8 @@ class  Textbox : public VectorizedObject
 		float x,y;
 		float tdimx, tdimy;
 		BitmapFont* font;
-		void RenderTexture() ;
+		void RenderTexture();
+		void UnbindTexture();
 		
 		
 	

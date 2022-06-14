@@ -19,7 +19,6 @@ void CollisionEngine::UpdateDbgColliders()
 		obj->collider->colliderRep->SetUniform("c",2,*(obj->collider->angle));
 	}	
 
-
 }
 
 //=======================================================================================

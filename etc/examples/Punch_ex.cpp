@@ -21,7 +21,7 @@ int main( int argc, char* args[] )
 	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN,"Punch_ex", 640,320 ); 
 	MainEngine.HandleWindow(&window);
 	 
-	window.SetMainWindow();
+	
 	Texture monkSpriteSheet;
 	monkSpriteSheet.LoadTexture(&window,"./etc/spritesheets/monkspritesheey.png", true, 4, GL_RGBA);
 	
@@ -29,7 +29,7 @@ int main( int argc, char* args[] )
 	run.ConnectTo(&attack, SDL_SCANCODE_UP , ON_PRESS);
 	attack.ConnectTo(&run, TIME_OUT , UNDEFINED );
 	
-	StateEngine monkanim(&window); 
+	StateEngine monkanim(&MainEngine); 
 	monkanim.AddState(&run);
 	monkanim.AddState(&attack);
 	// Shader
@@ -62,12 +62,9 @@ int main( int argc, char* args[] )
 	while( window.IsAlive() )
 	{
 		window.CycleStart();
-
 	    	
 		MonkChar.position[0]+= 0.02*(-kb[SDL_SCANCODE_A] + kb[SDL_SCANCODE_D]) - 2*float(MonkChar.position[0]>1.0) + 2*float(MonkChar.position[0]<-1.0);
 		MonkChar.position[1] += 0.02*(-kb[SDL_SCANCODE_S] + kb[SDL_SCANCODE_W]) - 2*float(MonkChar.position[1]>1.0) + 2*float(MonkChar.position[1]<-1.0);
-
-	
 
 		MonkChar.SetUniform("status",0,MonkChar.position[0]);
 		MonkChar.SetUniform("status",1,MonkChar.position[1]);

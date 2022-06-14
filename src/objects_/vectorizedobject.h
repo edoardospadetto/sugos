@@ -98,8 +98,8 @@ class VectorizedObject
 	
 	void Hide();
 	void Show();
-	virtual void RenderTexture() ;
-	virtual void UnbindTexture() {};
+	virtual void RenderTexture(){} ;
+	virtual void UnbindTexture(){};
 
 };
 

@@ -91,7 +91,7 @@ void Scene::LoadObj(VectorizedObject& obj, GLuint designatedprogram)
 		std::vector<VectorizedObject*> tmp{&obj};
 		assets.push_back(tmp);
 		obj.sceneprog = assets.size()-1 ;
-		obj.sceneprogidx = 0; 
+		obj.sceneprogidx = 0; //ever used? 
 		dbglog("	the requested program : ", designatedprogram, " has no queue, creating one");
 	}
 	
@@ -303,9 +303,12 @@ void Scene::Animations()
 			{
 				//Triggers not processed by SDL.
 				//wenttimeout : If the state just ended and restarted. 
-				bool wentTimeOut=false; 
-				temp_obj->selfStateEngine->AnimateState(wentTimeOut); // 1st 
-				temp_obj->selfStateEngine->ChangeState(wentTimeOut);  // 2nd
+				bool animationRestarted=false; 
+				if( temp_obj->selfStateEngine->CheckFrameUpdate() ) 
+				{
+					animationRestarted = temp_obj->selfStateEngine->NextFrame();
+				}
+				temp_obj->selfStateEngine->ChangeState(animationRestarted);  // 2nd
 				temp_obj->selfStateEngine->UpdateVBatFrame(temp_obj); // 3rd
 			}
 		} 
@@ -404,6 +407,7 @@ void Scene::UnloadObject(VectorizedObject& obj)
 	indexbuffersize -=tmpibo;
 	if(assets[obj.sceneprog].size() == 0)
 	{
+		programs.erase(programs.begin()+obj.sceneprog);
 		assets.erase(assets.begin()+obj.sceneprog);
 		for (int i =obj.sceneprog; i < assets.size(); i++ )
 		{
@@ -422,7 +426,7 @@ void Scene::UnloadObject(VectorizedObject& obj)
 	ColliderObject2D *tmpCollider = dynamic_cast<ColliderObject2D*>(&obj);
 	if(tmpCollider != nullptr) sceneCollisionEngine.UnloadObject(tmpCollider);
 		
-		
+
 	
 		
 	//TEMP

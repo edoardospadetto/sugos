@@ -16,7 +16,7 @@ y(0.0)
 	
 	 if( trow*tcol != text_.length() ) 
 	 {
-	 	std::cout << "Size of text different than size of grid\n" 
+	 	std::cout << "Size of text different than size of grid\n" ;
 	 	throw std::exception();
 	 }
 			
@@ -119,12 +119,10 @@ void Textbox::RenderTexture()
 {
 	font->texture->RenderTexture();
 }
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+void Textbox::UnbindTexture()
+{
+	font->texture->UnbindTexture();
+}
 
 
 
