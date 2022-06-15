@@ -9,7 +9,8 @@ Library based on OpenGL and SDL2.
 
 To build use makefile.
 
-``` make lib ``` builds static library sugos.a
+``` make lib ``` builds static library ```sugos.a```
 
-``` make <examplename>_ex ``` builds the respective example in etc/examples
-``` make <toolname>_tool ``` builds the respective tool in etc/tools
+``` make <examplename>_ex ``` builds the respective example in ```etc/examples```
+
+``` make <toolname>_tool ``` builds the respective tool in ```etc/tools```
