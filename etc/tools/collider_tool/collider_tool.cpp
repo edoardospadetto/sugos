@@ -20,7 +20,7 @@ float xb=0.0;
 int main()
 {
 
-  std::string name0;
+  std::string name0="runcolliders";
   //std::cin>>name0;
   EventEngine MainEngine=EventEngine(60);
 
@@ -69,6 +69,7 @@ int main()
   MainEngine.TrackButton(SDL_SCANCODE_C);
   MainEngine.TrackButton(SDL_SCANCODE_S);
   MainEngine.TrackButton(SDL_SCANCODE_RIGHT);
+  //MainEngine.TrackButton(SDL_SCANCODE_LEFT);
   bool c,n,s;
   bool c1,n1,s1;
   
@@ -84,21 +85,31 @@ int main()
 	c = MainEngine.GetState(SDL_SCANCODE_C) == PRESSED;
 	s = MainEngine.GetState(SDL_SCANCODE_S) == PRESSED;
 	n = MainEngine.GetState(SDL_SCANCODE_RIGHT) == PRESSED;
+	//p =  MainEngine.GetState(SDL_SCANCODE_LEFT) == PRESSED;
 	
 	c1 = (MainEngine.GetState(SDL_SCANCODE_C) == STEADY_DOWN) | c;
 	s1 = (MainEngine.GetState(SDL_SCANCODE_S) == STEADY_DOWN) | s;
 	n1 = (MainEngine.GetState(SDL_SCANCODE_RIGHT) == STEADY_DOWN) | n;
+	//p1 = (MainEngine.GetState(SDL_SCANCODE_LEFT) == STEADY_DOWN) | n;
 	//std::cout << c1 << s1 << n1 << "\n"; 
 	interface2.Logic(c1,n1,s1);
-	if (c) conf.Close();
-	else if  (s) conf.SaveCoords();
-	else if  (n) {conf.AddCollider(); conf.SetLastCollider();std::cout << "OK\n";}
-	else conf.EditCollider( (MouseButton) a,  x,  y);
 	
 	w2.CycleStart();
 	drawscene2.Prepare();
 	drawscene2.Update();
 	w2.CycleEnd();
+	
+	if (c) conf.Close();
+	else if  (s) conf.SaveCoords();
+	else if  (n)
+	{
+		if(MonkChar.HasAnimationRestarted()) conf.SetCollider(0);
+		else conf.MoveCollider(+1);
+	} 
+	
+	//else if  (p) {conf.MoveCollider(-1);}
+	else conf.EditCollider( (MouseButton) a,  x,  y);
+	
 		
 	 
 	MainEngine.WindowsEvents();

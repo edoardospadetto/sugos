@@ -303,12 +303,13 @@ void Scene::Animations()
 			{
 				//Triggers not processed by SDL.
 				//wenttimeout : If the state just ended and restarted. 
-				bool animationRestarted=false; 
+				bool tmpar=false; 
 				if( temp_obj->selfStateEngine->CheckFrameUpdate() ) 
 				{
-					animationRestarted = temp_obj->selfStateEngine->NextFrame();
+					tmpar = temp_obj->selfStateEngine->NextFrame();
 				}
-				temp_obj->selfStateEngine->ChangeState(animationRestarted);  // 2nd
+				temp_obj->selfStateEngine->ChangeState(tmpar);  // 2nd
+				temp_obj->SetAnimationRestarted(tmpar);
 				temp_obj->selfStateEngine->UpdateVBatFrame(temp_obj); // 3rd
 			}
 		} 

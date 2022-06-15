@@ -133,6 +133,7 @@ void StateEngine::AddState(State *state_)
 	statesNetwork.push_back(state_);
 	if (statesNetwork.size() ==1)
 	{
+		state_->currentFrame=0;
 		currentState=statesNetwork[0];
 	}
 }

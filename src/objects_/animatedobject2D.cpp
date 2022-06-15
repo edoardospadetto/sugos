@@ -17,4 +17,12 @@ void AnimatedObject2D::UnbindTexture()
 	this->selfStateEngine->currentState->GetTexture()->UnbindTexture();
 }
 
+bool AnimatedObject2D::HasAnimationRestarted()
+{
+	return this->animationRestarted;
+}
 
+void AnimatedObject2D::SetAnimationRestarted(bool hasit_)
+{
+	this->animationRestarted=hasit_;
+}

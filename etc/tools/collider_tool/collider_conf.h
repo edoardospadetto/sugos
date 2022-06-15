@@ -18,7 +18,7 @@ class ColliderConf
 	void Close();
 	void AddCollider();
 	void SetCollider(int num_);
-	void SetLastCollider();
+	void MoveCollider(int i);
 	
 	void SaveCoords();
 	  //OBJECTS
@@ -114,7 +114,7 @@ void ColliderConf::SaveCoords()
 	    for (int i=0; i<Polylines.size(); i++)
 	    {
 	    myfile << Polylines[i].size()<< "\n";
-	    for (int j=0; j<Polylines[i].size(); i++)
+	    for (int j=0; j<Polylines[i].size(); j++)
 	    {
 	     	myfile << Polylines[i][j]->vertex_buffer[0]<< " " <<  Polylines[i][j]->vertex_buffer[1] <<"\n";
 	    }	
@@ -134,11 +134,21 @@ void ColliderConf::AddCollider()
 
 void ColliderConf::SetCollider(int num_)
 {
-	 
+	
 	 for (int i=0; i<Polylines[num].size(); i++)
 	 {
 		s->UnloadObject(*(Polylines[num][i]));
 	 }
+	 
+	 if (!closed[num])
+	 {
+	 	for (int i =0; i<  Polylines[num].size(); i++)
+	 	{
+	 		delete Polylines[num][i];
+	 		Polylines[num].erase(Polylines[num].begin()+i);
+	 	}
+	 }
+	 
 	 num = num_;
 	 for (int i=0; i<Polylines[num].size(); i++)
 	 {
@@ -147,7 +157,9 @@ void ColliderConf::SetCollider(int num_)
 }
 
 
-void ColliderConf::SetLastCollider()
+void ColliderConf::MoveCollider(int i)
 {
-	this->SetCollider(Polylines.size()-1);
+	if(num+i == Polylines.size()) this->AddCollider();
+	else if (num+i <0 | num+i > Polylines.size() ) throw std::exception();
+	this->SetCollider(num+i);
 }

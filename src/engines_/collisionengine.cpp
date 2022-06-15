@@ -1,8 +1,8 @@
 #include <cstdio>
+#include <fstream>
 #include "./collisionengine.h"
 #include "../attributes_/collider.h"
 #include "../include/enums.h"
-#include <glm/glm.hpp>
 
 
 //=======================================================================================
@@ -22,7 +22,25 @@ void CollisionEngine::UpdateDbgColliders()
 }
 
 //=======================================================================================
-	
+std::vector<std::vector<glm::vec2>> CollisionEngine::LoadCollidersFromFile(const std::string& filename_)
+{
+	std::ifstream infile(filename_);
+	std::vector<std::vector<glm::vec2>> colliders;
+	int N,n;
+	float x,y;
+	infile >> N;
+	for (int i=0; i<N; i++)
+	{
+		colliders.push_back({});
+		infile >> n;
+		for (int j=0; j<n; j++)
+		{
+			infile >> x >> y;
+			colliders[i].push_back(glm::vec2{x,y});
+		}
+	}
+	return colliders;
+}	
 
 void CollisionEngine::VerifyCollisions()
 {
@@ -118,7 +136,7 @@ void CollisionEngine::StartCollisions()
 
 void CollisionEngine::UnloadObject(ColliderObject2D *obj)
 {
-	for (int i= obj->collisionSetIdx+1 ; i< this->collisionSet.size(); i++)
+	for (int i= obj->collisionSetIdx+1 ; i< int(this->collisionSet.size()); i++)
 	{
 		this->collisionSet[i]->collisionSetIdx = i-1;
 	}
