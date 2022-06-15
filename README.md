@@ -7,10 +7,22 @@ Library based on OpenGL and SDL2.
 3. SAT collisions
 4. Font rendering
 
-To build use makefile.
+### Build
+
+Build based on Makefile:
 
 ``` make lib ``` builds static library ```sugos.a```
 
 ``` make <examplename>_ex ``` builds the respective example in ```etc/examples```
 
 ``` make <toolname>_tool ``` builds the respective tool in ```etc/tools```
+
+If you want to modify any build option that has to be done manually on the Makefile.
+
+### Examples
+
+Examples contains a list of example of usage of the library
+
+### Tools
+
+Set of tools that could speedup the workflow using the library
