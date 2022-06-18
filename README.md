@@ -10,8 +10,9 @@ Library based on OpenGL and SDL2.
 ### Build
 
 Build based on Makefile:
+``` export SUGOSOUT = "SUGOS_OPENGL [SUGOS_OPENGL, SUGOS_WEB]" ```
 
-``` make lib ``` builds static library ```sugos.a```
+then ``` make lib ``` builds static library ```sugos.a```
 
 ``` make <examplename>_ex ``` builds the respective example in ```etc/examples```
 
@@ -26,3 +27,7 @@ Examples contains a list of example of usage of the library
 ### Tools
 
 Set of tools that could speedup the workflow using the library
+
+1.Collider Tool (almost finished)
+
+
