@@ -4,7 +4,7 @@
 
 
 #include <vector>
-#include <glm/glm.hpp>
+#include "../include/glm.h"
 #include "../include/enums.h"
 
 class VectorizedObject;

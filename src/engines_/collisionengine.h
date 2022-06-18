@@ -3,8 +3,7 @@
 
 #include <functional>
 #include <type_traits>
-#include <glm/glm.hpp>
-
+#include "../include/glm.h"
 #include "../objects_/colliderobject2D.h"
 
 class CollisionEngine

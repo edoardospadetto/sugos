@@ -12,9 +12,10 @@ class EventEngine
 	 std::map<int,bool> alreadyupdatedkeys;
 	 
 	 float fps = 60 ;
-	 unsigned int frame_start = 0; 
+	 
 	 std::map<int,Window_Class*> windows;
 	 public:
+	 unsigned int frame_start = 0; 
 	 const Uint8* keyboard;
 	 void TrackButton(int keycode_);
 	 ButtonAction GetState(int keycode_);

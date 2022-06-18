@@ -1,12 +1,12 @@
 #include "./eventengine.h"
-
 #include <iostream>
 #include <string>
 #include <SDL2/SDL.h>
-
 #include "./window.h"
 #include "../modules_/debugmisc_module.h"
-
+#ifdef EMSCRIPTEN_MACRO
+#include <emscripten.h>
+#endif
 /*
 int main() {
     // Initialize the joystick subsystem
@@ -86,10 +86,18 @@ EventEngine::EventEngine(unsigned int fps_): fps(float(fps_))
 		}
 	}
 	
+#ifdef OPENGL_MACRO
 	//Use OpenGL 3.1 core
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+#endif
+#ifdef OPENGLES_MACRO
+	//Use OpenGL 3.1 core
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+#endif	
 	keyboard = SDL_GetKeyboardState(NULL);
 	
 	
@@ -220,8 +228,15 @@ void EventEngine::WindowsEvents()
 #ifdef SHOWFPS
 	std::cout <<  now_frame << "  " << 1000/fps << "  " << ( now_frame  < 1000/fps)  << "\n";
 #endif
-	if ( now_frame < 1000/fps ) SDL_Delay(1000/fps - now_frame);
+	if ( now_frame < 1000/fps ) {
+#ifdef EMSCRIPTEN_MACRO
+		emscripten_sleep(1000/fps - now_frame);
+#else
+		SDL_Delay(1000/fps - now_frame);
+#endif
+	}
 	frame_start = SDL_GetTicks();
+	
 		
 		
 	

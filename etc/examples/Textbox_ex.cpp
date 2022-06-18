@@ -36,7 +36,7 @@ int main()
   tbtext.SetLetterColor(3,0.0,1.0,0.0,1.0);
   tbtext.SetLetterColor(4,0.0,0.0,1.0,1.0);
   tbtext.SetLetterColor(5,1.0,1.0,0.0,1.0);
-  
+  glCheckError();
   
   
   Scene test = Scene();
@@ -44,7 +44,7 @@ int main()
   test.Prepare();
   //menuscene = Scene()
   std::cout << "MAIN LOOP \n \n"; 
- 
+  
   while(menu.IsAlive())
   {     menu.CycleStart();
 	test.Prepare();

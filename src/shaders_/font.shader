@@ -1,6 +1,5 @@
 SHADER VERTEX fontV
-
-#version 330 core
+#version 300 es
 layout (location = 0) in vec2 aPos;
 layout (location = 1) in vec2 aTex;
 layout (location = 2) in vec4 aColor;
@@ -32,8 +31,8 @@ void main()
 ENDSHADER
 
 SHADER FRAGMENT fontF
-
-#version 330 core
+#version 300 es
+precision highp float;
 
 out vec4 FragColor;
 in vec2 TexCoord;
@@ -44,7 +43,7 @@ uniform sampler2D uTexture;
 void main()
 {	
 	vec4 txc = texture(uTexture, TexCoord);
-	FragColor =  vec4( ( 1-txc.x ),1-txc.y,1-txc.z,txc.w)*Color;
+	FragColor =  vec4( ( 1.0-txc.x ),1.0-txc.y,1.0-txc.z,txc.w)*Color;
 	
 } 
 

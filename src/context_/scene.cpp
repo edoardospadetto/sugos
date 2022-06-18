@@ -201,9 +201,13 @@ void Scene::Render()
 		{
 			
 			glUseProgram( programs[i] );
+			glCheckError();
 			glBindBuffer( GL_ARRAY_BUFFER, VBO );
+			glCheckError();
 			glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO );
-			glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, TBO );
+			glCheckError();
+			//glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, TBO );
+			glCheckError();
 			//Enable vertex position
 			for (int j =0; j< assets[i].size(); j++)
 			{

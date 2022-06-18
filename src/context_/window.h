@@ -10,7 +10,6 @@ class Window_Class
 
 {
 
-
 	
 		  SDL_Window* gWindow = NULL;
 		  SDL_Surface* screenSurface = NULL;

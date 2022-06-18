@@ -38,9 +38,9 @@ int main( int argc, char* args[] )
 	
 	glClearColor( 0.f, 0.f, 0.f, 1.f );
 	
-	AnimatedObject2D Spaceship{AnimatedObject2D(2,3,1,2,3)};
-	AnimatedObject2D Spaceship2{AnimatedObject2D(4,4,1,2,4)};
-	AnimatedObject2D Spaceship3{AnimatedObject2D(4,3,1,2,3)};
+	AnimatedObject2D Spaceship{AnimatedObject2D(2,3,1,2,GL_TRIANGLES)};
+	AnimatedObject2D Spaceship2{AnimatedObject2D(4,4,1,2,GL_QUADS)};
+	AnimatedObject2D Spaceship3{AnimatedObject2D(4,3,1,2,GL_TRIANGLES)};
 	
 	std::vector<AnimatedObject2D*> projectiles;
 	
@@ -69,11 +69,11 @@ int main( int argc, char* args[] )
 	Spaceship3.LinkUniformToVariable("status", 2);
 	
 
-	Spaceship.SpecifyBuffersAttributes("aPos", 2, GL_TRIANGLES);
-	Spaceship2.SpecifyBuffersAttributes("aPos", 2, GL_QUADS);
-	Spaceship2.SpecifyBuffersAttributes("aTex", 2, GL_QUADS);
-	Spaceship3.SpecifyBuffersAttributes("aPos", 2, GL_TRIANGLES);
-	Spaceship3.SpecifyBuffersAttributes("aTex", 2, GL_TRIANGLES);
+	Spaceship.SpecifyBuffersAttributes("aPos", 2);
+	Spaceship2.SpecifyBuffersAttributes("aPos", 2);
+	Spaceship2.SpecifyBuffersAttributes("aTex", 2);
+	Spaceship3.SpecifyBuffersAttributes("aPos", 2);
+	Spaceship3.SpecifyBuffersAttributes("aTex", 2);
 
 
 	Scene test = Scene();

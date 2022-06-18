@@ -1,7 +1,7 @@
 #ifndef COLLIDEROBJECT2D
 #define COLLIDEROBJECT2D
 
-#include <glm/glm.hpp>
+#include "../include/glm.h"
 
 #include "../include/enums.h"
 #include "../modules_/geometry_module.h"

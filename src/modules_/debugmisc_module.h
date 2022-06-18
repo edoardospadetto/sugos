@@ -1,5 +1,8 @@
 #ifndef DBGMISC
 #define DBGMISC
+#ifdef EMSCRIPTEN_MACRO
+#include <emscripten.h>
+#endif
 #include <iostream>
 #include <string>
 #include "../include/SDL&OpenGL.h"
@@ -43,7 +46,7 @@ void RecursiveCout(T t, Args... args)
 	RecursiveCout(args...);
 
 }
-
+/*
 template<typename T>
 void add_to_array(T *&array,T value) // add & to make "array" a reference
 {
@@ -54,7 +57,7 @@ void add_to_array(T *&array,T value) // add & to make "array" a reference
     array = newArr;
     array[size] = value;
 }
-
+*/
 
 template<typename... Args>
 void dbglog(Args... args)

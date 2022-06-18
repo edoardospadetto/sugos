@@ -71,7 +71,7 @@ void MovePentagon(const Uint8* kb , VectorizedObject & Pentagon)
 	Pentagon.position[0] += 0.02*(-kb[SDL_SCANCODE_A] + kb[SDL_SCANCODE_D]) - 2*float(Pentagon.position[0]>1.0) + 												2*float(Pentagon.position[0]<-1.0);
 	Pentagon.position[1] += vinst - 2*float(Pentagon.position[1]>1.0) + 										     2*float(Pentagon.position[1]<-1.0);;//0.02*(-kb[SDL_SCANCODE_S] + kb[SDL_SCANCODE_W]) - 2*float(Pentagon.position[1]>1.0) + 2*float(Pentagon.position[1]<-1.0);
 
-
+	
 	Pentagon.SetUniform("CM",0,Pentagon.position[0]);
 	Pentagon.SetUniform("CM",1,Pentagon.position[1]);
 	Pentagon.SetUniform("CM",2,Pentagon.angle);
@@ -89,12 +89,12 @@ int main( int argc, char* args[] )
 {
 	
 	// Create Window
-	EventEngine MainEngine=EventEngine(60);
+	EventEngine MainEngine=EventEngine(3000);
 	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Jumping Shape", 640,640 ); 
 	MainEngine.HandleWindow(&window);
 	
 	// Shader
-	GPUcodes gpucodes0=GPUcodes(&window,"./src/shaders_/vectorizedobject.shader");	
+	GPUcodes gpucodes0=GPUcodes(&window,"./src/shaders_/vectorizedobject.shader","#version 300 es");	
 	gpucodes0.Load("vecv","vecf", "PositionRotationColor");
 	glClearColor( 0.f, 0.f, 0.f, 1.f );
 	
@@ -118,14 +118,24 @@ int main( int argc, char* args[] )
 
 	while( window.IsAlive() )
 	{
+		std::cout << " a           " << MainEngine.GetTime()-MainEngine.frame_start <<" "  <<SDL_GL_GetSwapInterval()<< " \n"; 
 		window.CycleStart();
-	
+		glFinish();
+		std::cout << " cS          " << MainEngine.GetTime()-MainEngine.frame_start << " \n"; 
 		MovePentagon(kb, Pentagon);
-			
+		glFinish();
+		std::cout << "  Move       " << MainEngine.GetTime()-MainEngine.frame_start << " \n"; 
 		test.Prepare();
+		glFinish();
+		std::cout << "      Prep   " << MainEngine.GetTime()-MainEngine.frame_start << " \n"; 
 		test.Update();
+		glFinish();
+		std::cout << "      up     " << MainEngine.GetTime()-MainEngine.frame_start << " \n"; 
 		window.CycleEnd();
+		glFinish();
+		std::cout << "       fin   " << MainEngine.GetTime()-MainEngine.frame_start << " \n"; 
 		MainEngine.WindowsEvents();
+		glFinish();
 	}
 	
 

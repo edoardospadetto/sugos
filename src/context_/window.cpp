@@ -36,6 +36,7 @@ WIDTH(width_), HEIGHT(height_)
 	
 	}
 	
+#ifdef OPENGL_MACRO
 	//Initialize GLEW
 	glewExperimental = GL_TRUE; 
 	GLenum glewError = glewInit();
@@ -43,7 +44,7 @@ WIDTH(width_), HEIGHT(height_)
 	{
 		printf( "Error initializing GLEW! %s\n", glewGetErrorString( glewError ) );
 	}
-	
+#endif	
 
 	//Use Vsync
 	if( SDL_GL_SetSwapInterval( 1 ) < 0 )
@@ -90,12 +91,17 @@ Window_Class::~Window_Class()
 
 
 void Window_Class::CycleStart()
-{
+{	
+	
 	
 	SDL_GL_MakeCurrent(this->gWindow, this->GLcontext);
+
 	glClear ( GL_COLOR_BUFFER_BIT );
+	
 	glClear( GL_DEPTH_BUFFER_BIT );
+	
 	glClearColor ( 0.0, 0.0, 0.0, 1.0 );
+	
 
 	
     //
@@ -111,8 +117,8 @@ int Window_Class::CycleEnd()
 	// What was not possible to execute in the thread;
 	//if (lmainWindow) delete userWatchdog;
 	
-	
 	SDL_GL_SwapWindow(this->gWindow);
+	
 
 	
 	

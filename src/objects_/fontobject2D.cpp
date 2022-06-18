@@ -3,7 +3,7 @@
 #include "../attributes_/pngtablefont.h"
 // 8 vtlen 
 Textbox::Textbox(std::string && text_, BitmapFont* font_,  int row_, int col_, float cdimx_, float cdimy_):
-VectorizedObject(8,4*row_*col_,row_*col_,2,GL_QUADS),
+VectorizedObject(8,4*row_*col_,2*row_*col_,2,GL_TRIANGLES),
 font(font_),
 trow(row_),
 tcol(col_),
@@ -43,7 +43,7 @@ y(0.0)
 				this->vertex_buffer[4*8*i+8*j+5] = 1.0;
 				this->vertex_buffer[4*8*i+8*j+6] = 1.0;
 				this->vertex_buffer[4*8*i+8*j+7] = 1.0;
-				this->index_buffer[4*i+j] = 4*i+j;
+				//this->index_buffer[4*i+j] = 4*i+j;
 				if (c==' ')
 				{
 				this->vertex_buffer[4*8*i+8*j+2] =0.0;
@@ -60,7 +60,17 @@ y(0.0)
 				 "\n ---" );
 				*/
 				
-		}	
+		}
+		//iterate on index buffer
+		
+		this->index_buffer[6*i+0] = 4*i+0;
+		this->index_buffer[6*i+1] = 4*i+1;
+		this->index_buffer[6*i+2] = 4*i+2;
+		this->index_buffer[6*i+3] = 4*i+0;
+		this->index_buffer[6*i+4] = 4*i+2;
+		this->index_buffer[6*i+5] = 4*i+3;
+		
+		
 	}
 	//
 	

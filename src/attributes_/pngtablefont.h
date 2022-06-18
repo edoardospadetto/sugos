@@ -12,7 +12,7 @@
 
 #include<map>
 #include<string>
-#include <glm/glm.hpp>
+#include "../include/glm.h"
 #include "../include/SDL&OpenGL.h"
 #include "../context_/window.h"
 #include "../attributes_/texture.h"

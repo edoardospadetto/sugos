@@ -12,6 +12,11 @@
 
 #ifndef VECTORIZEDOBJECT
 #define VECTORIZEDOBJECT
+typedef unsigned int uint;
+#include <stdint.h>
+#ifdef EMSCRIPTEN_MACRO
+#include <emscripten.h>
+#endif
 #include <string>
 #include <vector>
 

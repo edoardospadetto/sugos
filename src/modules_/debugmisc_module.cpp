@@ -98,6 +98,12 @@ void printShaderLog( GLuint shader )
 	}
 }
 
+
+#ifdef OPENGLES_MACRO
+#define VERSION(NAME)  NAME ## _KHR 
+#else 
+#define VERSION(NAME)  NAME
+#endif
 char const* gl_error_string(GLenum const err) noexcept
 {
   switch (err)
@@ -115,18 +121,18 @@ char const* gl_error_string(GLenum const err) noexcept
     case GL_INVALID_OPERATION:
       return "GL_INVALID_OPERATION";
 
-    case GL_STACK_OVERFLOW:
+    case VERSION(GL_STACK_OVERFLOW) :
       return "GL_STACK_OVERFLOW";
 
-    case GL_STACK_UNDERFLOW:
+    case VERSION(GL_STACK_UNDERFLOW) :
       return "GL_STACK_UNDERFLOW";
 
     case GL_OUT_OF_MEMORY:
       return "GL_OUT_OF_MEMORY";
-
-    case GL_TABLE_TOO_LARGE:
+#ifdef OPENGL
+    case GL_TABLE_TOO_LARGE :
       return "GL_TABLE_TOO_LARGE";
-
+#endif
     // opengl 3 errors (1)
     case GL_INVALID_FRAMEBUFFER_OPERATION:
       return "GL_INVALID_FRAMEBUFFER_OPERATION";
@@ -150,8 +156,8 @@ GLenum glCheckError_(const char *file, int line)
             case GL_INVALID_ENUM:                  error = "INVALID_ENUM"; break;
             case GL_INVALID_VALUE:                 error = "INVALID_VALUE"; break;
             case GL_INVALID_OPERATION:             error = "INVALID_OPERATION"; break;
-            case GL_STACK_OVERFLOW:                error = "STACK_OVERFLOW"; break;
-            case GL_STACK_UNDERFLOW:               error = "STACK_UNDERFLOW"; break;
+            case VERSION(GL_STACK_OVERFLOW):       error = "STACK_OVERFLOW"; break;
+            case VERSION(GL_STACK_UNDERFLOW):      error = "STACK_UNDERFLOW"; break;
             case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
             case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
         }

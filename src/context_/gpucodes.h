@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "../include/SDL&OpenGL.h"
-
+typedef unsigned int uint;
 class Window_Class;
 
 class GPUcodes
@@ -13,8 +13,15 @@ class GPUcodes
 	private:
 	
 	Window_Class* parent = nullptr;
+	std::string version; 
+	bool lversion=false;
+	void ForceShaderVersion(std::string& shader_);
+	void SpecifyVersion(std::string& version_);
+	void ParseRaw(const std::string& path_);
+	void SplitRawInput(std::string rawin_);
+	void Compile();
 	
-		
+	
 	public:
 	
 	const std::vector<std::string> types {"VERTEX" , "FRAGMENT"};
@@ -28,13 +35,11 @@ class GPUcodes
 	std::vector<GLuint> glprograms;
 		
 
-	void ParseRaw(std::string& path_);
-	void SplitRawInput(std::string rawin_);
-	void Compile();
 	
 
 	GPUcodes(Window_Class* parent_, std::string&& path_);
 	GPUcodes(Window_Class* parent_, std::string& path_);
+	GPUcodes(Window_Class* parent_, const std::string& t, std::string version_ );
 	~GPUcodes(){};
 
 	void SetParentWindow(Window_Class* parent_);
@@ -45,7 +50,8 @@ class GPUcodes
 	void EnableProgram(const std::string& name);
 	void EnableProgram(std::string&& name);
 	void EnableProgram(uint programindex);
-
+	
+	
 };
 
 #endif

@@ -4,10 +4,11 @@
 #include <fstream>
 #include <cstdio>
 
+
 //#include "../include/SDL&OpenGL.h"
 
 
-void GPUcodes::ParseRaw(std::string& path_)
+void GPUcodes::ParseRaw(const std::string& path_)
 {
 	dbglog(" ===================================== ");
 	dbglog(" =======      SHADER SUMMARY    ====== ");
@@ -37,9 +38,49 @@ void GPUcodes::ParseRaw(std::string& path_)
 
 GPUcodes::GPUcodes(Window_Class* parent_, std::string&& t): parent(parent_) {parent->MakeCurrent();ParseRaw(t);Compile();}
 GPUcodes::GPUcodes(Window_Class* parent_, std::string& t): parent(parent_) {parent->MakeCurrent();ParseRaw(t);Compile();}
+GPUcodes::GPUcodes(Window_Class* parent_, const std::string& t, std::string version_ ): parent(parent_) 
+{	parent->MakeCurrent();
+	this->SpecifyVersion(version_);
+	ParseRaw(t);
+	Compile();
+}
 
 
 void GPUcodes::SetParentWindow(Window_Class* parent_) {parent = parent_;} 
+
+void GPUcodes::SpecifyVersion(std::string& version_)
+{
+	int delimiter1=version_.find("#version");
+	if(delimiter1==-1)
+	{
+		printf("Error, format of version should be: #version <version>\n");
+		throw 	std::exception(); 
+	} 
+	else 
+	{
+		std::cout << "delimiter 1 " << delimiter1 << "\n";
+	}
+	
+	this->version=version_;
+	this->lversion=true;
+}
+
+void GPUcodes::ForceShaderVersion(std::string& shader_)
+{
+	int delimiter1=shader_.find("#version");	
+	if(delimiter1!=-1)
+	{
+		int delimiter2=shader_.find('\n', delimiter1+1);
+		shader_= version + shader_.substr(delimiter2,shader_.length()-delimiter2);
+		std::cout << shader_ << "\n";
+		
+	}
+	else 
+	{
+		std::cout << "delimiter 1 " << delimiter1 << "\n";
+	}
+	
+}
 
 void GPUcodes::SplitRawInput(std::string rawin)
 {
@@ -67,6 +108,8 @@ void GPUcodes::SplitRawInput(std::string rawin)
 			std::string type   = fulldata.substr(delimiter1+1,delimiter2-delimiter1-1);
 			std::string shader = fulldata.substr(delimiter3+1,pos2-delimiter3-1);
 			std::string name   = fulldata.substr(delimiter2+1,delimiter3-delimiter2-1);
+			
+			if(lversion) this->ForceShaderVersion(shader);
 
 			shaders.push_back(shader);
 			shaders_name.push_back(name);

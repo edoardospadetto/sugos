@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "../include/SDL&OpenGL.h"
-#include <glm/glm.hpp>
+#include "../include/glm.h"
 #include <SDL2/SDL.h>
 
 #include "../include/enums.h"
@@ -24,7 +24,7 @@ void GenTriangle(VectorizedObject& obj)
 	{	
 		 0.05f,  0.0f,
 		-0.05f,  -0.03f,
-		-0.00f,  sqrt(3)*0.05f,
+		-0.00f,   static_cast<float>(sqrt(3))*0.05f,
 
 	};
 

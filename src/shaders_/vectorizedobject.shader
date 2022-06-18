@@ -1,7 +1,6 @@
 SHADER VERTEX vecv
+#version 300 es
 
-
-#version 330 core
 layout (location = 0) in vec2 r_;
 layout (location = 1) in vec4 c_;
 
@@ -32,8 +31,8 @@ void main()
 ENDSHADER
 
 SHADER FRAGMENT vecf
-
-#version 330 core
+#version 300 es
+precision highp float;
 
 out vec4 FragColor;
 in vec4 Color;

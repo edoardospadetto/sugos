@@ -15,16 +15,12 @@
 // SDL OPENGL GLU GLEW
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <GL/glew.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <SDL2/SDL_opengl.h>
-
+#include "include/SDL&OpenGL.h"
 //GLM MATH
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+//#include <glm/glm.hpp>
+//#include <glm/ext.hpp>
+//#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/gtc/type_ptr.hpp>
 
 #include "include/enums.h"
 
