@@ -5,7 +5,7 @@
 #include <cstdio>
 
 
-//#include "../include/SDL&OpenGL.h"
+//#include "../include/safe_include_SDLGL_OpenGL.h"
 
 
 void GPUcodes::ParseRaw(const std::string& path_)

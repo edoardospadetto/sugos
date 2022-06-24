@@ -1,57 +1,37 @@
-/*
+#include "./physicsobject2D.h"
 PhysicsObject2D::PhysicsObject2D(int vertex_len_,int vertex_num_,int surfaces_num_, GLenum representation_, float mass, float I ) : 
 VectorizedObject( vertex_len_, vertex_num_, surfaces_num_, 2, representation_)
 {
-	velocity = new float[2];
 	oneovermass = 1.0/mass;	
 	oneoverI = 1.0/ I ; 
 }
 
-void PhysicsObject2D::AddForce(const std::string &name, glm::vec2 force_ )
-{
-	forces[name] = force_;
-}
+void PhysicsObject2D::ApplyForce(glm::vec2 force_ ) {cumulativeForce+=force_;}
 
-void PhysicsObject2D::AddMomenta(const std::string &name, float momentum_ )
-{
-	momenta[name] = momentum_;
-}
-/*
-void PhysicsObject2D::AddImpulse(float px, float py)
-{
-	
-}
-*/
-/*
-void PhysicsObject2D::ComputeActions()
-{
+void PhysicsObject2D::ApplyImpulse( glm::vec2 impulse_ ) {cumulativeImpulse+=impulse_;}
 
-	cumulativeForce = glm::vec2(0.0,0.0);
-	cumulativeMomenta = 0.0;
-	for(auto f=forces.begin(); f!=forces.end(); ++f)
-	{
-      		cumulativeForce +=  (f->second) ;
-   	}
-   	for(auto m=momenta.begin(); m!=momenta.end(); ++m)
-	{
-      		cumulativeMomenta +=  (m->second) ;
-   	}
-   	
-}
+void PhysicsObject2D::ApplyAngularImpulse( float angularimpulse_ ) {cumulativeAngularImpulse+=angularimpulse_;}
 
-void PhysicsObject2D::TemporalEvolution(float deltatime_)
+void PhysicsObject2D::ApplyAngularForce( float angularforce_ ) {cumulativeAngularForce+=angularforce_;}
+
+
+void PhysicsObject2D::EulerIntegration(float deltatime_)
 {
-	float deltavx =  cumulativeForce.x * oneovermass * deltatime_;
-	float deltavy =  cumulativeForce.y * oneovermass * deltatime_;
-	float deltaw  =  cumulativeMomenta * oneoverI * deltatime_;
+	float deltavx =  ( cumulativeForce.x  * deltatime_   + cumulativeImpulse.x    ) *oneovermass;
+	float deltavy =  ( cumulativeForce.y  * deltatime_   + cumulativeImpulse.y    ) *oneovermass;
+	float deltaw  =  ( cumulativeAngularForce * deltatime_ + cumulativeAngularImpulse ) *oneoverI ;
 	
 	
-	this->position[0] += this->velocity[0]*deltatime_ +  0.5*deltavx*deltatime_;
-	this->position[1] += this->velocity[1]*deltatime_ +  0.5*deltavy*deltatime_;
-	this->velocity[0] += deltavx ;
-	this->velocity[1] += deltavy ;
-	this->angle       += this->omega*deltatime_ +  0.5*deltaw*deltatime_;
+	this->position[0] += ( this->velocity[0] +  0.5*deltavx ) *deltatime_;
+	this->position[1] += ( this->velocity[1] +  0.5*deltavy ) *deltatime_;
+	this->velocity.x  += deltavx ;
+	this->velocity.x  += deltavy ;
+	this->angle       += ( this->omega + 0.5*deltaw ) *deltatime_;
 	this->omega       += deltaw;
 
+	cumulativeForce          = {0,0};
+	cumulativeImpulse        = {0,0};
+	cumulativeAngularForce   = 0; 
+	cumulativeAngularImpulse = 0;
 }
-*/
+

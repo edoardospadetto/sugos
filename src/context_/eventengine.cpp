@@ -73,6 +73,14 @@ int main() {
     return 0;
 }
 */
+
+/*
+* Constructor.
+* Event Engine is the class on top, handles windows.
+* And inputs. 
+*/
+
+
 EventEngine::EventEngine(unsigned int fps_): fps(float(fps_))
 {
 
@@ -105,12 +113,25 @@ EventEngine::EventEngine(unsigned int fps_): fps(float(fps_))
 	
 }
 
+/*
+* Start Tracking the state of a Button.
+*
+*/
+
 void EventEngine::TrackButton(int keycode_)
 {
 	keyboard_old[keycode_]=keyboard[keycode_];
 	alreadyupdatedkeys[keycode_]=false;
 	keyboardState[keycode_]=INVALID;
 }
+
+
+/*
+* Get the state of a Button.
+*
+*/
+
+
 ButtonAction EventEngine::GetState(int keycode_)
 {
 
@@ -126,12 +147,6 @@ ButtonAction EventEngine::GetState(int keycode_)
 	{
 		//{ PRESSED = 2 , RELEASED = 1, STEADY_DOWN = 3 , STEADY_UP = 0 };
 		itG->second = (ButtonAction) (it->second+2*keyboard[keycode_])  ;
-		
-		
-		//if(it->second+2*keyboard[keycode_] == 2) std::cout<< " -- heyy -- \n";
-		//std::cout<< (int)lit->second << " -- " <<(int)keyboard[keycode_] << " -- " << (int) it->second <<" -- \n" ;
-		//std::cout<< " -- " << (bool) lit->second << " -- " <<
-		//	 (int) it->second << " -- "<< keyboard[keycode_] <<" -- " << (int) (it->second+2*keyboard[keycode_]) << " " <<  (int)keycode_ << " \n";
 		it->second=keyboard[keycode_];
 		lit ->second = true;
 	}
@@ -141,10 +156,23 @@ ButtonAction EventEngine::GetState(int keycode_)
 	
 }
 
+/*
+* Start Handling a window 
+*
+*/
+
+
 void  EventEngine::HandleWindow(Window_Class* w)
 {
 	windows[w->IDWindow]= w;
 }
+
+/*
+* Handle events related to a window 
+* To be completed.
+*/
+
+
 
 void EventEngine::WindowsEvents()
 {

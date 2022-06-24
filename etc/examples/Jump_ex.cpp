@@ -89,7 +89,7 @@ int main( int argc, char* args[] )
 {
 	
 	// Create Window
-	EventEngine MainEngine=EventEngine(3000);
+	EventEngine MainEngine=EventEngine(60);
 	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Jumping Shape", 640,640 ); 
 	MainEngine.HandleWindow(&window);
 	
@@ -118,24 +118,21 @@ int main( int argc, char* args[] )
 
 	while( window.IsAlive() )
 	{
-		std::cout << " a           " << MainEngine.GetTime()-MainEngine.frame_start <<" "  <<SDL_GL_GetSwapInterval()<< " \n"; 
+		 
 		window.CycleStart();
-		glFinish();
-		std::cout << " cS          " << MainEngine.GetTime()-MainEngine.frame_start << " \n"; 
+	
 		MovePentagon(kb, Pentagon);
-		glFinish();
-		std::cout << "  Move       " << MainEngine.GetTime()-MainEngine.frame_start << " \n"; 
+	
 		test.Prepare();
-		glFinish();
-		std::cout << "      Prep   " << MainEngine.GetTime()-MainEngine.frame_start << " \n"; 
+
 		test.Update();
-		glFinish();
-		std::cout << "      up     " << MainEngine.GetTime()-MainEngine.frame_start << " \n"; 
+		
+	
 		window.CycleEnd();
-		glFinish();
-		std::cout << "       fin   " << MainEngine.GetTime()-MainEngine.frame_start << " \n"; 
+
+
 		MainEngine.WindowsEvents();
-		glFinish();
+	
 	}
 	
 

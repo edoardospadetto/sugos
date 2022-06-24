@@ -58,7 +58,7 @@ int main()
   drawscene2.LoadObj(MonkChar, gpucodes0.glprograms[0]);	
   drawscene2.Prepare();
 
-  ColliderConf conf =  ColliderConf(&w2, &drawscene2, name0);
+  ColliderConf conf =  ColliderConf(&w2, &drawscene2, name0,0);
   Interface interface2(&w2,&drawscene2);
   monkanim.TriggerFrameChangeOnKeyPress(SDL_SCANCODE_RIGHT);
   
@@ -104,7 +104,7 @@ int main()
 	else if  (n)
 	{
 		if(MonkChar.HasAnimationRestarted()) conf.SetCollider(0);
-		else conf.MoveCollider(+1);
+		else conf.MoveCollider(+1, true);
 	} 
 	
 	//else if  (p) {conf.MoveCollider(-1);}

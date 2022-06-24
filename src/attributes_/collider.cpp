@@ -215,7 +215,10 @@ void Collider2D::Check(Collider2D* collider_, CollisionStatus &status_,  glm::ve
 
 
 
-
+/*
+* Checks if two colliders are closer than the sum of the maxima radii 
+* that contains a portion of the collider
+*/
 
 bool Collider2D::PreCheck(Collider2D* collider_ )
 {
@@ -225,7 +228,10 @@ bool Collider2D::PreCheck(Collider2D* collider_ )
 	return (this->radius + collider_->radius < cdist);
 }
 
-
+/*
+* Build the poligon representing 
+* the collider
+*/
 void Collider2D::BuildVecObj()
 {
 	

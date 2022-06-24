@@ -62,7 +62,7 @@ int main( int argc, char* args[] )
 	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Instanced Rendering", 620,620 ); 
 	MainEngine.HandleWindow(&window);
 	
-	GPUcodes gpumodule=GPUcodes(&window,"./src/shaders_/instanced.shader");	
+	GPUcodes gpumodule=GPUcodes(&window,"./src/shaders_/instanced.shader","#version 300 es");	
 
 	gpumodule.Load("instancedv","instancedf", "shader");
 	glClearColor( 0.f, 0.f, 0.f, 1.f );

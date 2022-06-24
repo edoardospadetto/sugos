@@ -1,7 +1,7 @@
 #include "./collisionhandlingmodule.h"
 #include "../objects_/colliderobject2D.h" 
 #include <SDL2/SDL.h>
-#include "../include/enums.h"
+#include "../enums.h"
 void RigidCollision(std::vector<ColliderObject2D*> &collisionSet, std::vector<int> &collidingObjects, glm::vec2* hitDirection, float* minOverlap )
 {
 

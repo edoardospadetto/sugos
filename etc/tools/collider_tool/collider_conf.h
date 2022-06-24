@@ -12,14 +12,16 @@ class ColliderConf
 	std::string collidername="";
 	float xold=0, yold=0;
 	void EditCollider(MouseButton  press, float x_, float y_);
-	ColliderConf(Window_Class *w_,Scene* s_, std::string name_); 
+	ColliderConf(Window_Class *w_,Scene* s_, std::string name_, int Ncoll); 
 	void AddInitialPoint(float x_, float y_);
 	void AddFinalPoint(float x_, float y_, bool click);
 	void Close();
 	void AddCollider();
 	void SetCollider(int num_);
-	void MoveCollider(int i);
+	void MoveCollider(int i, bool unsafe_);
 	
+	void EmptyCurrentCollider();
+	void LoadConfFile(std::string& filepath_);
 	void SaveCoords();
 	  //OBJECTS
 	 
@@ -29,11 +31,12 @@ class ColliderConf
 
 };
 
-ColliderConf::ColliderConf(Window_Class *w_,Scene* s_, std::string name_): w(w_),s(s_), collidername(name_)
+ColliderConf::ColliderConf(Window_Class *w_,Scene* s_, std::string name_, int Ncolliders_): w(w_),s(s_), collidername(name_)
 {
 
 	  vrend= new GPUcodes(w,"./src/shaders_/vectorizedobjectnc.shader");	
   	  vrend->Load("vecv","vecf", "vv");
+  	  for (int i=0; i< Ncolliders_; i++) this->AddCollider();
   	
 }
 
@@ -73,6 +76,18 @@ void ColliderConf::Close()
 	}
 	closed[num] = true;
 }
+
+void ColliderConf::EmptyCurrentCollider()
+{
+	for (int i=0; i<Polylines[num].size(); i++) 
+	{
+	
+		s->UnloadObject( *(Polylines[num][i]));
+		delete Polylines[num][i];
+		
+	}
+	this->Polylines[num].clear();
+}
 void ColliderConf::EditCollider(MouseButton  press, float x_, float y_)
 {
 
@@ -97,6 +112,15 @@ void ColliderConf::EditCollider(MouseButton  press, float x_, float y_)
 		else if (press == 0) 
 		{
 			lpress=false;
+		}
+	}
+	else 
+	{
+		if(!lpress && press ==1) 
+		{
+			closed[num]=false;
+			this->EmptyCurrentCollider();
+			lpress=true;
 		}
 	}
 	
@@ -157,9 +181,33 @@ void ColliderConf::SetCollider(int num_)
 }
 
 
-void ColliderConf::MoveCollider(int i)
+void ColliderConf::MoveCollider(int i, bool unsafe_)
 {
-	if(num+i == Polylines.size()) this->AddCollider();
+	if(num+i == Polylines.size() && unsafe_) this->AddCollider();
 	else if (num+i <0 | num+i > Polylines.size() ) throw std::exception();
 	this->SetCollider(num+i);
+}
+
+
+void ColliderConf::LoadConfFile(std::string& filepath_)
+{
+	std::ifstream file;
+	file.open(filepath_);
+	
+	if(file.is_open())
+	{
+		int Ncolliders; 
+		file >> Ncolliders;
+		for (int i=0; i<Ncolliders; i++)
+		{
+			int Nvert;
+			file >> Nvert;
+			for(int j=0; j<Nvert; j++)
+			{
+				float vx, vy;
+				file >> vx >> vy;
+			}
+		}
+	}
+
 }

@@ -23,13 +23,11 @@ vertex_len( vertex_len_), vertex_num(vertex_num_),  surfaces_num(surfaces_num_),
 	 		vertexxsurf = 3;
 	 		break;
 
-	 	case GL_QUADS:
+
 #ifdef OPENGL_MACRO
+		 case GL_QUADS:
 	 		vertexxsurf = 4;
 	 		break;
-#else
-			printf("OpenglES does not implement GL_QUADS")
-			throw std::exception()
 #endif
 
 	}

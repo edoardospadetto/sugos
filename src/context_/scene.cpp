@@ -3,7 +3,7 @@
 #include <exception>
 
 
-#include "../include/SDL&OpenGL.h"
+#include "../include/safe_include_SDLGL_OpenGL.h"
 
 #include "../modules_/debugmisc_module.h"
 #include "../engines_/stateengine.h"

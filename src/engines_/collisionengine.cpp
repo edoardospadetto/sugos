@@ -2,7 +2,7 @@
 #include <fstream>
 #include "./collisionengine.h"
 #include "../attributes_/collider.h"
-#include "../include/enums.h"
+#include "../enums.h"
 
 
 //=======================================================================================

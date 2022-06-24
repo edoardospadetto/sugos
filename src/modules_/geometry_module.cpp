@@ -4,11 +4,11 @@
 #include <iostream>
 #include <stdio.h>
 
-#include "../include/SDL&OpenGL.h"
-#include "../include/glm.h"
+#include "../include/safe_include_SDLGL_OpenGL.h"
+#include "../include/safe_include_glm.h"
 #include <SDL2/SDL.h>
 
-#include "../include/enums.h"
+#include "../enums.h"
 #include "./debugmisc_module.h"
 #include "../objects_/vectorizedobject.h"
 #include "../attributes_/collider.h"

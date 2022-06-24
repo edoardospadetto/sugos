@@ -1,6 +1,6 @@
 #include "./instancedobject.h"
 #include "../modules_/debugmisc_module.h"
-//#include "../include/SDL&OpenGL.h"
+//#include "../include/safe_include_SDLGL_OpenGL.h"
 
 
 InstancedObject::InstancedObject(int vertex_len_,int vertex_num_,int surfaces_num_,int space_dim_,int vertxsup_, 
