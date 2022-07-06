@@ -85,7 +85,7 @@ int main( int argc, char* args[] )
 	
 	Scene test = Scene();
 	
-	test.LoadObj(Triangle, gpumodule.glprograms[0]);
+	test.LoadObject(&Triangle, gpumodule.glprograms[0]);
 		
 	test.Prepare();
 

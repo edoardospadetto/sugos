@@ -3,10 +3,11 @@
 #include <string>
 #include <iostream>
 #include <stdio.h>
+#include <SDL2/SDL.h>
 
 #include "../include/safe_include_SDLGL_OpenGL.h"
 #include "../include/safe_include_glm.h"
-#include <SDL2/SDL.h>
+
 
 #include "../enums.h"
 #include "./debugmisc_module.h"
@@ -89,8 +90,7 @@ void GenColorQuad(VectorizedObject& obj, float xa,float ya,float x1,float y1)
 					 
 }
 
-// Generate a square with texture
-void GenQuadText(VectorizedObject& obj)
+void GenQuad2TText(VectorizedObject& obj)
 {
 	float vertex[]= 	//VBO data
 	{
@@ -103,6 +103,43 @@ void GenQuadText(VectorizedObject& obj)
 	for (int i =0; i<16; i++)
 	{
 		obj.vertex_buffer[i] = vertex[i];
+	}
+	
+	
+	obj.index_buffer[0] = 0;
+	obj.index_buffer[1] = 1;
+	obj.index_buffer[2] = 2;
+	obj.index_buffer[3] = 0;
+	obj.index_buffer[4] = 2;
+	obj.index_buffer[5] = 3;
+	
+	
+	
+	for (int i =0; i<4; i++)
+	{	
+		obj.vertex_buffer[4*i] *= 1;
+		obj.vertex_buffer[4*i+1] *= 1;
+		
+	}
+					 
+}
+
+
+// Generate a square with texture
+void GenQuadText(VectorizedObject& obj)
+{
+	float vertex[]= 	//VBO data
+	{
+		-1.0f, -1.0f, 0.25f, 0.25f, // bottom left
+		 1.0f, -1.0f, 0.4f, 0.25f, // bottom right
+		 1.0f,  1.0f, 0.4f, 0.4f,
+		-1.0f,  1.0f, 0.25f, 0.4f
+	};
+
+	for (int i =0; i<16; i++)
+	{
+		obj.vertex_buffer[i] = vertex[i];
+		std::cout << obj.vertex_buffer[i] <<" " << vertex[i]<< std::endl;
 	}
 	
 	for (int i =0; i<4; i++)

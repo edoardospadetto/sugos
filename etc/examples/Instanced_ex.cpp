@@ -46,7 +46,7 @@ int main( int argc, char* args[] )
 	//Pentagon.LinkUniformToVariable("CM", 4);
 	
 	Scene test = Scene();
-	test.LoadObj(Pentagon, gpucodes0.glprograms[0]);
+	test.LoadObject(&Pentagon, gpucodes0.glprograms[0]);
 	
 		
 	test.Prepare();

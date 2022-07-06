@@ -70,10 +70,10 @@ int main()
   Scene test = Scene();
   Scene test2 = Scene();
   
-  test.LoadObj(tbtext, gpucodes0.glprograms[0]);
-  test.LoadObj(tbtext3, gpucodes0.glprograms[0]);
-  test.LoadObj(tbtext4, gpucodes0.glprograms[0]);
-  test2.LoadObj(tbtext2, gpucodes1.glprograms[0]);		 
+  test.LoadObject(&tbtext, gpucodes0.glprograms[0]);
+  test.LoadObject(&tbtext3, gpucodes0.glprograms[0]);
+  test.LoadObject(&tbtext4, gpucodes0.glprograms[0]);
+  test2.LoadObject(&tbtext2, gpucodes1.glprograms[0]);		 
   test.Prepare();
   test2.Prepare();
   

@@ -77,10 +77,10 @@ int main( int argc, char* args[] )
 
 
 	Scene test = Scene();
-	test.LoadObj(Spaceship2, gpucodes0.glprograms[1]);
+	test.LoadObject(&Spaceship2, gpucodes0.glprograms[1]);
 	
-	test.LoadObj(Spaceship, gpucodes0.glprograms[0]);
-	test.LoadObj(Spaceship3, gpucodes0.glprograms[1]);		
+	test.LoadObject(&Spaceship, gpucodes0.glprograms[0]);
+	test.LoadObject(&Spaceship3, gpucodes0.glprograms[1]);		
 	
 			
 	
@@ -113,7 +113,7 @@ int main( int argc, char* args[] )
 			//
 			tmp->SpecifyBuffersAttributes("aPos", 2, GL_QUADS);
 			tmp->LinkUniformToVariable("status", 2);
-			test.LoadObj(*tmp, gpucodes0.glprograms[0]);
+			test.LoadObject(tmp, gpucodes0.glprograms[0]);
 			projectiles.push_back(tmp);
 			tmp->position[0]=Spaceship.position[0];
 			tmp->position[1]=Spaceship.position[1];

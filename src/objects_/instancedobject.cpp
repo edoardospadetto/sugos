@@ -45,6 +45,10 @@ void InstancedObject::EnableTBOAttributes(GLuint TBO,GLuint& offsettbo)
 	for(int k=0; k<this->instanceattributenames.size(); k++ )
 	{
 		
+		
+		/*std::cout << " "  <<  this->instanceattributelocationsprogram[k] << 
+		" " << (this->instanceattributesizes[k+1] - this->instanceattributesizes[k]) << " " << 
+		(this->instanceattributesizes[this->instanceattributesizes.size()-1])*sizeof(GLfloat) << "\n" ;*/ 
 			
 		glVertexAttribPointer(  this->instanceattributelocationsprogram[k], 
 					(this->instanceattributesizes[k+1] - this->instanceattributesizes[k]), 
@@ -55,6 +59,7 @@ void InstancedObject::EnableTBOAttributes(GLuint TBO,GLuint& offsettbo)
 				
 
 		glCheckError();
+		
 		glVertexAttribDivisor(this->instanceattributelocationsprogram[k], this->instanceattributedivisors[k]);
 		glCheckError();
 		glEnableVertexAttribArray(this->instanceattributelocationsprogram[k]);

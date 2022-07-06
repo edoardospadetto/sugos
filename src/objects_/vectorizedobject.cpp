@@ -4,17 +4,27 @@
 
 
 
-VectorizedObject::VectorizedObject(int vertex_len_,int vertex_num_, int surfaces_num_, int space_dim_,GLenum representation_):
-vertex_len( vertex_len_), vertex_num(vertex_num_),  surfaces_num(surfaces_num_), space_dim(space_dim_), representation(representation_)
+void VectorizedObject::Fill(int vertex_len_,int vertex_num_, int surfaces_num_, int space_dim_,GLenum representation_)
 {
 
+	vertex_len =  vertex_len_;
+	vertex_num = vertex_num_;
+	surfaces_num = surfaces_num_;
+	space_dim = space_dim_;
+	representation = representation_;
+}
+
+
+void VectorizedObject::Init()
+{
+	
 	dbglog("============= Object ============");
-	dbglog("vertex length   = ", vertex_len_ );
-	dbglog("vertex number   = ", vertex_num_ );
-	dbglog("surfaces number = ", surfaces_num_ );
+	dbglog("vertex length   = ", vertex_len );
+	dbglog("vertex number   = ", vertex_num );
+	dbglog("surfaces number = ", surfaces_num );
 
 	
-	switch(representation_)
+	switch(representation)
 	{
 		case GL_LINES:	
 	 		vertexxsurf = 2;
@@ -27,6 +37,7 @@ vertex_len( vertex_len_), vertex_num(vertex_num_),  surfaces_num(surfaces_num_),
 #ifdef OPENGL_MACRO
 		 case GL_QUADS:
 	 		vertexxsurf = 4;
+	 		std::cout << "Warnig :: GLQUADS" << std::endl;
 	 		break;
 #endif
 
@@ -34,11 +45,18 @@ vertex_len( vertex_len_), vertex_num(vertex_num_),  surfaces_num(surfaces_num_),
 	position      = new float[space_dim];
 	
 	
-	vertex_buffer = new float[vertex_len_*vertex_num_];
+	vertex_buffer = new float[vertex_len*vertex_num];
 	index_buffer  = new int[surfaces_num*vertexxsurf];
-	
+	std::cout << vertex_len*vertex_num << std::endl;
 	uniformsizes.push_back(0);
 	attributesizes.push_back(0);
+} 
+
+VectorizedObject::VectorizedObject(int vertex_len_,int vertex_num_, int surfaces_num_, int space_dim_,GLenum representation_):
+vertex_len( vertex_len_), vertex_num(vertex_num_),  surfaces_num(surfaces_num_), space_dim(space_dim_), representation(representation_)
+{
+
+	this->Init();
 }
 
 void VectorizedObject::GetBuffersInfo(uint &VBOsize , uint &IBOsize, uint &vertexlen_ )
@@ -278,6 +296,16 @@ void VectorizedObject::RenderProgramUniforms()
 
 }
 
+
+
+void VectorizedObject::SetTexture(Texture* texture_)
+{
+	pTexture = texture_;
+}
+
+
+/*
+
 void ModIB(int idx, int val)
 {
 
@@ -287,15 +315,5 @@ void ModVB(int idx, float val)
 {
 
 }
-/*
-virtual void  VectorizedObject::RenderTexture()
-{
 
-	//printf("Error virtual method\n");
-}
-
-virtual void  VectorizedObject::UnbindTexture()
-{
-
-	//printf("Error virtual method\n");
-}*/
+*/

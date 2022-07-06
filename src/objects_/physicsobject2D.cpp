@@ -1,7 +1,9 @@
 #include "./physicsobject2D.h"
-PhysicsObject2D::PhysicsObject2D(int vertex_len_,int vertex_num_,int surfaces_num_, GLenum representation_, float mass, float I ) : 
-VectorizedObject( vertex_len_, vertex_num_, surfaces_num_, 2, representation_)
+PhysicsObject2D::PhysicsObject2D(int vertex_len_,int vertex_num_,int surfaces_num_, GLenum representation_, float mass, float I ) //:
+//VectorizedObject( vertex_len_, vertex_num_, surfaces_num_, 2, representation_)
 {
+	this->Fill( vertex_len_, vertex_num_, surfaces_num_, 2, representation_);
+	this->Init();
 	oneovermass = 1.0/mass;	
 	oneoverI = 1.0/ I ; 
 }
@@ -25,7 +27,7 @@ void PhysicsObject2D::EulerIntegration(float deltatime_)
 	this->position[0] += ( this->velocity[0] +  0.5*deltavx ) *deltatime_;
 	this->position[1] += ( this->velocity[1] +  0.5*deltavy ) *deltatime_;
 	this->velocity.x  += deltavx ;
-	this->velocity.x  += deltavy ;
+	this->velocity.y  += deltavy ;
 	this->angle       += ( this->omega + 0.5*deltaw ) *deltatime_;
 	this->omega       += deltaw;
 

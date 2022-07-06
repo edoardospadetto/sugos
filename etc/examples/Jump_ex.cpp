@@ -103,7 +103,7 @@ int main( int argc, char* args[] )
 	
 	Scene test = Scene();
 	VectorizedObject Pentagon = BuildPentagon();
-	test.LoadObj(Pentagon, gpucodes0.glprograms[0]);
+	test.LoadObject(&Pentagon, gpucodes0.glprograms[0]);
 	
 		
 	test.Prepare();

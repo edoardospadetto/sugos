@@ -73,8 +73,8 @@ int main()
 	
   
   Scene test = Scene();
-  test.LoadObj(MonkChar, gpucodes1.glprograms[0]);	
-  test.LoadObj(tbtext, gpucodes0.glprograms[0]);	
+  test.LoadObject(&MonkChar, gpucodes1.glprograms[0]);	
+  test.LoadObject(&tbtext, gpucodes0.glprograms[0]);	
   test.Prepare();
   //menuscene = Scene()
   std::cout << "MAIN LOOP \n \n"; 

@@ -1,7 +1,7 @@
 #include "./scene.h"
 
 #include <exception>
-
+#include <algorithm>
 
 #include "../include/safe_include_SDLGL_OpenGL.h"
 
@@ -36,7 +36,83 @@ Scene::Scene()
 	glGenBuffers( 1, &TBO );
 }
 
+std::vector<std::string> Scene::GetAttributesNamesFromShader(GLuint designatedprogram)
+{
 
+	std::vector<std::string> atrbNames;
+	
+	const GLsizei bufSize = 16; // maximum name length
+	GLsizei length; // name length
+	GLint count;
+	GLint size; // size of the variable
+	GLenum type; // type of the variable (float, vec3 or mat4, etc)
+
+	
+	
+	GLchar name_temp[bufSize];
+	
+	
+	glGetProgramiv(designatedprogram, GL_ACTIVE_ATTRIBUTES, &count);
+	//printf("Active Attributes: %d\n", count);
+
+	for (int i = 0; i < count; i++)
+	{
+	    glGetActiveAttrib(designatedprogram, (GLuint)i, bufSize, &length, &size, &type, name_temp);
+	    atrbNames.push_back(name_temp);
+	   // std::cout << name_temp << "\n";
+
+	}
+	
+	return atrbNames;
+
+}
+
+
+void Scene::LoadAttributes(std::vector<std::string>& objAtrbNames,std::vector<int>& atrbLocs, 
+			    GLuint designatedprogram, std::vector<std::string>& atrbNames )
+{
+
+	
+	for (int i =0; i<objAtrbNames.size(); i++)
+	{
+		auto temp_it = std::find(atrbNames.begin(), atrbNames.end(), objAtrbNames[i]);
+		if (  temp_it != atrbNames.end())
+		{
+			atrbLocs[i] = glGetAttribLocation( designatedprogram, objAtrbNames[i].c_str() );	
+			GLenum error = glGetError();
+			
+			if(error!=GL_NO_ERROR | atrbLocs[i] == -1)
+			{ 
+				printf("OpenGL Error: %s for attribute %s\n", gl_error_string(error), atrbNames[i].c_str());
+				throw std::exception();
+			}
+			
+			dbglog("	linkbuffer attribute = ",objAtrbNames[i].c_str(), "location =", atrbLocs[i]);
+			
+			atrbNames.erase(temp_it);
+		}
+		else
+		{
+			printf("Error, attribute %s not found in shader program\n", objAtrbNames[i].c_str());
+			throw std::exception();
+		}
+	}
+	
+}
+
+void Scene::CheckAnyForgottenAttribute(std::vector<std::string>& atrbNames )
+{
+	if( atrbNames.size()>0)
+	{
+		printf("Error, attributes for shader not binded to CPU side:\n");
+		for(int i=0; i< atrbNames.size(); i++)
+		{
+			printf("	%s\n",  atrbNames[i].c_str()); 	
+		}
+		throw std::exception();	
+	}
+
+}
 
 /*
 * PURPOSE
@@ -61,7 +137,7 @@ Scene::Scene()
 
 
 
-void Scene::LoadObj(VectorizedObject& obj, GLuint designatedprogram)
+void Scene::LoadObject(VectorizedObject* obj, GLuint designatedprogram)
 {
 
 // ================================================================
@@ -76,11 +152,11 @@ void Scene::LoadObj(VectorizedObject& obj, GLuint designatedprogram)
 	{
 		if(programs[i] == designatedprogram)
 		{
-			assets[i].push_back(&obj);
+			assets[i].push_back(obj);
 			dbglog("	the requested program : ", programs[i], " has a queue, adding object");
 			lfound = true;
-			obj.sceneprog = i ;
-			obj.sceneprogidx = assets[i].size()-1; 
+			obj->sceneprog = i ;
+			obj->sceneprogidx = assets[i].size()-1; 
 			break;
 		}
 	}
@@ -88,63 +164,52 @@ void Scene::LoadObj(VectorizedObject& obj, GLuint designatedprogram)
 	if(!lfound)
 	{
 		programs.push_back(designatedprogram);
-		std::vector<VectorizedObject*> tmp{&obj};
+		std::vector<VectorizedObject*> tmp{obj};
 		assets.push_back(tmp);
-		obj.sceneprog = assets.size()-1 ;
-		obj.sceneprogidx = 0; //ever used? 
+		obj->sceneprog = assets.size()-1 ;
+		obj->sceneprogidx = 0; //ever used? 
 		dbglog("	the requested program : ", designatedprogram, " has no queue, creating one");
 	}
 	
-	for(int i=0; i<obj.uniformnames.size(); i++)
+	for(int i=0; i<obj->uniformnames.size(); i++)
 	{
-		GLint tmp = glGetUniformLocation(designatedprogram, obj.uniformnames[i].c_str());
+		std::cout << i << " " <<  obj->uniformnames[i].c_str() << "\n";
+		GLint tmp = glGetUniformLocation(designatedprogram, obj->uniformnames[i].c_str());
+		
 		GLenum error = glGetError();
 		if(error!=GL_NO_ERROR | tmp==-1) printf("ERROR: uniform %s \n", gl_error_string(error));
-		obj.uniformlocationsprogram[i] = tmp;
-		dbglog("	link uniform : ", obj.uniformnames[i], "at location " , tmp) ;
+		obj->uniformlocationsprogram[i] = tmp;
+		dbglog("	link uniform : ", obj->uniformnames[i], "at location " , tmp) ;
 	}
 	
 	uint tmpvbo, tmpibo, vtlen;
-	obj.GetBuffersInfo(tmpvbo, tmpibo, vtlen);
+	obj->GetBuffersInfo(tmpvbo, tmpibo, vtlen);
 	
 	vertexbuffersize += tmpvbo*vtlen;
 	indexbuffersize +=tmpibo;
 	
-	for (int i =0; i<obj.attributenames.size(); i++)
-	{
-		obj.attributelocationsprogram[i] = glGetAttribLocation( designatedprogram, obj.attributenames[i].c_str() );	
-		GLenum error = glGetError();
-		if(error!=GL_NO_ERROR | obj.attributelocationsprogram[i] == -1) printf("ERROR: attribute %s \n", gl_error_string(error));
-		dbglog("	linkbuffer attribute = ",obj.attributenames[i].c_str(), "location =", obj.attributelocationsprogram[i])   ;
-		
-	}
+
+	std::vector<std::string> atrbNames = this->GetAttributesNamesFromShader(designatedprogram);
+	this->LoadAttributes(obj->attributenames,obj->attributelocationsprogram, designatedprogram, atrbNames);
 	
-	InstancedObject *tmpInstanced = dynamic_cast<InstancedObject*>(&obj);
+	InstancedObject *tmpInstanced = dynamic_cast<InstancedObject*>(obj);
 	if(tmpInstanced!=nullptr)
 	{
 		uint tmptbo, instancesize;
 		for (int i =0; i<tmpInstanced->instanceattributenames.size(); i++)
 		{
 		
-			//std::cout << tmpInstanced->instanceattributenames[i].c_str() << "\n";
-			tmpInstanced->instanceattributelocationsprogram[i] = 
-					glGetAttribLocation( designatedprogram, tmpInstanced->instanceattributenames[i].c_str() );	
+			
 			tmpInstanced->InstancedBufferInfo(tmptbo, instancesize );
-			instancebuffersize += tmptbo*instancesize;
-			
-			GLenum error = glGetError();
-			if(error!=GL_NO_ERROR | tmpInstanced->instanceattributelocationsprogram[i] == -1)
-			{
-				printf("ERROR: instance attribute %s \n", gl_error_string(error));
-			}
-			
-			dbglog("	linkbuffer instance attribute = ",
-					tmpInstanced->instanceattributenames[i].c_str(), 
-					"location =", 
-					tmpInstanced->instanceattributelocationsprogram[i])   ;
+			this->instanceBufferSize += tmptbo*instancesize;
+			this->LoadAttributes(tmpInstanced->instanceattributenames,
+					      tmpInstanced->instanceattributelocationsprogram, 
+					      designatedprogram, atrbNames);
 		}
 		
 	}
+
+	this->CheckAnyForgottenAttribute( atrbNames );
 	
 	GLenum error = glGetError();
 	if(error!=GL_NO_ERROR) 
@@ -158,7 +223,7 @@ void Scene::LoadObj(VectorizedObject& obj, GLuint designatedprogram)
 //		            LOAD COLLISIONS
 // ================================================================
 
-	sceneCollisionEngine.LoadCollidingObject(dynamic_cast<ColliderObject2D*>(&obj)); 
+	sceneCollisionEngine.LoadCollidingObject(dynamic_cast<ColliderObject2D*>(obj)); 
 			
 
 	
@@ -346,7 +411,7 @@ void Scene::Prepare()
 	
 	//Create TBO
 	glBindBuffer( GL_ARRAY_BUFFER, TBO );
-	glBufferData( GL_ARRAY_BUFFER, instancebuffersize*sizeof(GLfloat), NULL , GL_DYNAMIC_DRAW );
+	glBufferData( GL_ARRAY_BUFFER, this->instanceBufferSize*sizeof(GLfloat), NULL , GL_DYNAMIC_DRAW );
 	
 	error = glGetError();
 	if(error!=GL_NO_ERROR) 
@@ -453,7 +518,7 @@ void Scene::DebugColliders(Window_Class* parent)
 	for (auto obj : sceneCollisionEngine.collisionSet )
 	{
 		obj->collider->BuildVecObj();
-		this->LoadObj( *(obj->collider->colliderRep), collidersdebug->glprograms[0]);
+		this->LoadObject( obj->collider->colliderRep, collidersdebug->glprograms[0]);
 	}
 	ldbgcolliders=true;
 }
@@ -507,6 +572,8 @@ void Scene::BufferVBO(VectorizedObject* obj,uint& tmpvbo, uint& vertxlen, uint& 
 		
 	glBindBuffer( GL_ARRAY_BUFFER, VBO );
 	glCheckError();
+	//std::cout << offsetvbo << " " << tmpvbo*vertxlen << std::endl;
+	
 	glBufferSubData( GL_ARRAY_BUFFER, offsetvbo*sizeof(GLfloat), tmpvbo*vertxlen*sizeof(GLfloat), obj->vertex_buffer );
 
 

@@ -1,6 +1,0 @@
-#include "./objects_/vectorizedobject.h"
-#include "./objects_/instancedobject.h"
-#include "./objects_/animatedobject2D.h"
-#include "./objects_/colliderobject2D.h"
-#include "./objects_/physicsobject2D.h"
-#include "./objects_/fontobject2D.h"

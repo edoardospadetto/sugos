@@ -5,10 +5,10 @@
 * It hangles all the call to OpenGL given the objects it has to draw.
 */
 #include <vector>
+#include "../engines_/collisionengine.h"
 
 class Window_Class;
 class GPUcodes;
-#include "../engines_/collisionengine.h"
 class VectorizedObject2D;
 class ColliderObject2D;
 class InstancedObject;
@@ -20,6 +20,13 @@ class Scene
 		void BufferVBO(VectorizedObject* obj,uint& tmpvbo, uint& vertxlen, uint& offsetvbo, uint& offsetvbover);
 		void BufferTBO(InstancedObject* obj,uint& tmptbo, uint& tbolen, uint& offsettbo);
 		void BufferIBO(VectorizedObject* obj, uint& tmpibo, uint& offsetibo);
+		
+		std::vector<std::string> GetAttributesNamesFromShader(GLuint designatedprogram);
+		void LoadAttributes(std::vector<std::string>& objAtrbNames,std::vector<int>& atrbLocs, 
+			       GLuint designatedprogram, std::vector<std::string>& atrbNames );
+		void CheckAnyForgottenAttribute(std::vector<std::string>& atrbNames );
+		
+		
 	        Window_Class* parent = nullptr;
 		bool ldbgcolliders = false;
 		CollisionEngine sceneCollisionEngine;
@@ -30,7 +37,9 @@ class Scene
 		//Instanced
 		GLuint TBO = 0;
 		
-		uint vertexbuffersize=0, indexbuffersize=0, instancebuffersize=0;
+		uint vertexbuffersize=0;
+		uint indexbuffersize=0; 
+		uint instanceBufferSize=0;
 		std::vector<std::vector<VectorizedObject*>> assets;
 		std::vector<GLuint> programs;
 		
@@ -43,7 +52,7 @@ class Scene
 		void ReBuffer();	 
 		void Render();
 		void SetCollisionHandler(void (*CollisionHandler_)(std::vector<ColliderObject2D*>&, std::vector<int>&, glm::vec2*, float* ) );
-		void LoadObj(VectorizedObject& obj, GLuint designatedprogram);
+		void LoadObject(VectorizedObject* obj, GLuint designatedprogram);
 		void Prepare();
 		void PrepareAdd();
 		void ProgramUniforms(VectorizedObject* obj);

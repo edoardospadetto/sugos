@@ -87,9 +87,9 @@ outdirs:
 	$(CC) -c $(DEFS)  $(FLAGS) $(EMSFLAGS) ./etc/tools/$@/$@.cpp $(LIBS) -I ./src/ -o ./build/$@.o $(PRELOAD)
 	$(CC)  $(DEFS) $(FLAGS) $(EMSFLAGS) ./build/$@.o  ./sugos/$(TARGET).a $(LIBS) -o $@.$(X) $(PRELOAD)
 
-$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
+$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(SRC_DIR)%.h
 	#echo $@
-	$(CC) $(DEFS) $(FLAGS) $(CPPFLAGS) -c $< -o ./$@ $(PRELOAD)
+	$(CC) $(DEFS) $(FLAGS) $(CPPFLAGS) -c $(filter-out %.h,$^) -o ./$@ $(PRELOAD)
 
 
 dirs:	

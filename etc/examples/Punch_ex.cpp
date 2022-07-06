@@ -52,7 +52,7 @@ int main( int argc, char* args[] )
 	MonkChar.SpecifyBuffersAttributes("aTex", 2);
 
 	Scene test = Scene();
-	test.LoadObj(MonkChar, gpucodes0.glprograms[0]);	
+	test.LoadObject(&MonkChar, gpucodes0.glprograms[0]);	
 	test.Prepare();
 
 	const Uint8* kb = SDL_GetKeyboardState(NULL);
