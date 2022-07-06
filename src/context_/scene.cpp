@@ -4,23 +4,19 @@
 #include <algorithm>
 
 #include "../include/safe_include_SDLGL_OpenGL.h"
-
 #include "../modules_/debugmisc_module.h"
 #include "../engines_/stateengine.h"
 #include "../engines_/collisionengine.h"
 #include "../context_/gpucodes.h"
 #include "../objects_/instancedobject.h"
 #include "../objects_/animatedobject2D.h"
-
 #include "../attributes_/collider.h"
 #include "../attributes_/state.h"
-
 #include "../modules_/debugmisc_module.h"
+
 void Scene::SetCollisionHandler(void (*CollisionHandler_)( std::vector<ColliderObject2D*>&, std::vector<int>& , glm::vec2*, float* ) )
 {
-
 	sceneCollisionEngine.SetCollisionHandler(CollisionHandler_);
-
 }
 
 /*
