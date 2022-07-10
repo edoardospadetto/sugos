@@ -86,11 +86,10 @@ void Scene::LoadShaderVars(std::vector<std::string>& objAtrbNames,std::vector<in
 			if (kind == GL_ACTIVE_ATTRIBUTES) objAtrbLocs[i] = glGetAttribLocation( designatedprogram, objAtrbNames[i].c_str() );	
 			else if (kind == GL_ACTIVE_UNIFORMS) objAtrbLocs[i] =  glGetUniformLocation(designatedprogram, objAtrbNames[i].c_str());
 			GLenum error = glGetError();
-			
+
 			if(error!=GL_NO_ERROR | objAtrbLocs[i] == -1)
 			{ 
-				
-				printf("OpenGL Error: %s for %s %s\n", gl_error_string(error),nameKind.c_str(), atrbNames[i].c_str());
+				printf("%s %d OpenGL Error: %s for %s %s\n",__FILE__, __LINE__, gl_error_string(error),nameKind.c_str(), atrbNames[i].c_str());
 				throw std::exception();
 			}
 			
@@ -153,7 +152,7 @@ void Scene::LoadObject(VectorizedObject* obj, GLuint designatedprogram)
 // ================================================================
 //		            LOAD GRAPHICS
 // ================================================================
-
+   
 	bool lfound = false;
 	
 	dbglog("designated program=  ", designatedprogram );
@@ -180,11 +179,15 @@ void Scene::LoadObject(VectorizedObject* obj, GLuint designatedprogram)
 		dbglog("	the requested program : ", designatedprogram, " has no queue, creating one");
 	}
 	
+	glCheckError();
+	
 	//load uniforms
 	std::vector<std::string> unifNames = this->GetVarNamesFromShader(designatedprogram,GL_ACTIVE_UNIFORMS);
 	this->LoadShaderVars(obj->uniformnames,obj->uniformlocationsprogram, designatedprogram, unifNames,GL_ACTIVE_UNIFORMS);
 	this->CheckAnyForgottenVar( unifNames );
-
+    
+    glCheckError();
+	
 	//load attributes
 	uint tmpvbo, tmpibo, vtlen;
 	obj->GetBuffersInfo(tmpvbo, tmpibo, vtlen);

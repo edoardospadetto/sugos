@@ -2,6 +2,7 @@
 #ifndef ENUMS
 #define ENUMS
 #include <SDL2/SDL.h>
+#include "./include/safe_include_SDLGL_OpenGL.h"
 
 
 enum Graphics {GPU = 0, CPU=1};

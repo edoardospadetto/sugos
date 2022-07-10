@@ -61,28 +61,29 @@ int main( int argc, char* args[] )
 	EventEngine MainEngine=EventEngine(60);
 	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Instanced Rendering", 620,620 ); 
 	MainEngine.HandleWindow(&window);
-	
+	glCheckError();
 	GPUcodes gpumodule=GPUcodes(&window,"./src/shaders_/instanced.shader","#version 300 es");	
-
+    glCheckError();
 	gpumodule.Load("instancedv","instancedf", "shader");
-	glClearColor( 0.f, 0.f, 0.f, 1.f );
 	
+	glClearColor( 0.f, 0.f, 0.f, 1.f );
+	glCheckError();
 	int N = 1000;
 	
   	
 	InstancedObject Triangle(2,4,3,2,GL_TRIANGLES, N,2);
-	
+	glCheckError();
 	float* velocities=new float[2*N];
 	memset(velocities,0.0,2*N);
 	velset(velocities);
 	
 	Triangle.SpecifyBuffersAttributes("vposition", 2) ;
 	Triangle.SpecifyBuffersInstanceAttributes("voffset", 2,1) ;
-  	
+  	 glCheckError();
 	GenPolygon(&Triangle,3,0.02);
 	Triangle.SetToOrigin(0);
 	GenOffset(&Triangle, N, 2);	
-	
+	 glCheckError();
 	Scene test = Scene();
 	
 	test.LoadObject(&Triangle, gpumodule.glprograms[0]);

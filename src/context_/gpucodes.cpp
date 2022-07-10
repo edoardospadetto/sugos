@@ -336,6 +336,8 @@ void GPUcodes::Load(const std::initializer_list<std::string>& combinedVertex,con
     this->Compile(fragmentBody.c_str(), GL_FRAGMENT_SHADER, id_f );
 
     this->Link(id_v, id_f, programName);
+    
+    glCheckError();
 
 
 }
@@ -355,7 +357,8 @@ void GPUcodes::Load(const std::string& vertexName, const std::string& fragmentNa
     dbglog("Compiling SUCCESSFULL  ", shaders_name[idx_a], shaders_id[idx_v]);
 	dbglog("Compiling SUCCESSFULL  ", shaders_name[idx_a], shaders_id[idx_f]);
 	
-	this->Link(idx_v, idx_f, programName);
+	this->Link(shaders_id[idx_v], shaders_id[idx_f], programName);
+	
     
 
 }
@@ -367,10 +370,12 @@ void GPUcodes::Link(int idV, int idF, const std::string& programName)
 	
     glAttachShader(program, idV);
 	glAttachShader(program, idF);
+	glCheckError();
 	
 	glprograms.push_back(program); 
 	this->programnames.push_back(programName); 
 	glLinkProgram(program);
+	glCheckError();
 	
 	GLint programSuccess = GL_TRUE;
     glGetProgramiv( program, GL_LINK_STATUS, &programSuccess );
@@ -384,8 +389,11 @@ void GPUcodes::Link(int idV, int idF, const std::string& programName)
     
     glDetachShader(program,idV);
     glDeleteShader(idV);
+    glCheckError();
+    
     glDetachShader(program,idF);
     glDeleteShader(idF);
+    glCheckError();
 
 
 }

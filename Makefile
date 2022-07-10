@@ -14,7 +14,7 @@ OBJS = $(patsubst $(SRC_DIR)%.cpp,$(OBJ_DIR)%.o,$(SRCS))
 #		CONFIGURATIONS HADLING 
 #**************************************************************
 
-ifeq ($(SUGOSOUT),SUGOS_EMSCRIPTEN)
+ifeq ($(sugos_out),EMSCRIPTEN)
 	CC = em++ -v
 	XT = cpp
 	X = html
@@ -27,14 +27,14 @@ ifeq ($(SUGOSOUT),SUGOS_EMSCRIPTEN)
 	%: force
 		@echo "**** Warning: Preload each asset you are using for JavaScript *** "
 	endif
-else ifeq ($(SUGOSOUT),SUGOS_OPENGLES)
+else ifeq ($(sugos_out),OPENGLES)
 	CC = g++ 
 	XT = cpp
 	X = app
 	TARGET = libsugos_es
 	LIBS = -Bstatic -w -lGLESv2 -lSDL2  -lSDL2_image -I ./src/include/ #-lpthreadexport 
 	DEFS = $(DEFS0) -D OPENGLES_MACRO  
-else ifeq ($(SUGOSOUT),SUGOS_OPENGL)
+else ifeq ($(sugos_out),OPENGL)
 	CC = g++ 
 	XT = cpp
 	X = app
