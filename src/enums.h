@@ -11,4 +11,5 @@ enum Polygon {GENERIC =0, SQUARE = 1};
 enum CollisionStatus { NOT_COLLIDING = 0 , COLLIDING = 1, ON_CHECK=2 , TO_CHECK=3};
 enum MouseButton {LEFT =1 , WHEEL = 2, RIGHT = 4};
 static const SDL_Scancode TIME_OUT = static_cast<SDL_Scancode>(-1);
+static const GLenum GSLS_FUNCTION_VEC4IO = static_cast<GLenum>(11100);
 #endif

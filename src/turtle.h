@@ -28,6 +28,7 @@
 
 #include "./context_/window.h"
 #include "./context_/eventengine.h"
+#include "./context_/camera_2D.h"
 #include "./context_/gpucodes.h"
 #include "./attributes.h"
 #include "./engines_/stateengine.h"

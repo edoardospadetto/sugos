@@ -21,10 +21,13 @@ class Scene
 		void BufferTBO(InstancedObject* obj,uint& tmptbo, uint& tbolen, uint& offsettbo);
 		void BufferIBO(VectorizedObject* obj, uint& tmpibo, uint& offsetibo);
 		
-		std::vector<std::string> GetAttributesNamesFromShader(GLuint designatedprogram);
-		void LoadAttributes(std::vector<std::string>& objAtrbNames,std::vector<int>& atrbLocs, 
-			       GLuint designatedprogram, std::vector<std::string>& atrbNames );
-		void CheckAnyForgottenAttribute(std::vector<std::string>& atrbNames );
+		std::vector<std::string> GetVarNamesFromShader(GLuint designatedprogram, GLenum kind);
+		
+		void LoadShaderVars(std::vector<std::string>& objAtrbNames,std::vector<int>& atrbLocs, 
+			       GLuint designatedprogram, std::vector<std::string>& atrbNames, GLint kind );
+			              
+	
+		void CheckAnyForgottenVar(std::vector<std::string>& varNames );
 		
 		
 	        Window_Class* parent = nullptr;

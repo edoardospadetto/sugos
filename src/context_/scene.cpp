@@ -32,10 +32,11 @@ Scene::Scene()
 	glGenBuffers( 1, &TBO );
 }
 
-std::vector<std::string> Scene::GetAttributesNamesFromShader(GLuint designatedprogram)
+// kind GL_ACTIVE_ATTRIBUTES or GL_ACTIVE_UNIFORMS
+std::vector<std::string> Scene::GetVarNamesFromShader(GLuint designatedprogram, GLenum kind)
 {
 
-	std::vector<std::string> atrbNames;
+	std::vector<std::string> varNames;
 	
 	const GLsizei bufSize = 16; // maximum name length
 	GLsizei length; // name length
@@ -48,42 +49,52 @@ std::vector<std::string> Scene::GetAttributesNamesFromShader(GLuint designatedpr
 	GLchar name_temp[bufSize];
 	
 	
-	glGetProgramiv(designatedprogram, GL_ACTIVE_ATTRIBUTES, &count);
+	glGetProgramiv(designatedprogram, kind, &count);
 	//printf("Active Attributes: %d\n", count);
 
 	for (int i = 0; i < count; i++)
 	{
-	    glGetActiveAttrib(designatedprogram, (GLuint)i, bufSize, &length, &size, &type, name_temp);
-	    atrbNames.push_back(name_temp);
-	   // std::cout << name_temp << "\n";
-
+	    
+	    if (kind == GL_ACTIVE_ATTRIBUTES) glGetActiveAttrib(designatedprogram, (GLuint)i, bufSize, &length, &size, &type, name_temp);
+	    else if (kind == GL_ACTIVE_UNIFORMS) glGetActiveUniform(designatedprogram, (GLuint)i, bufSize, &length, &size, &type, name_temp);
+	    
+	    // Ignore Samplers for now just this one
+	    if(type != GL_SAMPLER_2D ) 
+	    {
+	    	varNames.push_back(name_temp);
+	    	std::cout << name_temp << "\n";
+	    }
 	}
 	
-	return atrbNames;
+	return varNames;
 
 }
 
 
-void Scene::LoadAttributes(std::vector<std::string>& objAtrbNames,std::vector<int>& atrbLocs, 
-			    GLuint designatedprogram, std::vector<std::string>& atrbNames )
+void Scene::LoadShaderVars(std::vector<std::string>& objAtrbNames,std::vector<int>& objAtrbLocs, 
+			    GLuint designatedprogram, std::vector<std::string>& atrbNames, GLint kind )
 {
-
+	std::string nameKind = "";			
+	if (kind == GL_ACTIVE_ATTRIBUTES) nameKind = "attribute";
+	else if (kind == GL_ACTIVE_UNIFORMS) nameKind = "uniform";
 	
 	for (int i =0; i<objAtrbNames.size(); i++)
 	{
 		auto temp_it = std::find(atrbNames.begin(), atrbNames.end(), objAtrbNames[i]);
 		if (  temp_it != atrbNames.end())
 		{
-			atrbLocs[i] = glGetAttribLocation( designatedprogram, objAtrbNames[i].c_str() );	
+			if (kind == GL_ACTIVE_ATTRIBUTES) objAtrbLocs[i] = glGetAttribLocation( designatedprogram, objAtrbNames[i].c_str() );	
+			else if (kind == GL_ACTIVE_UNIFORMS) objAtrbLocs[i] =  glGetUniformLocation(designatedprogram, objAtrbNames[i].c_str());
 			GLenum error = glGetError();
 			
-			if(error!=GL_NO_ERROR | atrbLocs[i] == -1)
+			if(error!=GL_NO_ERROR | objAtrbLocs[i] == -1)
 			{ 
-				printf("OpenGL Error: %s for attribute %s\n", gl_error_string(error), atrbNames[i].c_str());
+				
+				printf("OpenGL Error: %s for %s %s\n", gl_error_string(error),nameKind.c_str(), atrbNames[i].c_str());
 				throw std::exception();
 			}
 			
-			dbglog("	linkbuffer attribute = ",objAtrbNames[i].c_str(), "location =", atrbLocs[i]);
+			dbglog("	linkbuffer ",nameKind," = ",objAtrbNames[i].c_str(), "location =", objAtrbLocs[i]);
 			
 			atrbNames.erase(temp_it);
 		}
@@ -96,19 +107,22 @@ void Scene::LoadAttributes(std::vector<std::string>& objAtrbNames,std::vector<in
 	
 }
 
-void Scene::CheckAnyForgottenAttribute(std::vector<std::string>& atrbNames )
+void Scene::CheckAnyForgottenVar(std::vector<std::string>& varNames )
 {
-	if( atrbNames.size()>0)
+	if( varNames.size()>0)
 	{
-		printf("Error, attributes for shader not binded to CPU side:\n");
-		for(int i=0; i< atrbNames.size(); i++)
+		printf("Error, var for shader not binded to CPU side:\n");
+		for(int i=0; i< varNames.size(); i++)
 		{
-			printf("	%s\n",  atrbNames[i].c_str()); 	
+			printf("	%s\n",  varNames[i].c_str()); 	
 		}
 		throw std::exception();	
 	}
 
 }
+
+
+
 
 /*
 * PURPOSE
@@ -156,7 +170,6 @@ void Scene::LoadObject(VectorizedObject* obj, GLuint designatedprogram)
 			break;
 		}
 	}
-	
 	if(!lfound)
 	{
 		programs.push_back(designatedprogram);
@@ -167,52 +180,36 @@ void Scene::LoadObject(VectorizedObject* obj, GLuint designatedprogram)
 		dbglog("	the requested program : ", designatedprogram, " has no queue, creating one");
 	}
 	
-	for(int i=0; i<obj->uniformnames.size(); i++)
-	{
-		std::cout << i << " " <<  obj->uniformnames[i].c_str() << "\n";
-		GLint tmp = glGetUniformLocation(designatedprogram, obj->uniformnames[i].c_str());
-		
-		GLenum error = glGetError();
-		if(error!=GL_NO_ERROR | tmp==-1) printf("ERROR: uniform %s \n", gl_error_string(error));
-		obj->uniformlocationsprogram[i] = tmp;
-		dbglog("	link uniform : ", obj->uniformnames[i], "at location " , tmp) ;
-	}
-	
+	//load uniforms
+	std::vector<std::string> unifNames = this->GetVarNamesFromShader(designatedprogram,GL_ACTIVE_UNIFORMS);
+	this->LoadShaderVars(obj->uniformnames,obj->uniformlocationsprogram, designatedprogram, unifNames,GL_ACTIVE_UNIFORMS);
+	this->CheckAnyForgottenVar( unifNames );
+
+	//load attributes
 	uint tmpvbo, tmpibo, vtlen;
 	obj->GetBuffersInfo(tmpvbo, tmpibo, vtlen);
-	
 	vertexbuffersize += tmpvbo*vtlen;
 	indexbuffersize +=tmpibo;
+	std::vector<std::string> atrbNames = this->GetVarNamesFromShader(designatedprogram,GL_ACTIVE_ATTRIBUTES);
+	this->LoadShaderVars(obj->attributenames,obj->attributelocationsprogram, designatedprogram, atrbNames,GL_ACTIVE_ATTRIBUTES);
 	
-
-	std::vector<std::string> atrbNames = this->GetAttributesNamesFromShader(designatedprogram);
-	this->LoadAttributes(obj->attributenames,obj->attributelocationsprogram, designatedprogram, atrbNames);
-	
+	//load attributes of instanced obj
 	InstancedObject *tmpInstanced = dynamic_cast<InstancedObject*>(obj);
 	if(tmpInstanced!=nullptr)
 	{
 		uint tmptbo, instancesize;
-		for (int i =0; i<tmpInstanced->instanceattributenames.size(); i++)
-		{
-		
-			
-			tmpInstanced->InstancedBufferInfo(tmptbo, instancesize );
-			this->instanceBufferSize += tmptbo*instancesize;
-			this->LoadAttributes(tmpInstanced->instanceattributenames,
-					      tmpInstanced->instanceattributelocationsprogram, 
-					      designatedprogram, atrbNames);
-		}
-		
+		//removed a loop over instanced names should be unnecessary
+		//a test with 2 instanced buffers will reveal.
+		tmpInstanced->InstancedBufferInfo(tmptbo, instancesize );
+		this->instanceBufferSize += tmptbo*instancesize;
+		this->LoadShaderVars(tmpInstanced->instanceattributenames,
+				      tmpInstanced->instanceattributelocationsprogram, 
+				      designatedprogram, atrbNames,GL_ACTIVE_ATTRIBUTES);
+				
 	}
-
-	this->CheckAnyForgottenAttribute( atrbNames );
+	this->CheckAnyForgottenVar( atrbNames );
 	
-	GLenum error = glGetError();
-	if(error!=GL_NO_ERROR) 
-	{
-		printf("ERROR: Load Object: %s \n", gl_error_string(error));
-		throw std::exception();
-	}
+	glCheckError();
 	
 	
 // ================================================================
@@ -220,9 +217,6 @@ void Scene::LoadObject(VectorizedObject* obj, GLuint designatedprogram)
 // ================================================================
 
 	sceneCollisionEngine.LoadCollidingObject(dynamic_cast<ColliderObject2D*>(obj)); 
-			
-
-	
 }
 
 

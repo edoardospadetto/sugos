@@ -289,6 +289,12 @@ void VectorizedObject::RenderProgramUniforms()
 				this->uniformattributes[this->uniformsizes[k]+2],
 				this->uniformattributes[this->uniformsizes[k]+3]);
 				break;
+			case 16: 
+			    glUniformMatrix4fv( this->uniformlocationsprogram[k],
+                                    1,
+                                    false,
+                                    &(this->uniformattributes[this->uniformsizes[k]]));
+			    break;
 				//dbglog("unif" , obj->uniformattributes[obj->uniformsizes[k]],obj->uniformattributes[obj->uniformsizes[k]+1 ]);
 		}
 	}

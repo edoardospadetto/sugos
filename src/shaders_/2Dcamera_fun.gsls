@@ -1,0 +1,12 @@
+SHADER FUNCTION camera2D
+
+uniform mat4 sugos_camera;
+vec4 Camera(vec4 model_position);
+
+vec4 Camera(vec4 model_position)
+{	
+    vec4 transformed = sugos_camera*model_position;
+    return transformed;
+}
+
+ENDSHADER

@@ -139,7 +139,6 @@ void GenQuadText(VectorizedObject& obj)
 	for (int i =0; i<16; i++)
 	{
 		obj.vertex_buffer[i] = vertex[i];
-		std::cout << obj.vertex_buffer[i] <<" " << vertex[i]<< std::endl;
 	}
 	
 	for (int i =0; i<4; i++)

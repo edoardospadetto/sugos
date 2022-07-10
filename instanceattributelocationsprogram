@@ -1,9 +1,0 @@
-src/context_/scene.cpp:		for (int i =0; i<tmpInstanced->instanceattributenames.size(); i++)
-src/context_/scene.cpp:			//std::cout << tmpInstanced->instanceattributenames[i].c_str() << "\n";
-src/context_/scene.cpp:			tmpInstanced->instanceattributelocationsprogram[i] = 
-src/context_/scene.cpp:					glGetAttribLocation( designatedprogram, tmpInstanced->instanceattributenames[i].c_str() );	
-src/context_/scene.cpp:			tmpInstanced->InstancedBufferInfo(tmptbo, instancesize );
-src/context_/scene.cpp:			if(error!=GL_NO_ERROR | tmpInstanced->instanceattributelocationsprogram[i] == -1)
-src/context_/scene.cpp:					tmpInstanced->instanceattributenames[i].c_str(), 
-src/context_/scene.cpp:					tmpInstanced->instanceattributelocationsprogram[i])   ;
-src/context_/scene.cpp:					tmpInstanced->Render(VBO,IBO,TBO,offsetvbo,offsetibo,offsettbo);
