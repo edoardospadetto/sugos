@@ -2,10 +2,10 @@
 
 Library based on OpenGL and SDL2.
 
-1. 2D animations
-2. particle systems with instanced rendering
-3. SAT collisions
-4. Font rendering
+- 2D animations
+- particle systems with instanced rendering
+- SAT collisions
+- Font rendering
 
 ### Build
 
@@ -28,6 +28,6 @@ Examples contains a list of example of usage of the library
 
 Set of tools that could speedup the workflow using the library
 
-1.Collider Tool (almost finished)
+- Collider Tool (almost finished)
 
 
