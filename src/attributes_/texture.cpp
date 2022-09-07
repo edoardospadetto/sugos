@@ -1,4 +1,5 @@
 #include "./texture.h"
+#include <exception>
 #include "../modules_/debugmisc_module.h"
 
 
@@ -21,9 +22,9 @@ void Texture::LoadTexture(Window_Class *w, const std::string& filename,bool flip
 	w->MakeCurrent();
 	glGenTextures(1, &( textureId));
 	glBindTexture(GL_TEXTURE_2D,  textureId);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	// load and generate the texture
 	int width, height, nrChannels;
@@ -54,13 +55,48 @@ void Texture::LoadTexture(Window_Class *w,std::string&& filename,bool flip_, int
 	LoadTexture(w, filename,flip_,desiredchannels,colorformat);
 }
 
+void Texture::LoadTexture(Window_Class *w,float* array, int size1, int size2, int size3)
+{
 
-void Texture::RenderTexture()
+    w->MakeCurrent();
+	glGenTextures(1, &( textureId));
+	glBindTexture(GL_TEXTURE_2D,  textureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    GLenum channels = GL_INVALID_VALUE;
+    switch(size3)
+    {
+        case 1:
+            channels =GL_RED;
+            break;
+        case 2:
+            channels =GL_RG;
+            break;
+        case 3:
+            channels =GL_RGB;
+            break;
+        case 4:
+            channels = GL_RGBA;
+            break;
+    
+    
+    }
+    if(channels == GL_INVALID_VALUE) {printf("Error, invalid choice of size 3, available only {1,2,3,4}\n");throw std::exception();}
+    glTexImage2D(GL_TEXTURE_2D, 0, channels, size1, size2, 0, channels, GL_FLOAT, array);
+    //glGenerateMipmap(GL_TEXTURE_2D);
+    ltexture = true;
+    glCheckError(); 
+
+}
+
+
+void Texture::RenderTexture(int idx)
 {
 
 	//is this temp?
 	if(textureId != -1 )
 	{
+	    glActiveTexture(GL_TEXTURE0 + idx);
 		glBindTexture(GL_TEXTURE_2D, this->textureId);
 		glCheckError();
 	}

@@ -121,7 +121,7 @@ void GPUcodes::SplitRawInput(std::string rawin)
 			int delimiter1=fulldata.find(' ');
 			int delimiter2=fulldata.find(' ', delimiter1+1);
 			int delimiter3=fulldata.find('\n', delimiter2+1);
-			if(fulldata.find(' ', delimiter2+1) < delimiter3 )
+			if( (int) (fulldata.find(' ', delimiter2+1)) < delimiter3 )
 			{
 				delimiter3=fulldata.find(' ', delimiter2+1);
 			}
@@ -239,7 +239,7 @@ int GPUcodes::FindNameIndex(const std::string& name)
     auto shader_pos = std::find(&(shaders_name[0]), &(shaders_name[0]) + shaders_name.size() , name);
 
 	int idx = std::distance(&(shaders_name[0]),shader_pos);
-	if(idx == shaders_name.size())
+	if(idx == (int) (shaders_name.size()))
 	{
 		printf("ERROR: Shader, name |%s| not found. No shader in use.\n",name.c_str());
 		throw std::exception();
@@ -401,7 +401,7 @@ void GPUcodes::Link(int idV, int idF, const std::string& programName)
 
 void GPUcodes::EnableProgram(const std::string& name)
 {
-	for (int i=0; i<glprograms.size(); i++)
+	for (int i=0; i< (int)(glprograms.size()); i++)
 	{if(programnames[i] == name) glUseProgram(glprograms[i]); return ;}
 	printf("ERROR : program not found\n");
 }

@@ -59,11 +59,11 @@ std::vector<std::string> Scene::GetVarNamesFromShader(GLuint designatedprogram, 
 	    else if (kind == GL_ACTIVE_UNIFORMS) glGetActiveUniform(designatedprogram, (GLuint)i, bufSize, &length, &size, &type, name_temp);
 	    
 	    // Ignore Samplers for now just this one
-	    if(type != GL_SAMPLER_2D ) 
-	    {
+	   //if(type != GL_SAMPLER_2D ) 
+	   // {
 	    	varNames.push_back(name_temp);
 	    	std::cout << name_temp << "\n";
-	    }
+	    //}
 	}
 	
 	return varNames;
@@ -111,7 +111,7 @@ void Scene::CheckAnyForgottenVar(std::vector<std::string>& varNames )
 	if( varNames.size()>0)
 	{
 		printf("Error, var for shader not binded to CPU side:\n");
-		for(int i=0; i< varNames.size(); i++)
+		for(int i=0; i< (int) (varNames.size()); i++)
 		{
 			printf("	%s\n",  varNames[i].c_str()); 	
 		}
@@ -253,7 +253,7 @@ void Scene::Render()
 	
 		
 		GLenum error = glGetError();
-		GLuint offsetibo=0 , offsetvbo=0, offsettbo=0,  tmpvbo=0, tmpibo=0, tmptbo=0, vertxlen=0;
+		GLuint offsetibo=0 , offsetvbo=0, offsettbo=0;
 		
 		for(int i=0; i< assets.size(); i++)
 		{
@@ -267,7 +267,7 @@ void Scene::Render()
 			//glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, TBO );
 			glCheckError();
 			//Enable vertex position
-			for (int j =0; j< assets[i].size(); j++)
+			for (int j =0; j< (int)(assets[i].size()); j++)
 			{
 			
 				InstancedObject* tmpInstanced=dynamic_cast<InstancedObject*>(assets[i][j]);
@@ -387,7 +387,7 @@ void Scene::Prepare()
 
 
 	
-	for(int i=0; i< assets.size(); i++)
+	for(int i=0; i< (int) (assets.size()); i++)
 	{
 		//dbglog("program", programs[i], "#assets", assets[i].size());
 	}
@@ -421,9 +421,9 @@ void Scene::Prepare()
 	uint offsetvbo=0, offsetibo=0, offsetvbover=0;
 	uint offsettbo=0, tmptbo=0, tbolen=0;
 
-	for(int i=0; i< assets.size(); i++)
+	for(int i=0; i< (int)(assets.size()); i++)
 	{
-	for(int j=0; j< assets[i].size(); j++)
+	for(int j=0; j< (int)(assets[i].size()); j++)
 	{
 		assets[i][j]->GetBuffersInfo(tmpvbo, tmpibo, vertxlen);
 	
@@ -472,7 +472,7 @@ void Scene::UnloadObject(VectorizedObject& obj)
 	{
 		programs.erase(programs.begin()+obj.sceneprog);
 		assets.erase(assets.begin()+obj.sceneprog);
-		for (int i =obj.sceneprog; i < assets.size(); i++ )
+		for (int i =obj.sceneprog; i < (int)(assets.size()); i++ )
 		{
 			for (int j =0; j < assets[i].size(); j++ )
 			{
@@ -480,7 +480,7 @@ void Scene::UnloadObject(VectorizedObject& obj)
 			}
 		}
 	}
-	for (int j =obj.sceneprogidx; j < assets[obj.sceneprog].size(); j++ )
+	for (int j =obj.sceneprogidx; j < (int) (assets[obj.sceneprog].size()); j++ )
 	{
 		assets[obj.sceneprog][j]->sceneprogidx = j ;
 	}
@@ -524,9 +524,9 @@ void Scene::ReBuffer()
 	uint offsetvbo=0, offsetibo=0, offsetvbover=0;
 	uint offsettbo=0, tmptbo=0, tbolen=0;
 
-	for(int i=0; i< assets.size(); i++)
+	for(int i=0; i< (int) (assets.size()); i++)
 	{
-	for(int j=0; j< assets[i].size(); j++)
+	for(int j=0; j< (int) (assets[i].size()); j++)
 	{
 		
 		assets[i][j]->GetBuffersInfo(tmpvbo, tmpibo, vertxlen);

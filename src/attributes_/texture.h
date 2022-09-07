@@ -19,7 +19,8 @@ class Texture
 	bool ltexture = false;
 	void LoadTexture(Window_Class *w,const std::string& filename,bool flip_, int desiredchannels, GLenum colorformat );
 	void LoadTexture(Window_Class *w,std::string&& filename,bool flip_, int desiredchannels, GLenum colorformat  );
-	void RenderTexture();
+	void LoadTexture(Window_Class *w,float* array, int size1, int size2, int size3);
+	void RenderTexture(int idx);
 	void UnbindTexture();
 
 };

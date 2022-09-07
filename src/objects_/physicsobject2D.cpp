@@ -37,3 +37,9 @@ void PhysicsObject2D::EulerIntegration(float deltatime_)
 	cumulativeAngularImpulse = 0;
 }
 
+
+void PhysicsObject2D::GetVelocity(float &vx, float &vy)
+{
+    vx = this->velocity.x;
+    vy = this->velocity.y;
+}   

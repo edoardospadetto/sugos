@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "./vectorizedobject.h"
 
 #include "../modules_/debugmisc_module.h"
@@ -47,7 +48,6 @@ void VectorizedObject::Init()
 	
 	vertex_buffer = new float[vertex_len*vertex_num];
 	index_buffer  = new int[surfaces_num*vertexxsurf];
-	std::cout << vertex_len*vertex_num << std::endl;
 	uniformsizes.push_back(0);
 	attributesizes.push_back(0);
 } 
@@ -128,21 +128,26 @@ VectorizedObject::~VectorizedObject()
 
 
 }
-int VectorizedObject::LinkUniformToVariable(std::string&& uniformname, int uniformsize )
+int VectorizedObject::LinkUniformToVariable(std::string&& uniformname, int uniformsize , GLenum kind)
 {
-	return LinkUniformToVariable( uniformname, uniformsize );
+	return LinkUniformToVariable( uniformname, uniformsize,kind );
 }
 
-int VectorizedObject::LinkUniformToVariable(const std::string& uniformname, int uniformsize )
+int VectorizedObject::LinkUniformToVariable(const std::string& uniformname, int uniformsize, GLenum kind )
 {
-	
-	for(int i=0; i<uniformsize; i++){ uniformattributes.push_back(0.0);}	
-	uniformnames.push_back(uniformname);
-	uniformlocationsprogram.push_back(-1);
-	dbglog(uniformsizes[uniformsizes.size()-1], "test");
-	uniformsizes.push_back(uniformsize+uniformsizes[uniformsizes.size()-1]);
-	return(uniformnames.size()-1);
-
+	if ( std::find(uniformnames.begin(), uniformnames.end(), uniformname) != uniformnames.end() ) 
+	{
+	    printf("Warning, uniform already binded, skip operation (if necessary change name)\n");
+	}
+	else
+	{
+	    for(int i=0; i<uniformsize; i++){ uniformattributes.push_back(0.0);}	
+	    uniformnames.push_back(uniformname);
+	    uniformkinds.push_back(kind);
+	    uniformlocationsprogram.push_back(-1);
+	    uniformsizes.push_back(uniformsize+uniformsizes[uniformsizes.size()-1]);
+	    return(uniformnames.size()-1);
+    }
 }
 int VectorizedObject::SetUniform(const std::string& uniformname,int idx, float value)
 {
@@ -269,34 +274,54 @@ void VectorizedObject::RenderProgramUniforms()
 
 	for(int k=0; k< this->uniformnames.size(); k++)
 	{
-		switch(this->uniformsizes[k+1]-this->uniformsizes[k])
-		{
-			case 2: 
-				glUniform2f(this->uniformlocationsprogram[k],
-				this->uniformattributes[this->uniformsizes[k]],
-				this->uniformattributes[this->uniformsizes[k]+1]);
-				break;
-			case 3: 
-				glUniform3f(this->uniformlocationsprogram[k],
-				this->uniformattributes[this->uniformsizes[k]],
-				this->uniformattributes[this->uniformsizes[k]+1],
-				this->uniformattributes[this->uniformsizes[k]+2]);
-				break;
-			case 4: 
-				glUniform4f(this->uniformlocationsprogram[k],
-				this->uniformattributes[this->uniformsizes[k]],
-				this->uniformattributes[this->uniformsizes[k]+1],
-				this->uniformattributes[this->uniformsizes[k]+2],
-				this->uniformattributes[this->uniformsizes[k]+3]);
-				break;
-			case 16: 
-			    glUniformMatrix4fv( this->uniformlocationsprogram[k],
-                                    1,
-                                    false,
-                                    &(this->uniformattributes[this->uniformsizes[k]]));
-			    break;
-				//dbglog("unif" , obj->uniformattributes[obj->uniformsizes[k]],obj->uniformattributes[obj->uniformsizes[k]+1 ]);
+	    if(uniformkinds[k] == GL_FLOAT)
+	    {
+		    switch(this->uniformsizes[k+1]-this->uniformsizes[k])
+		    {
+			    
+			    case 1:
+			        glUniform1f(this->uniformlocationsprogram[k],
+				    this->uniformattributes[this->uniformsizes[k]]);
+				    break;
+			    case 2: 
+				    glUniform2f(this->uniformlocationsprogram[k],
+				    this->uniformattributes[this->uniformsizes[k]],
+				    this->uniformattributes[this->uniformsizes[k]+1]);
+				    break;
+			    case 3: 
+				    glUniform3f(this->uniformlocationsprogram[k],
+				    this->uniformattributes[this->uniformsizes[k]],
+				    this->uniformattributes[this->uniformsizes[k]+1],
+				    this->uniformattributes[this->uniformsizes[k]+2]);
+				    break;
+			    case 4: 
+				    glUniform4f(this->uniformlocationsprogram[k],
+				    this->uniformattributes[this->uniformsizes[k]],
+				    this->uniformattributes[this->uniformsizes[k]+1],
+				    this->uniformattributes[this->uniformsizes[k]+2],
+				    this->uniformattributes[this->uniformsizes[k]+3]);
+				    break;
+			    case 16: 
+			        glUniformMatrix4fv( this->uniformlocationsprogram[k],
+                                        1,
+                                        false,
+                                        &(this->uniformattributes[this->uniformsizes[k]]));
+			        break;
+				    //dbglog("unif" , obj->uniformattributes[obj->uniformsizes[k]],obj->uniformattributes[obj->uniformsizes[k]+1 ]);
+		    }
 		}
+		else if (uniformkinds[k] == GL_INT)
+	    {
+            switch(this->uniformsizes[k+1]-this->uniformsizes[k])
+            {
+
+                case 1:
+                    glUniform1i(this->uniformlocationsprogram[k],
+                    this->uniformattributes[this->uniformsizes[k]]);
+                    break;
+            }
+
+	    }
 	}
 
 
@@ -306,7 +331,44 @@ void VectorizedObject::RenderProgramUniforms()
 
 void VectorizedObject::SetTexture(Texture* texture_)
 {
-	pTexture = texture_;
+	pTextures.push_back(texture_);
+	std::cout << __FILE__<<":"<<__LINE__<< " " << __FUNCTION__<< " is deprecated\n";
+	throw std::exception();
+	//pTexture = texture_;
+}
+
+void VectorizedObject::SetTexture(Texture* texture_, std::string&& name)
+{
+	pTextures.push_back(texture_);
+    this->LinkUniformToVariable(name,1, GL_INT);
+    texture_idx.push_back(texture_idx.size());
+    this->SetUniform(name, 0, texture_idx.size()-1);
+    
+	//pTexture = texture_;
+}
+
+
+
+void VectorizedObject::RenderTexture() 
+{
+    
+    for (int i=0; i < pTextures.size() ; i++) 
+    {
+      
+        pTextures[i]->RenderTexture(texture_idx[i]);
+        
+    }
+    //pTexture->RenderTexture();
+}
+void VectorizedObject::UnbindTexture() 
+{
+
+    for (auto txtr=pTextures.begin(); txtr!=pTextures.end(); txtr++) 
+    {
+        (*txtr)->UnbindTexture();
+    }
+    //pTexture->UnbindTexture();
+    
 }
 
 

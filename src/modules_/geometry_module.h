@@ -17,6 +17,7 @@ void GenTriangle(VectorizedObject& obj);
 void GenQuad(VectorizedObject& obj);
 void GenQuadText(VectorizedObject& obj);
 void GenQuad2TText(VectorizedObject& obj);
+void GenQuad2T(VectorizedObject& obj);
 void SetColor(VectorizedObject *obj,int sides_, float r,float g,float b, float a);
 void GenPolygon(VectorizedObject *obj, int sides_, float radius_);
 void GenPolygonCollider(ColliderObject2D *obj, int sides_, bool colored);

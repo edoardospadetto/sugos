@@ -4,6 +4,7 @@
 
 
 #include <vector>
+#include "../include/safe_include_SDLGL_OpenGL.h"
 #include "../include/safe_include_glm.h"
 #include "../enums.h"
 

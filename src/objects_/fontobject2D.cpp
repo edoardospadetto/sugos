@@ -90,7 +90,7 @@ void Textbox::SetUpDefaultShader()
 {
 
 	  lEnabledShader=true;
-	  this->LinkUniformToVariable("CM", 4);
+	  this->LinkUniformToVariable("CM", 4, GL_INT);
 	  this->SpecifyBuffersAttributes("aPos", 2) ;
 	  this->SpecifyBuffersAttributes("aTex", 2) ;
 	  this->SpecifyBuffersAttributes("aColor", 4) ;
@@ -127,7 +127,7 @@ void Textbox::SetLetterColor(int idx_, float r_, float g_, float b_, float a_ )
 }
 void Textbox::RenderTexture()
 {
-	font->texture->RenderTexture();
+	font->texture->RenderTexture(0);
 }
 void Textbox::UnbindTexture()
 {

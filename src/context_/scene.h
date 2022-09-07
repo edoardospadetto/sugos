@@ -1,4 +1,5 @@
-
+#ifndef SCENE
+#define SCENE
 
 /*
 * A scene is everything that is on screen now and on the near future.
@@ -30,7 +31,7 @@ class Scene
 		void CheckAnyForgottenVar(std::vector<std::string>& varNames );
 		
 		
-	        Window_Class* parent = nullptr;
+	    Window_Class* parent = nullptr;
 		bool ldbgcolliders = false;
 		CollisionEngine sceneCollisionEngine;
 		
@@ -78,3 +79,5 @@ class Scene
 * and not create a new buffer.
 *
 */
+
+#endif

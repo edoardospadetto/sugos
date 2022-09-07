@@ -20,19 +20,18 @@
                               
 #include <vector>
 #include <string>
+#include "../include/safe_include_glm.h"
 class VectorizedObject;
 
 class Camera_2D
 {
 	private:
-		float cx=0;
-		float cy=0;
-		float w=1;
-		float h=1;
+		
+		std::string camera_shader_path = "./src/shaders/2Dcamera_fun.gsls";
 		std::string camera_gsls;
 		std::string camera_uniform;
 		
-		float camera[16] = {0.0};
+		
 		
 		std::vector<VectorizedObject*> binded_objects;
 		std::vector<std::string> uniform_names;
@@ -45,7 +44,14 @@ class Camera_2D
 		void BindObject(VectorizedObject* object, const std::string& uniformName);
 		void Move(float dx,float dy);
 		void OpenView(float dw,float dh);
+		void SetPos(float x, float y);
 		void Update();
+		float cx=0;
+		float cy=0;
+		float w=1;
+		float h=1;
+		glm::mat4 camera = glm::mat4( 0.0 );
+		glm::mat4 inversecamera = glm::mat4( 0.0 );
 	
 };
 

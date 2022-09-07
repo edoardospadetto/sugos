@@ -125,6 +125,41 @@ void GenQuad2TText(VectorizedObject& obj)
 }
 
 
+void GenQuad2T(VectorizedObject& obj)
+{
+	float vertex[]= 	//VBO data
+	{
+		-1.0f, -1.0f, // bottom left
+		 1.0f, -1.0f, // bottom right
+		 1.0f,  1.0f,
+		-1.0f,  1.0f
+	};
+
+	for (int i =0; i<8; i++)
+	{
+		obj.vertex_buffer[i] = vertex[i];
+	}
+	
+	
+	obj.index_buffer[0] = 0;
+	obj.index_buffer[1] = 1;
+	obj.index_buffer[2] = 2;
+	obj.index_buffer[3] = 0;
+	obj.index_buffer[4] = 2;
+	obj.index_buffer[5] = 3;
+	
+	
+	
+	for (int i =0; i<4; i++)
+	{	
+		obj.vertex_buffer[4*i] *= 1;
+		obj.vertex_buffer[4*i+1] *= 1;
+		
+	}
+					 
+}
+
+
 // Generate a square with texture
 void GenQuadText(VectorizedObject& obj)
 {

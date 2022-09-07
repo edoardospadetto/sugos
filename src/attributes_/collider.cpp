@@ -249,7 +249,7 @@ void Collider2D::BuildVecObj()
 	
 	colliderRep->index_buffer[2*x.size()-1]=0;
 	colliderRep->SpecifyBuffersAttributes("aPos", 2);
-	colliderRep->LinkUniformToVariable("c", 3);
+	colliderRep->LinkUniformToVariable("c", 3, GL_FLOAT);
 	
 		
 }

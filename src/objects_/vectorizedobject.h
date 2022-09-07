@@ -33,33 +33,35 @@ class VectorizedObject
 		void GetBuffersInfo(uint& sizevbo,uint& sizeibo);
 		void RenderProgramUniforms();
 		void EnableVBOAttributes(GLuint VBO, GLuint& offsetvbo);
-		Texture* pTexture = nullptr;
+		std::vector<Texture*> pTextures;
 		bool hidden=false;
 		
 		virtual void Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint& offsetibo);
-		virtual void RenderTexture() {if(pTexture) pTexture->RenderTexture();};
-		virtual void UnbindTexture() {if(pTexture) pTexture->UnbindTexture();};
+		virtual void RenderTexture() ;
+		virtual void UnbindTexture() ;
 		
 		
 		bool lmodib;
 		bool lmodvb;
 		
 		std::vector<std::string>	buffernames = {};
-		std::vector<int> 		buffersizes = {};
-		std::vector<int> 		bufferformat = {};
+		std::vector<int> 		    buffersizes = {};
+		std::vector<int> 		    bufferformat = {};
 		
 		// Uniforms
-		std::vector<float> 		uniformattributes = {}; 
+		std::vector<float> 		    uniformattributes = {}; 
 		std::vector<std::string> 	uniformnames ={};
-		std::vector<int> 		uniformlocationsprogram ={};
-		std::vector<int> 		uniformsizes ={};
+		std::vector<int> 		    uniformlocationsprogram ={};
+		std::vector<int> 		    uniformsizes ={};
+		std::vector<int> 		    texture_idx ={};
+		std::vector<GLenum> 		uniformkinds ={};
 		
 		//IBO & VBO vars
 		std::vector<std::string> attributenames={}; 
 		std::vector<int> attributelocationsprogram={};
 		GLenum representation = -1;
 		std::vector<int> attributesizes={};
-		
+		public:	
 		//Geometry Info
 		int vertexxsurf = 0;
 		int vertex_len = 0;
@@ -73,29 +75,18 @@ class VectorizedObject
 		
 	
 	
-	public:
+
 
 	// Physics
 	float                          angle = 0.0;
-	float*				position = NULL; 
+	float*			               position = NULL; 
 	
 	
 	//Buffers 
-	float*				vertex_buffer = NULL;
-	int* 				index_buffer = NULL;
+	float*				           vertex_buffer = NULL;
+	int* 				           index_buffer = NULL;
 	
 	
-	/**
-	* @brief Computes the average of the two passed values.
-	*
-	* This function computes the average using the standard accepted
-	* formula for doing so.
-	*
-	* @return The average of the two passed values.
-	* @param x The first value to average.
-	* @param y The second value to average.
-	* @todo Need to write acceptance tests for this function
-	*/
 
 	VectorizedObject(int vertex_len_,int vertex_num_,int surfaces_num_,int space_dim_,GLenum representation_);
 	
@@ -108,8 +99,8 @@ class VectorizedObject
 	void Rescale(int vblocation, float factor);
 
 	
-	int LinkUniformToVariable(std::string&& uniformname, int uniformsize );
-	int LinkUniformToVariable(const std::string& uniformname, int uniformsize);
+	int LinkUniformToVariable(std::string&& uniformname, int uniformsize , GLenum kind );
+	int LinkUniformToVariable(const std::string& uniformname, int uniformsize, GLenum kind );
 	
 	
 	void ModIB(int idx, int val);
@@ -123,6 +114,7 @@ class VectorizedObject
 	int SetUniform(std::string&& uniformname,int idx, float value);
 	void SetUniform(int uniformidx,int idx, float value);
 	void SetTexture(Texture* texture_);
+	void SetTexture(Texture* texture_, std::string&& name);
 	
 	
 	~VectorizedObject();

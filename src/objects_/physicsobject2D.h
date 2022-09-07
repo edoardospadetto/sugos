@@ -1,9 +1,13 @@
+#ifndef PHYSICSOBJECT2D
+#define PHYSICSOBJECT2D
+
 #include "./vectorizedobject.h"
 #include "../include/safe_include_glm.h"
+
 class  PhysicsObject2D  : virtual public VectorizedObject
 {
 
-	private:
+	protected:
 	
 		glm::vec2 cumulativeForce          ={0,0};
 		glm::vec2 cumulativeImpulse        ={0,0};
@@ -27,8 +31,9 @@ class  PhysicsObject2D  : virtual public VectorizedObject
 		void ApplyAngularImpulse( float angularimpulse_ ); 
 		void ApplyAngularForce( float angularforce_ );
 		void EulerIntegration(float deltatime_);
+		void GetVelocity(float &vx, float &vy);
 
 };
 
-
+#endif
 

@@ -55,6 +55,7 @@ WIDTH(width_), HEIGHT(height_)
 	
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glDisable(GL_CULL_FACE); 
+	glEnable(GL_DEPTH_TEST);  
 	
 	if(lpixelart) //nopixealrt, I have no idea
 	{

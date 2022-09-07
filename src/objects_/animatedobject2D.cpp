@@ -10,7 +10,7 @@ VectorizedObject( vertex_len_, vertex_num_, surfaces_num_, space_dim_, vertxsup_
 
 void AnimatedObject2D::RenderTexture()
 {
-	this->selfStateEngine->currentState->GetTexture()->RenderTexture();
+	this->selfStateEngine->currentState->GetTexture()->RenderTexture(0);
 }
 void AnimatedObject2D::UnbindTexture()
 {

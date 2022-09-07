@@ -34,6 +34,7 @@
 #include "./engines_/stateengine.h"
 #include "./objects.h"
 #include "./modules_/geometry_module.h"
+#include "./modules_/noise_module.h"
 #include "./modules_/collisionhandlingmodule.h"
 
 #include "./engines_/collisionengine.h"

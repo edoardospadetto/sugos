@@ -59,7 +59,7 @@ int main( int argc, char* args[] )
 	Scene test = Scene();
 	test.LoadObject(&Pentagon, gpucodes0.glprograms[0]);
 	
-    Camera_2D camera(0.0,0.0,2.0,1.0);
+    Camera_2D camera(0.0,0.0,1.0,1.0);
     camera.BindObject(&Pentagon,"sugos_camera" );
 	
 	
