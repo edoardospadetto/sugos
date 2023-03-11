@@ -29,8 +29,8 @@ int main( int argc, char* args[] )
 	Triangle.SpecifyBuffersAttributes("r_", 2) ;
 	Square.SpecifyBuffersAttributes("r_", 2) ;
 	
-	Square.LinkUniformToVariable("CM", 4);
-	Triangle.LinkUniformToVariable("CM", 4);
+	Square.LinkUniformToVariable("CM", 4, GL_FLOAT);
+	Triangle.LinkUniformToVariable("CM", 4, GL_FLOAT);
 
 	
 	
@@ -63,6 +63,18 @@ int main( int argc, char* args[] )
 	
 	test.DebugColliders(&window);
 	
+	
+  std::string str1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,!?";
+  GPUcodes gpucodes1=GPUcodes(&window,"./src/shaders_/font.shader");	
+  gpucodes1.Load("fontV","fontF", "font");
+  Texture fontTexture = Texture();	
+  fontTexture.LoadTexture(&window,"./etc/fonts/font.png",true,4, GL_RGBA);
+  BitmapFont pixelFont =  BitmapFont("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,!?", 5, 8, 8, 10, &fontTexture);
+  Textbox tbtext = Textbox("PRESS A W S D Z X", &pixelFont,1,17,0.1,0.14);
+  tbtext.SetUpDefaultShader();
+  tbtext.SetCoords(-0.9,0.8,-0.0,0.0);
+  test.LoadObject(&tbtext, gpucodes1.glprograms[0]);
+	
 	test.Prepare();
 
 	const Uint8* kb = SDL_GetKeyboardState(NULL);
@@ -86,8 +98,6 @@ int main( int argc, char* args[] )
 		Square.SetUniform("CM",1,Square.position[1]);
 		Square.SetUniform("CM",2,Square.angle);
 		
-		
-	
 		test.Update();
 		test.Prepare();
 	

@@ -79,11 +79,11 @@ int main( int argc, char* args[] )
 	
 	Triangle.SpecifyBuffersAttributes("vposition", 2) ;
 	Triangle.SpecifyBuffersInstanceAttributes("voffset", 2,1) ;
-  	 glCheckError();
+  	glCheckError();
 	GenPolygon(&Triangle,3,0.02);
 	Triangle.SetToOrigin(0);
 	GenOffset(&Triangle, N, 2);	
-	 glCheckError();
+	glCheckError();
 	Scene test = Scene();
 	
 	test.LoadObject(&Triangle, gpumodule.glprograms[0]);

@@ -17,11 +17,11 @@ class ColliderConf
 	void AddFinalPoint(float x_, float y_, bool click);
 	void Close();
 	void AddCollider();
-	void SetCollider(int num_);
+	void SetCollider(int num_, bool unload_);
 	void MoveCollider(int i, bool unsafe_);
 	
 	void EmptyCurrentCollider();
-	void LoadConfFile(std::string& filepath_);
+	void LoadConfFile();
 	void SaveCoords();
 	  //OBJECTS
 	 
@@ -30,6 +30,60 @@ class ColliderConf
 
 
 };
+
+
+
+void ColliderConf::LoadConfFile()
+{
+    std::string filepath_ = "./etc/tools/collider_tool/colliders/"+collidername+".xy";
+	std::ifstream file;
+	this->EmptyCurrentCollider();
+	Polylines.clear();
+	closed.clear();
+
+	
+	file.open(filepath_);
+	
+	if(file.is_open())
+	{
+		int Ncolliders; 
+		file >> Ncolliders;
+		for (int i=0; i<Ncolliders; i++)
+		{
+		    Polylines.push_back({});
+	        closed.push_back(true);
+			int Nvert;
+			file >> Nvert;
+			float vx, vy;
+			
+			for(int j=0; j<Nvert; j++)
+			{
+			
+			    Polylines[i].push_back(new VectorizedObject(2,2,1,2,GL_LINES));
+			    Polylines[i][j]->SpecifyBuffersAttributes("r_", 2);
+                Polylines[i][j]->LinkUniformToVariable("CM", 4, GL_FLOAT);
+                Polylines[i][j]->index_buffer[0]=0;
+	            Polylines[i][j]->index_buffer[1]=1;
+				
+				file >> vx >> vy;
+				if(j>0) 
+				{
+			        Polylines[i][j]->vertex_buffer[0]=Polylines[i][j-1]->vertex_buffer[2];
+			        Polylines[i][j]->vertex_buffer[1]=Polylines[i][j-1]->vertex_buffer[3];
+			    }
+			    
+			    Polylines[i][j]->vertex_buffer[2]=vx;
+			    Polylines[i][j]->vertex_buffer[3]=vy;
+			
+			}
+			Polylines[i][0]->vertex_buffer[0]=Polylines[i][Nvert-1]->vertex_buffer[2];
+		    Polylines[i][0]->vertex_buffer[1]=Polylines[i][Nvert-1]->vertex_buffer[3];
+		}
+		
+	}
+	this->SetCollider(num,false);
+
+}
 
 ColliderConf::ColliderConf(Window_Class *w_,Scene* s_, std::string name_, int Ncolliders_): w(w_),s(s_), collidername(name_)
 {
@@ -46,7 +100,7 @@ void ColliderConf::AddInitialPoint(float x_, float y_)
 	Polylines[num].push_back(new VectorizedObject(2,2,1,2,GL_LINES));
 
 	Polylines[num][Polylines[num].size()-1]->SpecifyBuffersAttributes("r_", 2);
-
+    Polylines[num][Polylines[num].size()-1]->LinkUniformToVariable("CM", 4, GL_FLOAT);
 	Polylines[num][Polylines[num].size()-1]->vertex_buffer[0]=x_;
 	Polylines[num][Polylines[num].size()-1]->vertex_buffer[1]=y_;
 	Polylines[num][Polylines[num].size()-1]->vertex_buffer[2]=x_;
@@ -54,7 +108,7 @@ void ColliderConf::AddInitialPoint(float x_, float y_)
 	Polylines[num][Polylines[num].size()-1]->index_buffer[0]=0;
 	Polylines[num][Polylines[num].size()-1]->index_buffer[1]=1;
 	std::cout << (Polylines[num][Polylines[num].size()-1]) << "\n";
-	s->LoadObj( *(Polylines[num][Polylines[num].size()-1]), vrend->glprograms[0]);
+	s->LoadObject( Polylines[num][Polylines[num].size()-1], vrend->glprograms[0]);
 	
 }
 
@@ -95,7 +149,6 @@ void ColliderConf::EditCollider(MouseButton  press, float x_, float y_)
 	{
 		if (Polylines[num].size()>0)
 		{
-			
 			AddFinalPoint( x_, y_, false);
 		} 
 		
@@ -104,7 +157,7 @@ void ColliderConf::EditCollider(MouseButton  press, float x_, float y_)
 			if (Polylines[num].size()>0) AddFinalPoint( x_, y_, true);
 			else {
 			AddInitialPoint( x_, y_);
-			std::cout <<num <<"New\n";
+			std::cout <<num <<" New\n";
 			}
 			lpress=true;
 			
@@ -156,16 +209,19 @@ void ColliderConf::AddCollider()
 	closed.push_back(false);
 }
 
-void ColliderConf::SetCollider(int num_)
+void ColliderConf::SetCollider(int num_, bool unload_)
 {
-	
+	 if(unload_)
+	 {
 	 for (int i=0; i<Polylines[num].size(); i++)
 	 {
 		s->UnloadObject(*(Polylines[num][i]));
 	 }
+	 }
 	 
 	 if (!closed[num])
 	 {
+	    std::cout << "not closed\n";
 	 	for (int i =0; i<  Polylines[num].size(); i++)
 	 	{
 	 		delete Polylines[num][i];
@@ -176,7 +232,7 @@ void ColliderConf::SetCollider(int num_)
 	 num = num_;
 	 for (int i=0; i<Polylines[num].size(); i++)
 	 {
-		s->LoadObj(*( Polylines[num][i]) , vrend->glprograms[0] );
+		s->LoadObject( Polylines[num][i] , vrend->glprograms[0] );
 	 }
 }
 
@@ -185,29 +241,8 @@ void ColliderConf::MoveCollider(int i, bool unsafe_)
 {
 	if(num+i == Polylines.size() && unsafe_) this->AddCollider();
 	else if (num+i <0 | num+i > Polylines.size() ) throw std::exception();
-	this->SetCollider(num+i);
+	this->SetCollider(num+i, true);
 }
 
 
-void ColliderConf::LoadConfFile(std::string& filepath_)
-{
-	std::ifstream file;
-	file.open(filepath_);
-	
-	if(file.is_open())
-	{
-		int Ncolliders; 
-		file >> Ncolliders;
-		for (int i=0; i<Ncolliders; i++)
-		{
-			int Nvert;
-			file >> Nvert;
-			for(int j=0; j<Nvert; j++)
-			{
-				float vx, vy;
-				file >> vx >> vy;
-			}
-		}
-	}
 
-}

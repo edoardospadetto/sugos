@@ -140,7 +140,7 @@ ButtonAction EventEngine::GetState(int keycode_)
 	std::map<int,ButtonAction>::iterator itG = keyboardState.find(keycode_);
 	if(it ==  keyboard_old.end())
 	{
-		printf("Error, key not tracked\n");
+		printf("Error, key not tracked, use EventEngine::TrackButton(int keycode_)\n");
 		throw std::exception();
 	}
 	else if ( !  lit ->second )

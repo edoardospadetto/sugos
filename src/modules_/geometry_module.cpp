@@ -90,6 +90,44 @@ void GenColorQuad(VectorizedObject& obj, float xa,float ya,float x1,float y1)
 					 
 }
 
+
+void GenQuad2TColor(VectorizedObject& obj,float xa,float ya,float x1,float y1)
+{
+	float vertex[]= 	//VBO data
+	{
+		xa, ya, 1.0,0.5,0.5,1.0,
+		x1, ya, 1.0,0.5,0.5,1.0,
+		x1, y1, 1.0,0.5,0.5,1.0,
+		xa, y1, 1.0,0.5,0.5,1.0
+	};
+
+	for (int i =0; i<24; i++)
+	{
+		obj.vertex_buffer[i] = vertex[i];
+	}
+	
+	
+	obj.index_buffer[0] = 0;
+	obj.index_buffer[1] = 1;
+	obj.index_buffer[2] = 1;
+	obj.index_buffer[3] = 2;
+	obj.index_buffer[4] = 2;
+	obj.index_buffer[5] = 3;
+	obj.index_buffer[6] = 3;
+	obj.index_buffer[7] = 0;
+	
+	
+	
+	
+	for (int i =0; i<4; i++)
+	{	
+		obj.vertex_buffer[4*i] *= 1;
+		obj.vertex_buffer[4*i+1] *= 1;
+		
+	}
+					 
+}
+
 void GenQuad2TText(VectorizedObject& obj)
 {
 	float vertex[]= 	//VBO data
@@ -147,15 +185,6 @@ void GenQuad2T(VectorizedObject& obj)
 	obj.index_buffer[3] = 0;
 	obj.index_buffer[4] = 2;
 	obj.index_buffer[5] = 3;
-	
-	
-	
-	for (int i =0; i<4; i++)
-	{	
-		obj.vertex_buffer[4*i] *= 1;
-		obj.vertex_buffer[4*i+1] *= 1;
-		
-	}
 					 
 }
 

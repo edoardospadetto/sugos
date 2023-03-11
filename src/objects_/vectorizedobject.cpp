@@ -227,13 +227,10 @@ void VectorizedObject::Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint&
 	
 		if(!hidden)
 		{
-			
 			this->RenderProgramUniforms();
 			glCheckError();
-			
 			this->EnableVBOAttributes(VBO, offsetvbo);
 			glCheckError();
-		
 		  	this->RenderTexture();
 			glCheckError();
 			
@@ -249,8 +246,7 @@ void VectorizedObject::Render(GLuint VBO, GLuint IBO, GLuint& offsetvbo, GLuint&
 			this->UnbindTexture();
 			glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &nbuffersize);
 			glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &vbsi);
-			glCheckError();	
-
+			glCheckError();
 			
 					
 			for(int k=0; k<this->attributenames.size(); k++ ){glDisableVertexAttribArray( this->attributelocationsprogram[k]);}	
@@ -332,8 +328,9 @@ void VectorizedObject::RenderProgramUniforms()
 void VectorizedObject::SetTexture(Texture* texture_)
 {
 	pTextures.push_back(texture_);
+	texture_idx.push_back(texture_idx.size());
 	std::cout << __FILE__<<":"<<__LINE__<< " " << __FUNCTION__<< " is deprecated\n";
-	throw std::exception();
+	//throw std::exception();
 	//pTexture = texture_;
 }
 

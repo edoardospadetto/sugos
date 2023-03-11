@@ -20,7 +20,7 @@ int main( int argc, char* args[] )
 	//Camera_2D camera_test = Camera_2D(0.0,0.0,1.0,1.0);
 	
 	EventEngine MainEngine=EventEngine(60);
-	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Vob_ex", 640,640 ); 
+	Window_Class window = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Camera_ex", 640,640 ); 
 	MainEngine.HandleWindow(&window);
 	
 	// Shader
@@ -40,27 +40,40 @@ int main( int argc, char* args[] )
 	// As many as the sides
 	VectorizedObject Pentagon(6,5+1,5,2,GL_TRIANGLES);
 	
+	//-1+1-1+1 Box
+	VectorizedObject Box(6,4,4,2,GL_LINES);
+	GenQuad2TColor(Box,1.0,1.0,-1.0,-1.0);
 	GenColoredPolygon(&Pentagon,5,0.5,0.5,1.0,1.0,1.0);
 	//GenPolygon(&Pentagon,3,1.0);
 	
 	Pentagon.SpecifyBuffersAttributes("r_", 2);
 	Pentagon.SpecifyBuffersAttributes("c_", 4);
 	
+	Box.SpecifyBuffersAttributes("r_", 2);
+	Box.SpecifyBuffersAttributes("c_", 4);
+	
 	
 	Pentagon.SetToOrigin(0);
 	
 	
-	Pentagon.LinkUniformToVariable("CM", 4);
-	Pentagon.LinkUniformToVariable("sugos_camera", 16);
+	Pentagon.LinkUniformToVariable("CM", 4, GL_FLOAT);
+	Pentagon.LinkUniformToVariable("sugos_camera", 16, GL_FLOAT);
 
+    Box.LinkUniformToVariable("CM", 4, GL_FLOAT);
+	Box.LinkUniformToVariable("sugos_camera", 16, GL_FLOAT);
+
+	
 	
 
 	
 	Scene test = Scene();
 	test.LoadObject(&Pentagon, gpucodes0.glprograms[0]);
+	test.LoadObject(&Box, gpucodes0.glprograms[0]);
 	
-    Camera_2D camera(0.0,0.0,1.0,1.0);
+    Camera_2D camera(0.0,0.0,2.0,2.0);
     camera.BindObject(&Pentagon,"sugos_camera" );
+	camera.BindObject(&Box,"sugos_camera" );
+	
 	
 	
 		
@@ -94,9 +107,14 @@ int main( int argc, char* args[] )
 		Pentagon.SetUniform("CM",2,Pentagon.angle);
 		Pentagon.SetUniform("CM",3,0.0);
 		
+		camera.Move( 0.02*(-kb[SDL_SCANCODE_K] + kb[SDL_SCANCODE_L]) , 
+		             0.02*(-kb[SDL_SCANCODE_O] + kb[SDL_SCANCODE_P]) );
+		
 		
 		test.Prepare();
+		camera.Update();
 		test.Update();
+		
 		window.CycleEnd();
 		MainEngine.WindowsEvents();
 	}

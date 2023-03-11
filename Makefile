@@ -92,16 +92,17 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(SRC_DIR)%.h
 	$(CC) $(DEFS) $(FLAGS) $(CPPFLAGS) -c $(filter-out %.h,$^) -o ./$@ $(PRELOAD)
 
 
-dirs:	
+dirs:
 	@mkdir -p build
 	@mkdir -p build/objects_
 	@mkdir -p build/modules_
 	@mkdir -p build/context_
 	@mkdir -p build/attributes_
 	@mkdir -p build/engines_
-	
+
 
 clean:
+	@rm -rf sugos
 	@rm -rf *.app
 	@rm -rf *.html
 	@rm -rf *.js

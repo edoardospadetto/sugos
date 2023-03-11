@@ -96,6 +96,7 @@ void Texture::RenderTexture(int idx)
 	//is this temp?
 	if(textureId != -1 )
 	{
+	    
 	    glActiveTexture(GL_TEXTURE0 + idx);
 		glBindTexture(GL_TEXTURE_2D, this->textureId);
 		glCheckError();

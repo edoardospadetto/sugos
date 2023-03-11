@@ -7,11 +7,11 @@ layout (location = 1) in vec2 aTex;
 
 out vec2 TexCoord;
 
-uniform vec2 status;
+uniform vec3 status;
 
 void main()
 {	
-    gl_Position = vec4(aPos.x+status[0], aPos.y+status[1], 0.0, 1.0);
+    gl_Position = vec4(aPos.x+status[0], aPos.y+status[1], status[2], 1.0);
     TexCoord = aTex;
 }
 

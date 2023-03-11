@@ -5,7 +5,7 @@ class Interface
 		Texture *fontTexture =nullptr;
 		std::vector<Textbox*> tbtext ={} ;
 		Interface(Window_Class* w_,Scene* s_);
-		void Logic(bool a, bool b, bool c);
+		void Logic(bool a, bool b, bool c, bool l);
 		~Interface();
 };
 
@@ -23,6 +23,7 @@ Interface::Interface(Window_Class* w_,Scene* s_)
 	tbtext.push_back(new Textbox("CLOSE SHAPE", pixelFont,1,11,0.03,0.05));
 	tbtext.push_back(new Textbox("NEXT FRAME", pixelFont,1,10,0.03,0.05));
 	tbtext.push_back(new Textbox("SAVE COLLIDERS", pixelFont,1,14,0.03,0.05));
+	tbtext.push_back(new Textbox("LOAD COLLIDERS", pixelFont,1,14,0.03,0.05));
 	
 	
 	for (int i=0; i<tbtext.size(); i++)
@@ -30,13 +31,13 @@ Interface::Interface(Window_Class* w_,Scene* s_)
 		tbtext[i]->SetUpDefaultShader(); //dont do that twice
 		tbtext[i]->SetCoords(-0.9,0.8-0.15*i,0.0,0.0);
 		tbtext[i]->SetColor(1.0,1.0,1.0,1.0);
-		s_->LoadObj(*(tbtext[i]), gpucode.glprograms[0]);	
+		s_->LoadObject(tbtext[i], gpucode.glprograms[0]);	
 	}
 	s_->Prepare();
 
 }
 
-void Interface::Logic(bool c, bool n, bool s)
+void Interface::Logic(bool c, bool n, bool s, bool l)
 {
 	for (int idx=0; idx<this->tbtext.size(); idx++)
 	{
@@ -45,6 +46,7 @@ void Interface::Logic(bool c, bool n, bool s)
 	if (c) tbtext[0]->SetColor(1.0,1.0,0.0,1.0);
 	if (n) tbtext[1]->SetColor(1.0,1.0,0.0,1.0);
 	if (s) tbtext[2]->SetColor(1.0,1.0,0.0,1.0);
+	if (l) tbtext[3]->SetColor(1.0,1.0,0.0,1.0);
 }	
 
 Interface::~Interface()

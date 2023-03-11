@@ -25,7 +25,7 @@ VectorizedObject BuildPentagon()
 	Pentagon.SetToOrigin(0);
 	
 	
-	Pentagon.LinkUniformToVariable("CM", 4);
+	Pentagon.LinkUniformToVariable("CM", 4, GL_FLOAT);
 	
 	return Pentagon;
 }
@@ -106,6 +106,18 @@ int main( int argc, char* args[] )
 	test.LoadObject(&Pentagon, gpucodes0.glprograms[0]);
 	
 		
+  std::string str1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,!?";
+  GPUcodes gpucodes1=GPUcodes(&window,"./src/shaders_/font.shader");	
+  gpucodes1.Load("fontV","fontF", "font");
+  Texture fontTexture = Texture();
+  fontTexture.LoadTexture(&window,"./etc/fonts/font.png",true,4, GL_RGBA);
+  BitmapFont pixelFont =  BitmapFont("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,!?", 5, 8, 8, 10, &fontTexture);
+  Textbox tbtext = Textbox("PRESS A P D", &pixelFont,1,11,0.1,0.1);
+  tbtext.SetUpDefaultShader();
+  tbtext.SetCoords(-0.9,0.8,-0.0,0.0);
+  test.LoadObject(&tbtext, gpucodes1.glprograms[0]);
+		
+		
 	test.Prepare();
 
 	const Uint8* kb = SDL_GetKeyboardState(NULL);
@@ -114,6 +126,11 @@ int main( int argc, char* args[] )
 	Pentagon.position[0] = 0.0;
 	Pentagon.position[1] = 0.0;
 	Pentagon.angle       = -M_PI*0.5;
+	
+	
+	
+	
+
 	
 
 	while( window.IsAlive() )

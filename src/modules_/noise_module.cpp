@@ -5,6 +5,7 @@
 #include <exception>
 #include "../include/safe_include_glm.h"
 #include "../include/glm/gtx/norm.hpp"
+#include "../modules_/debugmisc_module.h"
 #include <iostream>
 #include <math.h>       /* modf */
 
@@ -32,7 +33,8 @@ float gradient_perlin(int h, float x, float y)
 std::vector<float> Perlin2D(int Nx, int Ny, float freqX, float freqY,int octaves, int seed)
 {
         
-        //std::srand(201);
+        
+        dbglog("Warning: Set octaves check to avoid overflow errors");
         std::vector<float> noise;
         std::vector<int> p;
         for (int i=0; i<256; i++) p.push_back(i);        
@@ -58,12 +60,14 @@ std::vector<float> Perlin2D(int Nx, int Ny, float freqX, float freqY,int octaves
             int  xi = int(i*freqX/Nx) %512; 
             int  yi = int(j*freqY/Ny) %512;
             
-            //std::cout<<xi<< " " << yi << "\n";
+           
             
-            float xf = i*freqX/Nx-xi;
-            float yf = j*freqY/Ny-yi;
+            float xf = (i*freqX)/float(Nx)-float(xi); 
+            float yf = (j*freqY)/float(Ny)-float(yi);
             float u = fade_perlin( xf ) ; 
             float v = fade_perlin( yf ) ;
+            
+            std::cout<< i<< " " << j << " cia o "<<"|"<<xi<< " " << yi <<" "  <<xf << " " << yf << " " <<  freqX << " " << freqY<< "\n";
             
             float n[4] = {  gradient_perlin(p[p[xi] + yi]         , xf, yf),
                             gradient_perlin(p[p[xi] + yi + 1]     , xf, yf - 1),
@@ -77,17 +81,19 @@ std::vector<float> Perlin2D(int Nx, int Ny, float freqX, float freqY,int octaves
             if(noiseMax<noise_val) noiseMax = noise_val*div;
             if(noiseMin>noise_val) noiseMin = noise_val*div;
             noise[i*Nx+j] = noise_val;
+
        }
        }
        div *=0.5;
        freqX*=2;
        freqY*=2;
        }
-       
-       for(int i=0; i<noise.size(); i++) {noise[i]  =(noise[i]-noiseMin)/(noiseMax-noiseMin);}
+
+       for(int i=0; i<noise.size(); i++) { std::cout<< noise[i] << std::endl; noise[i]  =(noise[i]-noiseMin)/(noiseMax-noiseMin);}
   
- 
+
         return  noise;
+      
 } 
 
 
@@ -205,8 +211,8 @@ void MatrixBlurFilter(std::vector<float> &data, int Nx, int Ny, int stride, floa
     
 
     
-    float mmin = *std::min_element(data.begin(), data.end()) ;
-    float mmax = *std::max_element(data.begin(), data.end()) ;
+    //float mmin = *std::min_element(data.begin(), data.end()) ;
+    //float mmax = *std::max_element(data.begin(), data.end()) ;
     //for(int i=0; i<data.size(); i++) {data[i]  =(data[i]-mmin)/(mmax-mmin);}
     
 }

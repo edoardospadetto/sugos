@@ -42,7 +42,7 @@ int main( int argc, char* args[] )
 	Pentagon.SetToOrigin(0);
 	
 	
-	Pentagon.LinkUniformToVariable("CM", 4);
+	Pentagon.LinkUniformToVariable("CM", 4, GL_FLOAT);
 	
 	Scene test = Scene();
 	test.LoadObject(&Pentagon, gpucodes0.glprograms[0]);

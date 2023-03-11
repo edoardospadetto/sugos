@@ -27,7 +27,7 @@ class Camera_2D
 {
 	private:
 		
-		std::string camera_shader_path = "./src/shaders/2Dcamera_fun.gsls";
+		std::string camera_shader_path = "./src/shaders_/2Dcamera_fun.gsls";
 		std::string camera_gsls;
 		std::string camera_uniform;
 		

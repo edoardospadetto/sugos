@@ -49,13 +49,13 @@ int main()
   MonkChar.Rescale(0,0.7);
   //MonkChar.SetSnapshot(0, 0);
 
-  MonkChar.LinkUniformToVariable("status", 2);
+  MonkChar.LinkUniformToVariable("status", 3, GL_FLOAT);
 
   MonkChar.SpecifyBuffersAttributes("aPos", 2);	
   MonkChar.SpecifyBuffersAttributes("aTex", 2);
 
  
-  drawscene2.LoadObj(MonkChar, gpucodes0.glprograms[0]);	
+  drawscene2.LoadObject(&MonkChar, gpucodes0.glprograms[0]);	
   drawscene2.Prepare();
 
   ColliderConf conf =  ColliderConf(&w2, &drawscene2, name0,0);
@@ -69,9 +69,10 @@ int main()
   MainEngine.TrackButton(SDL_SCANCODE_C);
   MainEngine.TrackButton(SDL_SCANCODE_S);
   MainEngine.TrackButton(SDL_SCANCODE_RIGHT);
+  MainEngine.TrackButton(SDL_SCANCODE_L);
   //MainEngine.TrackButton(SDL_SCANCODE_LEFT);
-  bool c,n,s;
-  bool c1,n1,s1;
+  bool c,n,s,l;
+  bool c1,n1,s1,l1;
   
   conf.AddCollider();
   
@@ -85,14 +86,16 @@ int main()
 	c = MainEngine.GetState(SDL_SCANCODE_C) == PRESSED;
 	s = MainEngine.GetState(SDL_SCANCODE_S) == PRESSED;
 	n = MainEngine.GetState(SDL_SCANCODE_RIGHT) == PRESSED;
+	l = MainEngine.GetState(SDL_SCANCODE_L) == PRESSED;
 	//p =  MainEngine.GetState(SDL_SCANCODE_LEFT) == PRESSED;
 	
 	c1 = (MainEngine.GetState(SDL_SCANCODE_C) == STEADY_DOWN) | c;
 	s1 = (MainEngine.GetState(SDL_SCANCODE_S) == STEADY_DOWN) | s;
 	n1 = (MainEngine.GetState(SDL_SCANCODE_RIGHT) == STEADY_DOWN) | n;
+	l1 = (MainEngine.GetState(SDL_SCANCODE_L) == STEADY_DOWN) | l;
 	//p1 = (MainEngine.GetState(SDL_SCANCODE_LEFT) == STEADY_DOWN) | n;
 	//std::cout << c1 << s1 << n1 << "\n"; 
-	interface2.Logic(c1,n1,s1);
+	interface2.Logic(c1,n1,s1,l1);
 	
 	w2.CycleStart();
 	drawscene2.Prepare();
@@ -101,9 +104,10 @@ int main()
 	
 	if (c) conf.Close();
 	else if  (s) conf.SaveCoords();
+	else if  (l) conf.LoadConfFile();
 	else if  (n)
 	{
-		if(MonkChar.HasAnimationRestarted()) conf.SetCollider(0);
+		if(MonkChar.HasAnimationRestarted()) conf.SetCollider(0, true);
 		else conf.MoveCollider(+1, true);
 	} 
 	

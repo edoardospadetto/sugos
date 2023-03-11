@@ -26,6 +26,10 @@ InstancedObject::~InstancedObject()
 
 }
 
+/*
+* Specify those attributes which are different in the different instances of an object. 
+* And are contained in the instance buffer.
+*/
 int InstancedObject::SpecifyBuffersInstanceAttributes(const std::string& name, int instanceattributesize_, int divisor_)
 {
 	instanceattributenames.push_back(name);
@@ -45,11 +49,6 @@ void InstancedObject::EnableTBOAttributes(GLuint TBO,GLuint& offsettbo)
 	for(int k=0; k<this->instanceattributenames.size(); k++ )
 	{
 		
-		
-		/*std::cout << " "  <<  this->instanceattributelocationsprogram[k] << 
-		" " << (this->instanceattributesizes[k+1] - this->instanceattributesizes[k]) << " " << 
-		(this->instanceattributesizes[this->instanceattributesizes.size()-1])*sizeof(GLfloat) << "\n" ;*/ 
-			
 		glVertexAttribPointer(  this->instanceattributelocationsprogram[k], 
 					(this->instanceattributesizes[k+1] - this->instanceattributesizes[k]), 
 					GL_FLOAT, 
@@ -69,13 +68,13 @@ void InstancedObject::EnableTBOAttributes(GLuint TBO,GLuint& offsettbo)
 
 }
 
+/*
+* Override of the render method for instanced objects. 
+*/
 
 void InstancedObject::Render(GLuint VBO, GLuint IBO, GLuint TBO, GLuint& offsetvbo, GLuint& offsetibo, GLuint& offsettbo)
 {
-	
-		
-	
-	
+
 		this->RenderProgramUniforms();
 		glCheckError();
 		
@@ -116,6 +115,8 @@ void InstancedObject::Render(GLuint VBO, GLuint IBO, GLuint TBO, GLuint& offsetv
 		glCheckError();
 
 }
+
+
 /*
 void ModTB(int idx, float val)
 {

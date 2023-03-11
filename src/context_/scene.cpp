@@ -59,11 +59,19 @@ std::vector<std::string> Scene::GetVarNamesFromShader(GLuint designatedprogram, 
 	    else if (kind == GL_ACTIVE_UNIFORMS) glGetActiveUniform(designatedprogram, (GLuint)i, bufSize, &length, &size, &type, name_temp);
 	    
 	    // Ignore Samplers for now just this one
-	   //if(type != GL_SAMPLER_2D ) 
-	   // {
+	   if(type != GL_SAMPLER_2D ) 
+	   {
+	       
 	    	varNames.push_back(name_temp);
-	    	std::cout << name_temp << "\n";
-	    //}
+	   // 	std::cout << name_temp << "\n";
+	   }
+	   else
+	   {
+	         std::cout << "Temporary warning to be fixed" << std::endl;
+	         std::cout << "SAMPLERS 2D are ignored, they should be activated from the Texture interface" << std::endl;
+	         std::cout << "Also other textures should be handled this way." << std::endl;
+	        
+	   }
 	}
 	
 	return varNames;
@@ -78,13 +86,30 @@ void Scene::LoadShaderVars(std::vector<std::string>& objAtrbNames,std::vector<in
 	if (kind == GL_ACTIVE_ATTRIBUTES) nameKind = "attribute";
 	else if (kind == GL_ACTIVE_UNIFORMS) nameKind = "uniform";
 	
+	GLsizei bufSize_;
+	GLsizei length_;
+	GLint size_;
+	GLenum type_;
+    GLchar* name_ = new GLchar[128];
+			    
+	
 	for (int i =0; i<objAtrbNames.size(); i++)
 	{
 		auto temp_it = std::find(atrbNames.begin(), atrbNames.end(), objAtrbNames[i]);
 		if (  temp_it != atrbNames.end())
 		{
-			if (kind == GL_ACTIVE_ATTRIBUTES) objAtrbLocs[i] = glGetAttribLocation( designatedprogram, objAtrbNames[i].c_str() );	
-			else if (kind == GL_ACTIVE_UNIFORMS) objAtrbLocs[i] =  glGetUniformLocation(designatedprogram, objAtrbNames[i].c_str());
+			if (kind == GL_ACTIVE_ATTRIBUTES) 
+			{
+			    objAtrbLocs[i] = glGetAttribLocation(designatedprogram , objAtrbNames[i].c_str() );
+			    //glGetActiveAttrib(	designatedprogram,objAtrbLocs[i], 128, &length_, &size_,&type_,name_);
+			}	
+			else if (kind == GL_ACTIVE_UNIFORMS)
+			{
+			    objAtrbLocs[i] =  glGetUniformLocation(designatedprogram, objAtrbNames[i].c_str());
+			    //glGetActiveUniform(	designatedprogram,objAtrbLocs[i], 128, &length_, &size_,&type_,name_);
+			} 
+			
+			//dbglog("|",size_, length_,type_,name_,"|");
 			GLenum error = glGetError();
 
 			if(error!=GL_NO_ERROR | objAtrbLocs[i] == -1)
@@ -103,6 +128,8 @@ void Scene::LoadShaderVars(std::vector<std::string>& objAtrbNames,std::vector<in
 			throw std::exception();
 		}
 	}
+	
+	delete[] name_;
 	
 }
 
@@ -461,6 +488,11 @@ void Scene::Prepare()
 
 void Scene::UnloadObject(VectorizedObject& obj)
 {	
+	if (  assets[obj.sceneprog][obj.sceneprogidx] != &obj ) 
+	{
+	    printf("Error %s:%d %s: The object queried is not loaded in the scene", __FILE__ , __LINE__ , __FUNCTION__);
+	    return;
+	}
 	
 	assets[obj.sceneprog].erase(assets[obj.sceneprog].begin()+obj.sceneprogidx);
 	

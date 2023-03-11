@@ -13,6 +13,7 @@ int main()
 {
  //std::string font0 = "!\"#$%_'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_'abcdefghiklmnopqrstuvwxyz{|}~ç€£&à";
  //"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,!?"
+
   EventEngine MainEngine=EventEngine(60);
   Window_Class menu = Window_Class(SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN, "Editor", 640,320 ); 
   MainEngine.HandleWindow(&menu);
@@ -22,7 +23,7 @@ int main()
   gpucodes0.Load("fontV","fontF", "font");
   
   Texture fontTexture = Texture();
- 
+  
   fontTexture.LoadTexture(&menu,"./etc/fonts/font.png",true,4, GL_RGBA);
   dbglog(fontTexture.tx_width, fontTexture.tx_height );
   //BitmapFont pixelFont =  BitmapFont("ABCD", 2, 2, 16, 16, &fontTexture);
@@ -31,7 +32,7 @@ int main()
   
   Textbox tbtext = Textbox("LIL RUSSIAN", &pixelFont,1,11,0.1,0.2);
   tbtext.SetUpDefaultShader();
-  tbtext.SetCoords(-0.7,-0.2,0.0,0.3);
+  tbtext.SetCoords(-0.2,0.6,-0.0,0.0);
   tbtext.SetLetterColor(2,1.0,0.0,0.0,1.0);
   tbtext.SetLetterColor(3,0.0,1.0,0.0,1.0);
   tbtext.SetLetterColor(4,0.0,0.0,1.0,1.0);
@@ -60,15 +61,14 @@ int main()
 
 	GenQuadText(MonkChar);	
 	MonkChar.SetToOrigin(0);
-	MonkChar.Rescale(0,0.7);
 	//MonkChar.SetSnapshot(0, 0);
 
-	MonkChar.LinkUniformToVariable("status", 2);
+	MonkChar.LinkUniformToVariable("status", 3, GL_FLOAT);
 
 	MonkChar.SpecifyBuffersAttributes("aPos", 2);	
 	MonkChar.SpecifyBuffersAttributes("aTex", 2);
 
-	
+	MonkChar.SetUniform("status",2,-0.1);
 
 	
   
@@ -90,5 +90,6 @@ int main()
 	MainEngine.WindowsEvents();
   }
   menu.Close();
+  
   
 }

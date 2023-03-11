@@ -10,7 +10,8 @@ Library based on OpenGL and SDL2.
 ### Build
 
 Build based on Makefile:
-``` export SUGOSOUT = "SUGOS_OPENGL [SUGOS_OPENGL, SUGOS_WEB]" ```
+Define output configuration trough:
+``` export sugos_outls = "OPENGL [OPENGLES, EMSCRIPTEN]" ```
 
 then ``` make lib ``` builds static library ```sugos.a```
 
@@ -20,9 +21,10 @@ then ``` make lib ``` builds static library ```sugos.a```
 
 If you want to modify any build option that has to be done manually on the Makefile.
 
-### Examples
+### etc/examples
 
-Examples contains a list of example of usage of the library
+Examples contains a list of example of usage of the library and its utility.
+Refer to the README.md in the corresponding folder.
 
 ### Tools
 

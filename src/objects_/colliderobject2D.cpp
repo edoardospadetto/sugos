@@ -7,7 +7,10 @@ VectorizedObject(vertex_len_,vertex_num_,surfaces_num_,space_dim_,representation
 	
 }
 
-
+/*
+* Constructs collider object from vertex buffer. vblocation represent the first index of a 2D coordinate point, in the vertex buffer.
+* Coordinates are assumed contiguos. Shape of the collider has to be specified.  
+*/
 void ColliderObject2D::SameShapeCollider(int vblocation, Polygon shape_)
 {
 	std::vector<glm::vec2> x_;
@@ -18,7 +21,6 @@ void ColliderObject2D::SameShapeCollider(int vblocation, Polygon shape_)
 			x_.push_back(tmp_);
 			
 	}	
-	//printf("size : %d \n", x_.size());
 	collider = new Collider2D(std::move( x_ ), shape_);
 }
 
