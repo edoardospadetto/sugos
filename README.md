@@ -3,6 +3,7 @@
 Library based on OpenGL and SDL2.
 
 - 2D animations
+- 3D object rendering (primitive stage) 
 - particle systems with instanced rendering
 - SAT collisions
 - Font rendering
@@ -30,6 +31,6 @@ Refer to the README.md in the corresponding folder.
 
 Set of tools that could speedup the workflow using the library
 
-- Collider Tool (almost finished)
+- Collider Tool 
 
 
