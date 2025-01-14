@@ -12,7 +12,7 @@ Library based on OpenGL and SDL2.
 
 Build based on Makefile:
 Define output configuration trough:
-``` export sugos_out = "OPENGL [OPENGLES, EMSCRIPTEN]" ```
+``` export sugos_out=OPENGL [OPENGLES, EMSCRIPTEN]" ```
 
 then ``` make lib ``` builds static library ```sugos.a```
 
