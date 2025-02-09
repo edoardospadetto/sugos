@@ -36,13 +36,7 @@
 #include "./modules_/geometry_module.h"
 #include "./modules_/noise_module.h"
 #include "./modules_/collisionhandlingmodule.h"
+#include "./modules_/parse_module.h"
 
 #include "./engines_/collisionengine.h"
 #include "./context_/scene.h"
-
-
-
-
-
-
-

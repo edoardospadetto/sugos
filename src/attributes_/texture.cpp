@@ -5,24 +5,24 @@
 
 //STBI IMAGE
 #ifndef EXTERNAL
-#define EXTERNAL 
+#define EXTERNAL
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "../external/stb_image.h"
 #endif
 
 /*
-* Generate Texture from image, with path filename, flip flips the ordering of the pixel, 
-* desiderchannels are the number of channels, color format GL_RGB or GL_RGBA so on. 
+* Generate Texture from image, with path filename, flip flips the ordering of the pixel,
+* desiderchannels are the number of channels, color format GL_RGB or GL_RGBA so on.
 *
 */
 void Texture::LoadTexture(Window_Class *w, const std::string& filename,bool flip_, int desiredchannels, GLenum colorformat )
 {
-	
+
 	w->MakeCurrent();
 	glGenTextures(1, &( textureId));
 	glBindTexture(GL_TEXTURE_2D,  textureId);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -30,7 +30,7 @@ void Texture::LoadTexture(Window_Class *w, const std::string& filename,bool flip
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(int(flip_));
 	unsigned char *data = stbi_load(filename.c_str(), &tx_width, &tx_height, &nrChannels, desiredchannels);
-	
+
 	if (data)
 	{
 		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -45,9 +45,9 @@ void Texture::LoadTexture(Window_Class *w, const std::string& filename,bool flip
 		textureId=-1;
 
 	}
-	stbi_image_free(data); 
-	glCheckError(); 
-	
+	stbi_image_free(data);
+	glCheckError();
+
 }
 
 void Texture::LoadTexture(Window_Class *w,std::string&& filename,bool flip_, int desiredchannels, GLenum colorformat)
@@ -78,14 +78,14 @@ void Texture::LoadTexture(Window_Class *w,float* array, int size1, int size2, in
         case 4:
             channels = GL_RGBA;
             break;
-    
-    
+
+
     }
     if(channels == GL_INVALID_VALUE) {printf("Error, invalid choice of size 3, available only {1,2,3,4}\n");throw std::exception();}
     glTexImage2D(GL_TEXTURE_2D, 0, channels, size1, size2, 0, channels, GL_FLOAT, array);
     //glGenerateMipmap(GL_TEXTURE_2D);
     ltexture = true;
-    glCheckError(); 
+    glCheckError();
 
 }
 
@@ -96,8 +96,8 @@ void Texture::RenderTexture(int idx)
 	//is this temp?
 	if(textureId != -1 )
 	{
-	    
-	    glActiveTexture(GL_TEXTURE0 + idx);
+
+	   glActiveTexture(GL_TEXTURE0 + idx);
 		glBindTexture(GL_TEXTURE_2D, this->textureId);
 		glCheckError();
 	}
@@ -113,4 +113,3 @@ void Texture::UnbindTexture()
 	glBindTexture(GL_TEXTURE_2D, NULL );
 	glCheckError();
 }
-

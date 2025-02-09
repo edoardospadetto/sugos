@@ -10,16 +10,16 @@
 
 #include "./parse_module.h"
 
-int LoadObj(std::string &&  path, VectorizedObject** obj)
+int LoadObjFile(std::string &&  path, VectorizedObject** obj)
 {
 	printf("Loading OBJ file %s...\n", path.c_str());
 
 	std::vector<int> vertexIndices, uvIndices, normalIndices;
-	std::vector<float> temp_vertices; 
+	std::vector<float> temp_vertices;
 	std::vector<float> temp_uvs;
 	std::vector<float> temp_normals;
-	
-	
+
+
 
 	FILE * file = fopen(path.c_str(), "r");
 	if( file == NULL ){
@@ -37,7 +37,7 @@ int LoadObj(std::string &&  path, VectorizedObject** obj)
 		if (res == EOF) break; // EOF = End Of File. Quit the loop.
 
 		// else : parse lineHeader
-		
+
 		if ( strcmp( lineHeader, "v" ) == 0 )
 		{
 			float x,y,z;
@@ -63,21 +63,21 @@ int LoadObj(std::string &&  path, VectorizedObject** obj)
 			temp_normals.push_back(z);
 		}
 		else if ( strcmp( lineHeader, "f" ) == 0 )
-		{	
+		{
 			char* tmpbuffer = (char*)malloc(sizeof(char)*256);
 			fgets(tmpbuffer,256,file);
 			//fscanf(file, "%s", tmpbuffer);
 			int vertexIndex[4], uvIndex[4], normalIndex[4];
-			
-			
-			int check = sscanf(tmpbuffer, "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d\n", 
+
+
+			int check = sscanf(tmpbuffer, "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d\n",
 		   	    &vertexIndex[0], &uvIndex[0], &normalIndex[0],
 			    &vertexIndex[1], &uvIndex[1], &normalIndex[1],
 			    &vertexIndex[2], &uvIndex[2], &normalIndex[2],
 			    &vertexIndex[3], &uvIndex[3], &normalIndex[3]);
-			    
+
 			//printf("%s  %d\n", tmpbuffer, check );
-			   
+
 			if (check == 9)
 			{
 				vertexIndices.push_back(vertexIndex[0]);
@@ -90,10 +90,10 @@ int LoadObj(std::string &&  path, VectorizedObject** obj)
 				normalIndices.push_back(normalIndex[1]);
 				normalIndices.push_back(normalIndex[2]);
 			}
-			else if(check == 12) 
+			else if(check == 12)
 			{
-			
-	
+
+
 				vertexIndices.push_back(vertexIndex[0]);
 				vertexIndices.push_back(vertexIndex[1]);
 				vertexIndices.push_back(vertexIndex[2]);
@@ -103,7 +103,7 @@ int LoadObj(std::string &&  path, VectorizedObject** obj)
 				normalIndices.push_back(normalIndex[0]);
 				normalIndices.push_back(normalIndex[1]);
 				normalIndices.push_back(normalIndex[2]);
-						 	
+
 			 	vertexIndices.push_back(vertexIndex[0]);
 				vertexIndices.push_back(vertexIndex[3]);
 				vertexIndices.push_back(vertexIndex[2]);
@@ -113,21 +113,21 @@ int LoadObj(std::string &&  path, VectorizedObject** obj)
 				normalIndices.push_back(normalIndex[0]);
 				normalIndices.push_back(normalIndex[3]);
 				normalIndices.push_back(normalIndex[2]);
-				
+
 				//printf("quad\n");
-			 
-			 
-			 
-			 } 
+
+
+
+			 }
 			 else
 			 {
-			 	printf("Error, format not understood\n"); 
-			    	return 1; 
+			 	printf("Error, format not understood\n");
+			    	return 1;
 			 }
 			 free(tmpbuffer);
-			
-			
-			
+
+
+
 		}
 		else
 		{
@@ -137,15 +137,15 @@ int LoadObj(std::string &&  path, VectorizedObject** obj)
 		}
 
 	}
-	
-	unsigned int vals = 8;
-	unsigned int vertnum = vertexIndices.size(); 
+
+	unsigned int vals = 5;
+	unsigned int vertnum = vertexIndices.size();
 	unsigned int idxnum  = vertexIndices.size();
 	int* idx = new int[idxnum];
 	float* buffer = new float[idxnum*vals];
 
 	*obj = new VectorizedObject(8,vertnum, idxnum,3,GL_TRIANGLES);
-	
+
 	// For each vertex of each triangle
 	for( unsigned int i=0; i<idxnum; i++){
 
@@ -153,21 +153,23 @@ int LoadObj(std::string &&  path, VectorizedObject** obj)
 		int vertexIndex = abs(vertexIndices[i]);
 		int uvIndex = abs(uvIndices[i]);
 		int normalIndex = abs(normalIndices[i]);
-		
-		idx[i] = i;
+
+		(*obj)->index_buffer[i] = i;
+
 		// Get the attributes thanks to the index
-		buffer[vals*i+0] = temp_vertices[3*(vertexIndex-1)+0];
-		buffer[vals*i+1] = temp_vertices[3*(vertexIndex-1)+1];
-		buffer[vals*i+2] = temp_vertices[3*(vertexIndex-1)+2];
-		
-		buffer[vals*i+3] = temp_uvs[2*(uvIndex-1)+0];
-		buffer[vals*i+4] = temp_uvs[2*(uvIndex-1)+1];
-		
-		
-		buffer[vals*i+5]=temp_normals[3*(normalIndex-1)+0];
-		buffer[vals*i+6]=temp_normals[3*(normalIndex-1)+1];
-		buffer[vals*i+7]=temp_normals[3*(normalIndex-1)+2];
-		
+
+      (*obj)->vertex_buffer[vals*i+0] = temp_vertices[3*(vertexIndex-1)+0]*0.1;
+		(*obj)->vertex_buffer[vals*i+1] = temp_vertices[3*(vertexIndex-1)+1]*0.1;
+		(*obj)->vertex_buffer[vals*i+2] = temp_vertices[3*(vertexIndex-1)+2]*0.1;
+
+		(*obj)->vertex_buffer[vals*i+3] = temp_uvs[2*(uvIndex-1)+0];
+		(*obj)->vertex_buffer[vals*i+4] = temp_uvs[2*(uvIndex-1)+1];
+
+
+		//(*obj)->vertex_buffer[vals*i+5]=temp_normals[3*(normalIndex-1)+0];
+		//(*obj)->vertex_buffer[vals*i+6]=temp_normals[3*(normalIndex-1)+1];
+		//(*obj)->vertex_buffer[vals*i+7]=temp_normals[3*(normalIndex-1)+2];
+
 		//std::cout << buffer[vals*i+5] << "  "
 		//	<< buffer[vals*i+6] << "  "
 		//	<< buffer[vals*i+7] << "  " << std::endl;
@@ -175,13 +177,13 @@ int LoadObj(std::string &&  path, VectorizedObject** obj)
 		//out_vertices.push_back(vertex);
 		//out_uvs     .push_back(uv);
 		//out_normals .push_back(normal);
-	
+
 	}
-	
+
 	//ResetOrigin();
 	fclose(file);
 	printf("Done!\n");
-	 
+
 	 return 0;
 
 }

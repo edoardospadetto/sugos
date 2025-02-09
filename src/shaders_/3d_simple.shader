@@ -3,6 +3,7 @@ SHADER VERTEX 3Dsimplev
 
 in vec3 p3d_Vertex;
 in vec2  vTexCoord;
+in vec3  vnormals;
 out vec2 fTexCoord;
 in vec3 b;
 
@@ -22,5 +23,6 @@ uniform sampler2D uTexture;
 
 void main() {
   fragColor = texture(uTexture, fTexCoord);
+  //fragColor = vec4(0.5,1.0,1.0,1.0);
 }
 ENDSHADER

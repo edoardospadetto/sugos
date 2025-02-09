@@ -20,8 +20,8 @@ StateEngine::StateEngine(EventEngine *eventengine_): eventengine(eventengine_)
 */
 
 
-void StateEngine::UpdateVBatFrame(AnimatedObject2D* animObj) //count from 0 
-{	
+void StateEngine::UpdateVBatFrame(AnimatedObject2D* animObj) //count from 0
+{
 	int x = currentState->x;
 	int y = currentState->y;
 	//dbglog("miao ",x,y,currentState->w,currentState->h);
@@ -41,24 +41,18 @@ void StateEngine::UpdateVBatFrame(AnimatedObject2D* animObj) //count from 0
 
 
 bool StateEngine::CheckFrameUpdate()
-{	
+{
 
 	if (eventengine == nullptr) printf("Error, clock not binded global context");
 	int timeNow = eventengine->GetTime();
-	if(lkeypress) 
+	if(lkeypress)
 	{
-		//std::cout << "info  "  << (eventengine->GetState(triggerkeycode)) << " \n";
 		return (eventengine->GetState(triggerkeycode) == PRESSED ) ;
 	}
-	else 
+	else
 	{
 		return ( timeNow-frameInit > currentState->GetCurrentFrameDuration() );
 	}
-	//if (time_above_threshold)
-	//{
-	//this->NextFrame(wentTimeOut, timeNow);
-	//}	
-			
 
 }
 
@@ -82,18 +76,18 @@ bool StateEngine::TriggerFrameChangeOnKeyPress(int keycode_)
 bool StateEngine::NextFrame() // TRUE if animation RESTARTED
 {
 
-	++currentState->currentFrame; 
-	
+	++currentState->currentFrame;
+
 	bool restartedAnimation = ( currentState->currentFrame >= currentState->frameNum );
 	if(restartedAnimation)
 	{
-		currentState->currentFrame=0;	
+		currentState->currentFrame=0;
 	}
 	int tmp= currentState->currentFrame;
-	currentState->x=currentState->row[tmp]; 
-	currentState->y=currentState->col[tmp]; 
-	frameInit = eventengine->GetTime(); // in principle should be the one from above, but should be fine 
-	
+	currentState->x=currentState->row[tmp];
+	currentState->y=currentState->col[tmp];
+	frameInit = eventengine->GetTime(); // in principle should be the one from above, but should be fine
+
 	return restartedAnimation;
 }
 
@@ -105,27 +99,26 @@ bool StateEngine::NextFrame() // TRUE if animation RESTARTED
 
 void StateEngine::ChangeState(bool &wentTimeOut)
 {
-	
-	
+
+
 	for (int i=0; i<currentState->edges.size() ; i++)
 	{
 		SDL_Scancode key  = currentState->edges[i];
-		
+
 
 		if (key == TIME_OUT )
 		{
 			if (wentTimeOut) currentState = currentState->subsequents[i];
-					
+
 		}
 		else if(eventengine->keyboard[key] + int(currentState->direction[i]) == 1 )
 		{
-			//std::cout << window->kb[key] << "\n" ;
 			currentState = currentState->subsequents[i];
 		}
-		
+
 	}
-	
-	
+
+
 }
 
 void StateEngine::AddState(State *state_)
@@ -137,6 +130,3 @@ void StateEngine::AddState(State *state_)
 		currentState=statesNetwork[0];
 	}
 }
-
-
-
